@@ -13,7 +13,7 @@ max_jet_pt: 30
 canvas_w: 800
 canvas_h: 900
 x_axis_title: "#it{z}_{||}^{ch}"
-y_axis_title: "#frac{#it{R}(#it{z}_{||}^{ch})}{#Delta#it{z}_{||}^{ch}} (GeV/#it{c})^{-1}"
+y_axis_title: "#frac{#it{R}(#it{z}_{||}^{ch})}{#Delta#it{z}_{||}^{ch}}"
 
 # Specific to cross section plot (CompareD0JetRateVsZDataVsTheory.py)
 name_prefix: D0JetRateVsZ_JetPt_15_30
