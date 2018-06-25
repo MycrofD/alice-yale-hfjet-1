@@ -14,7 +14,7 @@ spectra:
 -
   variable_name: JetPt
   normalization: cross_section
-  variable_title: "#it{p}_{T,ch jet}"
+  variable_title: "#it{p}_{T,jet}^{ch}"
   d_meson: "D0_D0toKpiCuts"
   d_pt_cuts: []
   jet_pt_cuts: []
@@ -23,7 +23,7 @@ spectra:
 -
   variable_name: JetPt
   normalization: cross_section
-  variable_title: "#it{p}_{T,ch jet}"
+  variable_title: "#it{p}_{T,jet}^{ch}"
   d_meson: "D0_D0toKpiCuts"
   d_pt_cuts: [2]
   jet_pt_cuts: []
@@ -32,7 +32,7 @@ spectra:
 -
   variable_name: JetPt
   normalization: cross_section
-  variable_title: "#it{p}_{T,ch jet}"
+  variable_title: "#it{p}_{T,jet}^{ch}"
   d_meson: "D0_D0toKpiCuts"
   d_pt_cuts: [3]
   jet_pt_cuts: []
@@ -40,8 +40,26 @@ spectra:
   jet_pt_bins: [5, 6, 8, 10, 14, 20, 30]
 -
   variable_name: JetZ
+  normalization: cross_section
+  variable_title: "#it{z}_{||}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [2]
+  jet_pt_cuts: [5, 15]
+  d_pt_bins: [2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]
+-
+  variable_name: JetZ
+  normalization: cross_section
+  variable_title: "#it{z}_{||}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [6]
+  jet_pt_cuts: [15, 30]
+  d_pt_bins: [6, 7, 8, 10, 12, 16, 30]
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]  
+-
+  variable_name: JetZ
   normalization: distribution
-  variable_title: "#it{z}_{||,D}^{ch jet}"
+  variable_title: "#it{z}_{||}^{ch}"
   d_meson: "D0_D0toKpiCuts"
   d_pt_cuts: [2]
   jet_pt_cuts: [5, 15]
@@ -50,7 +68,7 @@ spectra:
 -
   variable_name: JetZ
   normalization: distribution
-  variable_title: "#it{z}_{||,D}^{ch jet}"
+  variable_title: "#it{z}_{||}^{ch}"
   d_meson: "D0_D0toKpiCuts"
   d_pt_cuts: [6]
   jet_pt_cuts: [15, 30]

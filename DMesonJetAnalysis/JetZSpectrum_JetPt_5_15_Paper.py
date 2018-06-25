@@ -1,17 +1,14 @@
 #!/usr/bin/env python
-# python script to do extract B feed down correction factors
 
+import math
 from scipy import stats
-import yaml
 import IPython
 import ROOT
 import DMesonJetUtils
-import math
 
 globalList = []
 
 input_path = "/Volumes/DATA/ALICE/JetResults"
-
 
 def GetMeasuredCrossSection():
     fname = "{0}/JetZSpectrum_JetPt_5_15_Systematics.root".format(input_path)
@@ -29,7 +26,6 @@ def GetMeasuredCrossSection():
         exit(1)
     return hStat, hSyst
 
-
 def GetTheoryCrossSection():
     # fname = "{0}/PromptDJetsPrediction_1505317519.root".format(input_path)
     fname = "{0}/PromptDJetsPrediction_1483386026.root".format(input_path)
@@ -37,35 +33,24 @@ def GetTheoryCrossSection():
     if not file or file.IsZombie():
         print("Could not open file {0}".format(fname))
         exit(1)
-    hStat = DMesonJetUtils.GetObject(file, "default/JetZSpectrum_DPt_20_JetPt_5_15/GeneratorLevel_JetZSpectrum")
+    hStat = DMesonJetUtils.GetObject(file, "default/JetZSpectrum_DPt_20_JetPt_5_15_Distribution/GeneratorLevel_JetZSpectrum")
     if not hStat:
         print("Cannot get theory cross section with statistical uncertainty!")
         exit(1)
-    hSystUp = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetZSpectrum_DPt_20_JetPt_5_15//GeneratorLevel_JetZSpectrum/GeneratorLevel_JetZSpectrum_UpperSyst")
+    hSystUp = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetZSpectrum_DPt_20_JetPt_5_15_Distribution//GeneratorLevel_JetZSpectrum/GeneratorLevel_JetZSpectrum_UpperSyst")
     if not hSystUp:
         print("Cannot get theory cross section upper systematic uncertainty!")
         exit(1)
-    hSystLow = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetZSpectrum_DPt_20_JetPt_5_15//GeneratorLevel_JetZSpectrum/GeneratorLevel_JetZSpectrum_LowerSyst")
+    hSystLow = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetZSpectrum_DPt_20_JetPt_5_15_Distribution//GeneratorLevel_JetZSpectrum/GeneratorLevel_JetZSpectrum_LowerSyst")
     if not hSystUp:
         print("Cannot get theory cross section lower systematic uncertainty!")
         exit(1)
-    hSyst = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetZSpectrum_DPt_20_JetPt_5_15//GeneratorLevel_JetZSpectrum/GeneratorLevel_JetZSpectrum_CentralAsymmSyst")
+    hSyst = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetZSpectrum_DPt_20_JetPt_5_15_Distribution//GeneratorLevel_JetZSpectrum/GeneratorLevel_JetZSpectrum_CentralAsymmSyst")
     if not hSystUp:
         print("Cannot get theory cross section lower systematic uncertainty!")
         exit(1)
-
-    # no need to scale for antiparticle factor since it is a probability density
-    hStat.Scale(1.0, "width")
-    hSystUp.Scale(1.0, "width")
-    hSystLow.Scale(1.0, "width")
-
-    # no need to scale for antiparticle factor since it is a probability density
-    # for i in range(0, hSyst.GetN()):
-    #    hSyst.SetPoint(i, hSyst.GetX()[i], hSyst.GetY()[i] / 2)
-    #    hSyst.SetPointError(i, hSyst.GetErrorXlow(i), hSyst.GetErrorXhigh(i), hSyst.GetErrorYlow(i) / 2, hSyst.GetErrorYhigh(i) / 2)
 
     return hStat, hSystUp, hSystLow, hSyst
-
 
 def CalculateMean(stat, syst):
     weighted_sum = 0
@@ -89,7 +74,6 @@ def CalculateMean(stat, syst):
 
     return mean, mean_error
 
-
 def CalculateChi2(stat1, syst1, stat2, syst2):
     chi2 = 0
     for ibin in range(1, stat1.GetNbinsX() + 1):
@@ -99,7 +83,6 @@ def CalculateChi2(stat1, syst1, stat2, syst2):
     p = 1 - stats.chi2.cdf(chi2, stat1.GetNbinsX())
 
     return chi2, stat1.GetNbinsX(), p
-
 
 def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySystUp, theorySystLow, theorySyst):
     mean_z_data, mean_z_err_data = CalculateMean(dataStat, dataSyst)
@@ -218,8 +201,7 @@ def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySystUp, theorySystLo
     paveALICE.SetTextFont(43)
     paveALICE.SetTextSize(22)
     paveALICE.SetTextAlign(13)
-    paveALICE.AddText("ALICE Preliminary")
-    paveALICE.AddText("pp, #sqrt{#it{s}} = 7 TeV")
+    paveALICE.AddText("ALICE, pp, #sqrt{#it{s}} = 7 TeV")
     paveALICE.AddText("Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#eta_{jet}| < 0.5")
     paveALICE.AddText("5 < #it{p}_{T,ch jet} < 15 GeV/#it{c}")
     paveALICE.AddText("with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}")
@@ -231,7 +213,6 @@ def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySystUp, theorySystLo
 
     return canvas
 
-
 def main():
     ROOT.TH1.AddDirectory(False)
     ROOT.gStyle.SetOptTitle(0)
@@ -240,10 +221,9 @@ def main():
     dataStat, dataSyst = GetMeasuredCrossSection()
     theoryStat, theorySystUp, theorySystDown, theorySyst = GetTheoryCrossSection()
     canvas = PlotCrossSections(dataStat, dataSyst, theoryStat, theorySystUp, theorySystDown, theorySyst)
-    canvas.SaveAs("{0}/JetZSpectrum_JetPt_5_15_QM18.pdf".format(input_path))
-    canvas.SaveAs("{0}/JetZSpectrum_JetPt_5_15_QM18.C".format(input_path))
-    canvas.SaveAs("{0}/JetZSpectrum_JetPt_5_15_QM18.eps".format(input_path))
-
+    canvas.SaveAs("{0}/JetZSpectrum_JetPt_5_15_Paper.pdf".format(input_path))
+    canvas.SaveAs("{0}/JetZSpectrum_JetPt_5_15_Paper.C".format(input_path))
+    canvas.SaveAs("{0}/JetZSpectrum_JetPt_5_15_Paper.eps".format(input_path))
 
 if __name__ == '__main__':
     main()

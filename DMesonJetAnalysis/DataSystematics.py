@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# python script to prepare B feed-down correction file
+# python script to calculate systematic uncertainties
 
 import argparse
 import IPython
@@ -13,12 +13,12 @@ import DMesonJetUtils
 import DMesonJetCompare
 import copy
 from collections import OrderedDict
+import HistogramNormalizator
 
 globalList = []
 
 xaxis_title = ""
 yaxis_title = ""
-
 
 def main(config):
     ROOT.TH1.AddDirectory(False)
@@ -28,21 +28,21 @@ def main(config):
     global xaxis_title
     global yaxis_title
 
-    if "JetZSpectrum" in config["name"]:
-        xaxis_title = "#it{z}_{||,D}^{ch jet}"
+    if "JetZ" in config["name"]:
+        xaxis_title = "#it{z}_{||}^{ch}"
         if config["normalization"] == "cross_section":
-            yaxis_title = "#frac{d^{2}#sigma}{d#it{z}_{||}d#eta} (mb)"
+            yaxis_title = "#frac{d^{2}#sigma}{d#it{z}_{||}^{ch}d#it{#eta}} (mb)"
         elif config["normalization"] == "distribution":
-            yaxis_title = "probability density"
+            yaxis_title = "Probability Density"
         else:
             print("Normalization option '{}' invalid".format(config["normalization"]))
             exit(1)
     elif "JetPtSpectrum" in config["name"]:
-        xaxis_title = "#it{p}_{T,ch jet} (GeV/#it{c})"
+        xaxis_title = "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
         if config["normalization"] == "cross_section":
-            yaxis_title = "#frac{d^{2}#sigma}{d#it{p}_{T}d#eta} [mb (GeV/#it{c})^{-1}]"
+            yaxis_title = "#frac{d^{2}#sigma}{d#it{p}_{T,jet}^{ch}d#it{#eta}} [mb (GeV/#it{c})^{-1}]"
         elif config["normalization"] == "distribution":
-            yaxis_title = "probability density (GeV/#it{c})^{-1}"
+            yaxis_title = "Probability Density (GeV/#it{c})^{-1}"
         else:
             print("Normalization option '{}' invalid".format(config["normalization"]))
             exit(1)
@@ -65,7 +65,6 @@ def main(config):
 
     SaveCanvases(config["input_path"])
 
-
 def Start(config):
     histograms = LoadHistograms(config)
     results = dict()
@@ -74,28 +73,19 @@ def Start(config):
     results["FinalSpectrum"] = PlotSpectrumStatAndSyst(config["name"], results)
     return results
 
-
 def LoadHistograms(config):
-    crossSection = 62.2  # mb CINT1
-    branchingRatio = 0.0393  # D0->Kpi
-    antiPartNorm = 2.0  # D0 / D0bar
-
     files = OpenFiles(config)
     events = LoadEvents(files, config)
 
     histograms = dict()
 
     h = DMesonJetUtils.GetObject(files[config["default"]["input_name"]], config["default"]["histogram_name"])
+    if not h: 
+        exit(1)
     h.GetXaxis().SetTitle(xaxis_title)
     h.GetYaxis().SetTitle(yaxis_title)
-    if config["normalization"] == "cross_section":
-        h.Scale(crossSection / (events[config["default"]["input_name"]] * branchingRatio * antiPartNorm), "width")
-    elif config["normalization"] == "distribution":
-        h.Scale(1.0 / h.Integral(1, h.GetNbinsX()), "width")
-    else:
-        print("Unknown normalization option '{}'".format(config["normalization"]))
-        exit(1)
-    if not h: exit(1)
+    normalizator = HistogramNormalizator.DataNormalizator(h, config["normalization"], events[config["default"]["input_name"]])
+    h = normalizator.NormalizeHistogram()
     histograms["default"] = h
     v_types = ["variations", "up_variations", "low_variations"]
     for s in config["sources"]:
@@ -106,21 +96,15 @@ def LoadHistograms(config):
                 histograms[s["name"]][v_type] = []
                 for v in s[v_type]:
                     h = DMesonJetUtils.GetObject(files[v["input_name"]], v["histogram_name"])
-                    if not h: exit(1)
-                    h_copy = h.Clone("{0}_copy".format(v["histogram_name"]))
-                    if config["normalization"] == "cross_section":
-                        h_copy.Scale(crossSection / (events[v["input_name"]] * branchingRatio * antiPartNorm), "width")
-                    elif config["normalization"] == "distribution":
-                        h_copy.Scale(1.0 / h_copy.Integral(1, h_copy.GetNbinsX()), "width")
-                    else:
-                        print("Unknown normalization option '{}'".format(config["normalization"]))
+                    if not h:
                         exit(1)
+                    normalizator = HistogramNormalizator.DataNormalizator(h, config["normalization"], events[v["input_name"]])
+                    h_copy = normalizator.NormalizeHistogram()
                     h_copy.SetTitle(v["histogram_title"])
                     h_copy.GetXaxis().SetTitle(xaxis_title)
                     h_copy.GetYaxis().SetTitle(yaxis_title)
                     histograms[s["name"]][v_type].append(h_copy)
     return histograms
-
 
 def LoadEvents(files, config):
     events = dict()
@@ -131,7 +115,6 @@ def LoadEvents(files, config):
         hevents = DMesonJetUtils.GetObject(files[name], heventsName)
         events[name] = hevents.GetBinContent(1)
     return events
-
 
 def OpenFiles(config):
     files = dict()
@@ -155,7 +138,6 @@ def OpenFiles(config):
                     exit(1)
                 files[input_name] = f
     return files
-
 
 def LoadInputNames(s):
     input_names = []
@@ -208,7 +190,6 @@ def CompareVariations(config, histograms):
         globalList.append(obj)
     return result
 
-
 def CalculateFixSystematicUncertainty(config):
     fixed_unc2 = 0
     print("Source & Uncertainty (\\%) \\\\ \\hline")
@@ -220,7 +201,6 @@ def CalculateFixSystematicUncertainty(config):
     print("\\hline")
     print("{0} & {1:.1f}".format("Total", fixed_unc * 100))
     return fixed_unc
-
 
 def GenerateUncertainties(config, histograms):
     baseline = histograms["default"]
@@ -397,7 +377,6 @@ def GenerateUncertainties(config, histograms):
               centralSystUnc.GetName() : centralSystUnc}
     return result
 
-
 def PlotSystematicUncertaintySummary(name, results):
     sourcesUp = []
     sourcesLow = []
@@ -488,7 +467,6 @@ def PlotSystematicUncertaintySummary(name, results):
     for obj in r:
         globalList.append(obj)
 
-
 def PlotSpectrumStatAndSyst(name, results):
     stat = results["Variations"]["default"]
     syst = results["Uncertainties"]["central_syst_unc"]
@@ -500,19 +478,21 @@ def PlotSpectrumStatAndSyst(name, results):
 
     h.GetXaxis().SetTitle(xaxis_title)
     h.GetYaxis().SetTitle(yaxis_title)
-
     if "JetPtSpectrum" in name:
         h.GetYaxis().SetRangeUser(5e-6, 4e-2)
         canvas.SetLogy()
-    elif "JetZSpectrum" in name:
+    elif "JetZ" in name:
+        h.GetXaxis().SetRangeUser(0.2, 1.0)
         if "JetPt_15_30" in name:
-            # h.GetYaxis().SetRangeUser(0, 0.008)
-            h.GetYaxis().SetRangeUser(0, 5.0)
-            h.GetXaxis().SetRangeUser(0.4, 1.0)
+            if "CrossSection" in name:
+                h.GetYaxis().SetRangeUser(-0.001, 0.008)
+            elif "Spectrum" in name:
+                h.GetYaxis().SetRangeUser(0, 5.0)
         else:
-            # h.GetYaxis().SetRangeUser(0, 0.2)
-            h.GetYaxis().SetRangeUser(0, 3.5)
-            h.GetXaxis().SetRangeUser(0.2, 1.0)
+            if "CrossSection" in name:
+                h.GetYaxis().SetRangeUser(-0.02, 0.18)
+            elif "Spectrum" in name:
+                h.GetYaxis().SetRangeUser(0, 3.5)
 
     syst_copy = syst.Clone("central_syst_unc_copy")
     syst_copy.Draw("e2")
@@ -546,13 +526,11 @@ def PlotSpectrumStatAndSyst(name, results):
     result["FinalSpectrumCanvas"] = canvas
     return result
 
-
 def SaveCanvases(input_path):
     for obj in globalList:
         if isinstance(obj, ROOT.TCanvas):
             oname = obj.GetName().replace("/", "_")
             obj.SaveAs("{0}/{1}.pdf".format(input_path, oname))
-
 
 def GenerateRootList(pdict, name):
     rlist = ROOT.TList()
@@ -573,10 +551,9 @@ def GenerateRootList(pdict, name):
             print("Error: type of object {0} not recognized!".format(obj))
     return rlist
 
-
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='Prepare B feed-down correction file.')
+    parser = argparse.ArgumentParser(description='Data systematics.')
     parser.add_argument('yaml', metavar='conf.yaml')
 
     args = parser.parse_args()

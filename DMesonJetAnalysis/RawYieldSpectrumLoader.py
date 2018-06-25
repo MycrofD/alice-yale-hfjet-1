@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-# python script to do extract B feed down correction factors
+# load raw spectrum
 
 import ROOT
 import numpy
 import DMesonJetFDCorrection
 import DMesonJetUtils
-
+import HistogramNormalizator
 
 class RawYieldSpectrumLoader:
 
@@ -297,12 +297,11 @@ class RawYieldSpectrumLoader:
         fdSyst["tot_low"] = fdCorrection.fFDTotLowSystUncHistogram.Clone("FDTotLowSystUnc")
         fdTotSystGraph = fdCorrection.fFDTotSystUncGraph.Clone("FDTotSystUnc")
 
-        crossSection = 62.2  # mb CINT1
-        branchingRatio = 0.0393  # D0->Kpi
         if self.fEvents is None: self.LoadNumberOfEvents()
-        norm = self.fEvents / crossSection * branchingRatio
+        norm = self.fEvents / HistogramNormalizator.CROSS_SECTION * HistogramNormalizator.BRANCHING_RATIO * 2.0 #particle / anti-particle normalization
 
         if isinstance(error_band, basestring) and "graph" in error_band:
+        # a graph was requested
             if "tot" in error_band:
                 graph = fdTotSystGraph
             else:
@@ -313,15 +312,21 @@ class RawYieldSpectrumLoader:
                 graph.SetPointEYhigh(ibin, graph.GetErrorYhigh(ibin) * norm * fdHist.GetXaxis().GetBinWidth(ibin + 1))
             return graph
         elif error_band in fdSyst:
+        # error band requested: can be the partial systematic, including only the POWHEG scale and quark mass variations,
+        # or the total systematic which includes also other uncertainties added in quadrature, such as PDF variation
             if error_band == -1 or error_band == "tot_low": s = -1
             else: s = 1
             fdHist.Add(fdSyst[error_band], s)
         elif error_band == 0:
+        # central points were requested
             pass
         else:
+        # a specific variation was requested
             fdHist = fdCorrection.GetFDHistogram(error_band)
 
-        fdHist.Scale(norm)
+        for ibin in xrange(1, fdHist.GetNbinsX() + 1):
+            fdHist.SetBinContent(ibin, fdHist.GetBinContent(ibin) * norm * fdHist.GetXaxis().GetBinWidth(ibin))
+            fdHist.SetBinError(ibin, fdHist.GetBinError(ibin) * norm * fdHist.GetXaxis().GetBinWidth(ibin))
 
         return fdHist
 

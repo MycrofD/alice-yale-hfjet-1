@@ -32,32 +32,22 @@ def GetTheoryCrossSection():
     if not file or file.IsZombie():
         print("Could not open file {0}".format(fname))
         exit(1)
-    hStat = DMesonJetUtils.GetObject(file, "default/JetPtSpectrum_DPt_30/GeneratorLevel_JetPtSpectrum")
+    hStat = DMesonJetUtils.GetObject(file, "default/JetPtSpectrum_DPt_30_CrossSection/GeneratorLevel_JetPtSpectrum")
     if not hStat:
         print("Cannot get theory cross section with statistical uncertainty!")
         exit(1)
-    hSystUp = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetPtSpectrum_DPt_30//GeneratorLevel_JetPtSpectrum/GeneratorLevel_JetPtSpectrum_UpperSyst")
+    hSystUp = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetPtSpectrum_DPt_30_CrossSection//GeneratorLevel_JetPtSpectrum/GeneratorLevel_JetPtSpectrum_UpperSyst")
     if not hSystUp:
         print("Cannot get theory cross section upper systematic uncertainty!")
         exit(1)
-    hSystLow = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetPtSpectrum_DPt_30//GeneratorLevel_JetPtSpectrum/GeneratorLevel_JetPtSpectrum_LowerSyst")
+    hSystLow = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetPtSpectrum_DPt_30_CrossSection//GeneratorLevel_JetPtSpectrum/GeneratorLevel_JetPtSpectrum_LowerSyst")
     if not hSystUp:
         print("Cannot get theory cross section lower systematic uncertainty!")
         exit(1)
-    hSyst = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetPtSpectrum_DPt_30//GeneratorLevel_JetPtSpectrum/GeneratorLevel_JetPtSpectrum_CentralAsymmSyst")
+    hSyst = DMesonJetUtils.GetObject(file, "SystematicUncertainty/JetPtSpectrum_DPt_30_CrossSection//GeneratorLevel_JetPtSpectrum/GeneratorLevel_JetPtSpectrum_CentralAsymmSyst")
     if not hSyst:
         print("Cannot get theory cross section lower systematic uncertainty!")
         exit(1)
-
-    # scale for the bin width and the antiparticle factor
-    hStat.Scale(0.5, "width")
-    hSystUp.Scale(0.5, "width")
-    hSystLow.Scale(0.5, "width")
-
-    # scale for antiparticle factor
-    for i in range(0, hSyst.GetN()):
-        hSyst.SetPoint(i, hSyst.GetX()[i], hSyst.GetY()[i] / 2)
-        hSyst.SetPointError(i, hSyst.GetErrorXlow(i), hSyst.GetErrorXhigh(i), hSyst.GetErrorYlow(i) / 2, hSyst.GetErrorYhigh(i) / 2)
 
     return hStat, hSystUp, hSystLow, hSyst
 
