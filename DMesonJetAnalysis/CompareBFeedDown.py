@@ -1,23 +1,21 @@
 #!/usr/bin/env python
-# python script to do extract B feed down correction factors
 
 import argparse
 import yaml
 import IPython
 import ROOT
-import os
 import DMesonJetCompare
 import DMesonJetUtils
 import MCSimulationSystematics
 
 globalList = []
 
-def main(configs, jet_type, jet_radius, name):
+def main(configs, name):
     ROOT.TH1.AddDirectory(False)
     ROOT.gStyle.SetOptTitle(0)
     ROOT.gStyle.SetOptStat(0)
 
-    CompareFeedDown(configs, jet_type, jet_radius, name)
+    CompareFeedDown(configs, name)
 
 def OpenFiles(configs):
     for c in configs:
@@ -25,11 +23,11 @@ def OpenFiles(configs):
         c["file"] = ROOT.TFile(fname, "read")
         c["default_list"] = c["file"].Get("default")
 
-def CompareFeedDown(configs, jet_type, jet_radius, name):
-    spectrum_names = MCSimulationSystematics.GenerateSpectrumNames(configs[0]["spectra"])
+def CompareFeedDown(configs, name):
+    spectrum_names = MCSimulationSystematics.GenerateSpectrumNames(configs[0]["spectra"], True)
     OpenFiles(configs)
     if not name: name = "Comparison"
-    for sname in spectrum_names:
+    for sname,_ in spectrum_names:
         cname = ""
         histos = []
         print("Spectrum {}...".format(sname))
@@ -70,22 +68,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='B feed-down comparison')
     parser.add_argument('yaml', nargs='*',
                         help='List of YAML configuration files')
-    parser.add_argument('--jet-type', metavar='TYPE',
-                        default="Charged")
-    parser.add_argument('--jet-radius', metavar='RADIUS',
-                        default="R040")
     parser.add_argument('--name', metavar='NAME',
                         default=None)
     args = parser.parse_args()
 
-    configs = []
+    yconfigs = []
 
     for fname in args.yaml:
         f = open(fname, 'r')
         c = yaml.load(f)
         f.close()
-        configs.append(c)
+        yconfigs.append(c)
 
-    main(configs, args.jet_type, args.jet_radius, args.name)
+    main(yconfigs, args.name)
 
     IPython.embed()
