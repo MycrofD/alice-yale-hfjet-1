@@ -1,14 +1,12 @@
 #!/usr/bin/env python
-# python script to do extract B feed down correction factors
 
-import yaml
 import IPython
+import numpy
 import ROOT
 import DMesonJetUtils
 import RawYieldSpectrumLoader
-import subprocess
+import HistogramNormalizator
 import DMesonJetCompare
-import numpy
 
 globalList = []
 
@@ -16,8 +14,6 @@ input_path = "/Volumes/DATA/ALICE/JetResults"
 
 pass4DmesonAna = "HFPtSpectrum_Pass4_combinedFDForLow_mergeThr1.root"
 
-crossSection = 62.2  # mb CINT1
-branchingRatio = 0.0393  # D0->Kpi
 antiPartNorm = 2.0  # D0 / D0bar
 events = 0
 
@@ -46,7 +42,7 @@ def GetJetPtSpectrum():
     LoadEvents(file, hname)
     h = DMesonJetUtils.GetObject(file, hname)
     print("The number of events is {0}".format(events))
-    h.Scale(crossSection / (events * branchingRatio * antiPartNorm), "width")
+    h.Scale(HistogramNormalizator.CROSS_SECTION / (events * HistogramNormalizator.BRANCHING_RATIO * antiPartNorm), "width")
     return h
 
 def GetDPtSpectrum(kincuts=None, jet_radius=None, jet_type=None):
@@ -60,7 +56,7 @@ def GetDPtSpectrum(kincuts=None, jet_radius=None, jet_type=None):
     loader.fKinematicCuts = kincuts
     loader.fRawYieldMethod = "InvMassFit"
     h = loader.GetDefaultSpectrumFromDMesonJetAnalysis(True, 0, 0)
-    h.Scale(crossSection / (events * branchingRatio * antiPartNorm), "width")
+    h.Scale(HistogramNormalizator.CROSS_SECTION / (events * HistogramNormalizator.BRANCHING_RATIO * antiPartNorm), "width")
     return h
 
 def GetTheoryJetPtCrossSection():
@@ -137,7 +133,7 @@ def CompareJetPtvsDPt():
 
     hpass4_old = GetPass4AnalysisSpectrum()
     hpass4 = hpass4_old.Clone("hpass4")
-    hpass4.Scale(1e-9 / branchingRatio)
+    hpass4.Scale(1e-9 / HistogramNormalizator.BRANCHING_RATIO)
     hpass4.SetTitle("Data, D^{0}")
     globalList.append(hpass4)
 
