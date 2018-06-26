@@ -18,7 +18,7 @@ def GetBFeedDownSpectra():
     loader.fVariableName = "JetPt"
     loader.fKinematicCuts = "DPt_30"
     loader.fRawYieldMethod = "SideBand"
-    loader.fFDConfig = { "file_name": "BFeedDown_1512404613_1399.root",
+    loader.fFDConfig = { "file_name": "BFeedDown_1516708272_1399.root",
                         "central_points": "default",
                         "spectrum": "DetectorLevel_JetPtSpectrum_bEfficiencyMultiply_cEfficiencyDivide"}
     h = loader.GetDefaultSpectrumFromMultiTrial(False, 0, 0)

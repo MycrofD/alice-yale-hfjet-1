@@ -17,7 +17,7 @@ def GetBFeedDownSpectra(kincuts):
     loader.fVariableName = "JetZ"
     loader.fKinematicCuts = kincuts
     loader.fRawYieldMethod = "SideBand"
-    loader.fFDConfig = { "file_name": "BFeedDown_1512404613_1399.root",
+    loader.fFDConfig = { "file_name": "BFeedDown_1516708272_1399.root",
                         "central_points": "default",
                         "spectrum": "DetectorLevel_JetZSpectrum_bEfficiencyMultiply_cEfficiencyDivide"}
     h = loader.GetDefaultSpectrumFromMultiTrial(False, 0, 0)
