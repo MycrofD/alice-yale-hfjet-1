@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-# python script to do extract B feed down correction factors
 
-import yaml
 import IPython
 import ROOT
-import DMesonJetUtils
 import RawYieldSpectrumLoader
 
 globalList = []

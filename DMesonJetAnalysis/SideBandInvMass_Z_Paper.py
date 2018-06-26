@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# python script to do extract B feed down correction factors
 
 import subprocess
 import IPython
