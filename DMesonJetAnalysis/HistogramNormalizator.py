@@ -3,7 +3,7 @@ import math
 import DMesonJetUtils
 
 CROSS_SECTION = 62.2  # mb CINT1
-BRANCHING_RATIO = 0.0393  # D0->Kpi
+BRANCHING_RATIO = 0.0389  # D0->Kpi
 
 class NormalizationType(Enum):
     Unknown = 0
