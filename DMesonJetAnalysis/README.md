@@ -60,9 +60,9 @@ Then execute:
 
 ## B Feed-Down
 
-` ./MCSimulationSystematics.py FDCorrection.yaml `
+` ./MCSimulationSystematics.py FDCorrection_EvtGen.yaml `
 
-`./MCSimulationSystematics.py FDCorrection_1416.yaml`
+`./MCSimulationSystematics.py FDCorrection_EvtGen_1416.yaml`
 
 ## Unfolding
 
