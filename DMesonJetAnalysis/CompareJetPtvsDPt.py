@@ -14,7 +14,6 @@ input_path = "/Volumes/DATA/ALICE/JetResults"
 
 pass4DmesonAna = "HFPtSpectrum_Pass4_combinedFDForLow_mergeThr1.root"
 
-antiPartNorm = 2.0  # D0 / D0bar
 events = 0
 
 def LoadEvents(file, hname):
@@ -42,7 +41,7 @@ def GetJetPtSpectrum():
     LoadEvents(file, hname)
     h = DMesonJetUtils.GetObject(file, hname)
     print("The number of events is {0}".format(events))
-    h.Scale(HistogramNormalizator.CROSS_SECTION / (events * HistogramNormalizator.BRANCHING_RATIO * antiPartNorm), "width")
+    h.Scale(HistogramNormalizator.CROSS_SECTION / (events * HistogramNormalizator.BRANCHING_RATIO), "width")
     return h
 
 def GetDPtSpectrum(kincuts=None, jet_radius=None, jet_type=None):
@@ -56,7 +55,7 @@ def GetDPtSpectrum(kincuts=None, jet_radius=None, jet_type=None):
     loader.fKinematicCuts = kincuts
     loader.fRawYieldMethod = "InvMassFit"
     h = loader.GetDefaultSpectrumFromDMesonJetAnalysis(True, 0, 0)
-    h.Scale(HistogramNormalizator.CROSS_SECTION / (events * HistogramNormalizator.BRANCHING_RATIO * antiPartNorm), "width")
+    h.Scale(HistogramNormalizator.CROSS_SECTION / (events * HistogramNormalizator.BRANCHING_RATIO), "width")
     return h
 
 def GetTheoryJetPtCrossSection():
@@ -78,10 +77,6 @@ def GetTheoryJetPtCrossSection():
         print("Cannot get theory cross section lower systematic uncertainty!")
         exit(1)
 
-    # scale for the bin width and the antiparticle factor
-    hStat.Scale(0.5, "width")
-    hSystUp.Scale(0.5, "width")
-    hSystLow.Scale(0.5, "width")
     return hStat, hSystUp, hSystLow
 
 def GetTheoryDPtCrossSection():
@@ -103,10 +98,6 @@ def GetTheoryDPtCrossSection():
         print("Cannot get theory cross section lower systematic uncertainty!")
         exit(1)
 
-    # scale for the bin width and the antiparticle factor
-    hStat.Scale(0.5, "width")
-    hSystUp.Scale(0.5, "width")
-    hSystLow.Scale(0.5, "width")
     return hStat, hSystUp, hSystLow
 
 def GetPass4AnalysisSpectrum():
@@ -116,9 +107,9 @@ def GetPass4AnalysisSpectrum():
         print("Cannot get pass 4 analysis spectrum!")
         exit(1)
     h_copy = h.Clone("pass4")
+    h_copy.Scale(2.0) # the D meson spectra analysis was normalized dividing by 2 for D0/D0bar
     file.Close()
     return h_copy
-
 
 def CompareJetPtvsDPt():
     jetPtSpectrumHist = GetJetPtSpectrum()

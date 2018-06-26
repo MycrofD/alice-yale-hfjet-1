@@ -92,18 +92,16 @@ class DataNormalizator(Normalizator):
         Normalizator.__init__(self, h, normalization)
         self.fEvents = events
         self.fNormalizationOption = "width"
-        self.fAntiPartNorm = 2.0  # D0 / D0bar
         self.GetCrossSectionNormalization = self.GetCrossSectionNormalizationData
 
     def GetCrossSectionNormalizationData(self):
-        return CROSS_SECTION / (self.fEvents * BRANCHING_RATIO * self.fAntiPartNorm)
+        return CROSS_SECTION / (self.fEvents * BRANCHING_RATIO)
 
 class MCSimulationNormalizator(Normalizator):
     def __init__(self, h, normalization):
         Normalizator.__init__(self, h, normalization)
         self.fNormalizationOption = "width"
-        self.fAntiPartNorm = 2.0  # D0 / D0bar
         self.GetCrossSectionNormalization = self.GetCrossSectionNormalizationMCSimulation
 
     def GetCrossSectionNormalizationMCSimulation(self):
-        return 1.0 / self.fAntiPartNorm
+        return 1.0

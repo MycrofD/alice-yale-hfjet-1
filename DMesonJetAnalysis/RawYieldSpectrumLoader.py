@@ -298,7 +298,7 @@ class RawYieldSpectrumLoader:
         fdTotSystGraph = fdCorrection.fFDTotSystUncGraph.Clone("FDTotSystUnc")
 
         if self.fEvents is None: self.LoadNumberOfEvents()
-        norm = self.fEvents / HistogramNormalizator.CROSS_SECTION * HistogramNormalizator.BRANCHING_RATIO * 2.0 #particle / anti-particle normalization
+        norm = self.fEvents / HistogramNormalizator.CROSS_SECTION * HistogramNormalizator.BRANCHING_RATIO
 
         if isinstance(error_band, basestring) and "graph" in error_band:
         # a graph was requested

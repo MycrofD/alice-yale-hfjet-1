@@ -53,9 +53,9 @@ def GetD0JetTheoryCrossSection(input_path, gen, proc, ts, scale, spectrum, jet_t
         h.Scale(1.0 / h.Integral(h.GetXaxis().FindBin(data_minx*1.0001), h.GetXaxis().FindBin(data_maxx*0.9999)), "width")
     else:
         if scale:
-            h.Scale(scale * 0.5, "width")  # particle/antiparticle
+            h.Scale(scale, "width")
         else:
-            h.Scale(0.5, "width")  # particle/antiparticle
+            h.Scale(1.0, "width")
 
     return h
 
