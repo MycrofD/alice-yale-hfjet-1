@@ -485,12 +485,12 @@ def PlotSpectrumStatAndSyst(name, results):
         h.GetXaxis().SetRangeUser(0.2, 1.0)
         if "JetPt_15_30" in name:
             if "CrossSection" in name:
-                h.GetYaxis().SetRangeUser(-0.001, 0.008)
+                h.GetYaxis().SetRangeUser(-0.001, 0.016)
             elif "Spectrum" in name:
                 h.GetYaxis().SetRangeUser(0, 5.0)
         else:
             if "CrossSection" in name:
-                h.GetYaxis().SetRangeUser(-0.02, 0.18)
+                h.GetYaxis().SetRangeUser(-0.02, 0.36)
             elif "Spectrum" in name:
                 h.GetYaxis().SetRangeUser(0, 3.5)
 
