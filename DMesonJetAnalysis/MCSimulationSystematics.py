@@ -733,12 +733,21 @@ def GenerateUnfoldingEngine(name, responseFile, prior, spectrumName, nbins, dmes
 
 def GetUnfoldedSpectrum(name, histogram, responseFile, prior, spectrumName, dmeson, unfolding_debug):
     unf = GenerateUnfoldingEngine(name, responseFile, prior, spectrumName, histogram.GetXaxis().GetNbins(), dmeson)
-    unf.fInputSpectrum = histogram
+    
+    # Need to remove the bin width normalization
+    h_copy = histogram.Clone()
+    for ibin in range(h_copy.GetNbinsX() + 2):
+        h_copy.SetBinContent(ibin, h_copy.GetBinContent(ibin) * h_copy.GetXaxis().GetBinWidth(ibin))
+        h_copy.SetBinError(ibin, h_copy.GetBinError(ibin) * h_copy.GetXaxis().GetBinWidth(ibin))
+
+    unf.fInputSpectrum = h_copy
     unf.fTruthSpectrum = None
     unf.Start(unfolding_debug)
     default_reg = unf.GetDefaultRegularization(unf.fDefaultMethod, unf.fDefaultPrior)
     default_unfolded = unf.fUnfoldedSpectra[unf.fDefaultMethod, default_reg, unf.fDefaultPrior]
     default_unfolded.SetName(histogram.GetName().replace("_detector", "_unfolded"))
+
+    default_unfolded.Scale(1.0, "width")
     return default_unfolded
 
 def ApplyEfficiency(hist, efficiency, reverse):
@@ -755,8 +764,15 @@ def ApplyEfficiency(hist, efficiency, reverse):
             hist.SetBinError(xbin, ybin, hist.GetBinError(xbin, ybin) * eff)
 
 def ApplyResponse(truth, responseFile, prior, spectrumName, dmeson):
+    # Need to remove the bin width normalization
+    h_copy = truth.Clone()
+    for ibin in range(0, h_copy.GetNbinsX() + 2):
+        h_copy.SetBinContent(ibin, h_copy.GetBinContent(ibin) * h_copy.GetXaxis().GetBinWidth(ibin))
+        h_copy.SetBinError(ibin, h_copy.GetBinError(ibin) * h_copy.GetXaxis().GetBinWidth(ibin))
+
     unf = GenerateUnfoldingEngine(truth.GetName(), responseFile, prior, spectrumName, truth.GetXaxis().GetNbins(), dmeson)
-    unf.fInputSpectrum = truth
+
+    unf.fInputSpectrum = h_copy
     unf.fTruthSpectrum = None
     unf.GenerateResponse()
     resp = unf.fResponseMatrices["GeneratedSpectrum"].fNormResponse.Clone("temp")
@@ -765,7 +781,7 @@ def ApplyResponse(truth, responseFile, prior, spectrumName, dmeson):
         if inty == 0:
             continue
         print("Integral is {0:.3f}".format(inty))
-        scaling = truth.GetBinContent(ybin) / inty
+        scaling = h_copy.GetBinContent(ybin) / inty
         for xbin in range(0, resp.GetXaxis().GetNbins() + 2):
             binValue = resp.GetBinContent(xbin, ybin) * scaling
             binErr = resp.GetBinError(xbin, ybin) * scaling
@@ -773,6 +789,9 @@ def ApplyResponse(truth, responseFile, prior, spectrumName, dmeson):
             resp.SetBinError(xbin, ybin, binErr)
     result = resp.ProjectionX("{0}_detector".format(truth.GetName()), 0, -1)
     result.GetYaxis().SetTitle(truth.GetYaxis().GetTitle())
+
+    result.Scale(1.0, "width")
+
     return result
 
 def OpenResponseFile(input_path, response, efficiency):
