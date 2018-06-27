@@ -131,18 +131,36 @@ def PlotCrossSections(dataStat, dataSyst, config):
         dataStat_copy.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
 
     for t in config["theory"]:
-        if not t["active"]: continue
-        h = t["histogram"].Clone(t["gen"])
-        h.Draw("same e0")
-        if "data_minx" in config and "data_maxx" in config:
-            h.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
-        globalList.append(h)
-        h.SetLineColor(t["color"])
-        h.SetLineStyle(t["line"])
-        h.SetLineWidth(2)
-        h.SetMarkerStyle(1)
-        h.SetMarkerColor(t["color"])
-        t["histogram_plot"] = h
+        if not t["active"]:
+            continue
+        if not "type" in t or t["type"] == "stat-only":
+            h = t["histogram"].Clone(t["gen"])
+            h.Draw("same e0")
+            if "data_minx" in config and "data_maxx" in config:
+                h.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
+            globalList.append(h)
+            h.SetLineColor(t["color"])
+            h.SetLineStyle(t["line"])
+            h.SetLineWidth(2)
+            h.SetMarkerStyle(1)
+            h.SetMarkerColor(t["color"])
+            t["histogram_plot"] = h
+        elif t["type"] == "stat+syst":
+            hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
+            hSyst.SetLineColor(t["color"])
+            hSyst.SetLineWidth(2)
+            hSyst.SetFillStyle(0)
+            hSyst.Draw("2")
+            globalList.append(hSyst)
+            t["systematics_plot"] = hSyst
+
+            hStat = t["histogram"].Clone("{0}_copy".format(t["histogram"].GetName()))
+            hStat.SetMarkerStyle(getattr(ROOT, t["marker"]))
+            hStat.SetLineColor(t["color"])
+            hStat.SetMarkerColor(t["color"])
+            hStat.Draw("same p e0 x0")
+            globalList.append(hStat)
+            t["histogram_plot"] = hStat
 
     padRatio.cd()
 
@@ -188,8 +206,10 @@ def PlotCrossSections(dataStat, dataSyst, config):
         ratioStat.SetBinContent(ibin, 1.0)
 
     for t in config["theory"]:
-        if not t["active"]: continue
+        if not "histogram_plot" in t:
+            continue
         r = t["histogram_plot"].Clone()
+        globalList.append(r)
         for ibin in range(1, r.GetNbinsX() + 1):
             if t["histogram_plot"].GetBinContent(ibin) <= 0: 
                 r.SetBinError(ibin, 0)
@@ -197,15 +217,23 @@ def PlotCrossSections(dataStat, dataSyst, config):
                 continue
             r.SetBinError(ibin, t["histogram_plot"].GetBinError(ibin) / t["histogram_plot"].GetBinContent(ibin))
             r.SetBinContent(ibin, t["histogram_plot"].GetBinContent(ibin) / dataStat_copy.GetBinContent(ibin))
-        r.SetLineColor(t["color"])
-        r.SetLineStyle(t["line"])
-        r.SetLineWidth(2)
-        r.SetMarkerStyle(20)
-        r.SetMarkerSize(0)
-        r.Draw("same e0")
-        globalList.append(r)
-        t["ratio"] = r
-
+        if not "type" in t or t["type"] == "stat-only":
+            r.SetLineColor(t["color"])
+            r.SetLineStyle(t["line"])
+            r.SetLineWidth(2)
+            r.SetMarkerStyle(20)
+            r.SetMarkerSize(0)
+            r.Draw("same e0")
+            t["ratio"] = r
+        elif t["type"] == "stat+syst":
+            rSyst = t["systematics_plot"].Clone()
+            globalList.append(rSyst)
+            for ibin in range(0, rSyst.GetN()):
+                rSyst.SetPointEYlow(ibin, rSyst.GetErrorYlow(ibin) / dataSyst_copy.GetY()[ibin])
+                rSyst.SetPointEYhigh(ibin , rSyst.GetErrorYhigh(ibin) / dataSyst_copy.GetY()[ibin])
+                rSyst.SetPoint(ibin, rSyst.GetX()[ibin], rSyst.GetY()[ibin] / dataSyst_copy.GetY()[ibin])
+            rSyst.Draw("2")
+            r.Draw("same p e0 x0")
     padMain.cd()
 
     y1 = 0.90
@@ -226,7 +254,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
     else:
         max_length = 0
         for t in config["theory"]: 
-            if not t["active"]:
+            if not "histogram_plot" in t:
                 continue
             if len(t["title"]) > max_length:
                 max_length = len(t["title"])
@@ -258,9 +286,17 @@ def PlotCrossSections(dataStat, dataSyst, config):
     leg1.SetTextAlign(12)
     leg1.SetMargin(0.15)
     for t in config["theory"]: 
-        if not t["active"]:
+        if not "histogram_plot" in t:
             continue
-        leg1.AddEntry(t["histogram_plot"], t["title"], "l")
+        if not "type" in t or t["type"] == "stat-only":
+            leg1.AddEntry(t["histogram_plot"], t["title"], "l")
+        elif t["type"] == "stat+syst":
+            entry = leg1.AddEntry(None, t["title"], "pf")
+            entry.SetFillStyle(0)
+            entry.SetLineColor(t["histogram_plot"].GetLineColor())
+            entry.SetLineWidth(t["histogram_plot"].GetLineWidth())
+            entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
+            entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
 
     leg1.Draw()
 

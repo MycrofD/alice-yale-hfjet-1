@@ -15,30 +15,70 @@ def GetD0JetTheoryCrossSectionAll(config, axis):
             spectrum_name = t["spectrum_name"]
         else:
             spectrum_name = config["theory_spectrum"]
-        if "jet_type" in t:
-            jet_type = t["jet_type"]
-        else:
-            jet_type = config["jet_type"]
         if "normalization" in config:
             normalization = config["normalization"]
         else:
             normalization = "CrossSection"
         if "scale" in t and normalization != "Distribution":
             scale *= t["scale"]
-
-        if "data_minx" in config and "data_maxx" in config:
-            data_minx = config["data_minx"]
-            data_maxx = config["data_maxx"]
+        if "jet_type" in t:
+            jet_type = t["jet_type"]
         else:
-            data_minx = 0
-            data_maxx = -1
-            
-        if normalization == "Distribution" and data_maxx < data_minx:
-            print("Error: requsted normalization, but did not provide minx and maxx via the fields 'data_minx' and 'data_maxx'. Aborting.")
-            exit(1)
+            jet_type = config["jet_type"]
 
-        h = GetD0JetTheoryCrossSection(config["input_path"], t["gen"], t["proc"], t["ts"], scale, spectrum_name, jet_type, axis, normalization, data_minx, data_maxx)
-        t["histogram"] = h
+        if "type" in t:
+            theory_type = t["type"]
+        else:
+            theory_type = "stat-only"
+        
+        if theory_type == "stat-only":
+            if "data_minx" in config and "data_maxx" in config:
+                data_minx = config["data_minx"]
+                data_maxx = config["data_maxx"]
+            else:
+                data_minx = 0
+                data_maxx = -1
+                
+            if normalization == "Distribution" and data_maxx < data_minx:
+                print("Error: requsted normalization, but did not provide minx and maxx via the fields 'data_minx' and 'data_maxx'. Aborting.")
+                exit(1)
+
+            h = GetD0JetTheoryCrossSection(config["input_path"], t["gen"], t["proc"], t["ts"], scale, spectrum_name, jet_type, axis, normalization, data_minx, data_maxx)
+            t["histogram"] = h
+
+        elif theory_type == "stat+syst":
+            file_name = t["file_name"]
+            hStat, hSyst = GetD0JetTheoryCrossSectionStatSyst(config["input_path"], file_name, scale, spectrum_name, normalization)
+            t["histogram"] = hStat
+            t["systematics"] = hSyst
+
+def GetD0JetTheoryCrossSectionStatSyst(input_path, file_name, scale, spectrum, normalization):
+    fname = "{}/{}".format(input_path, file_name)
+    file = ROOT.TFile(fname)
+    if not file or file.IsZombie():
+        print("Could not open file {0}".format(fname))
+        exit(1)
+    underscore = spectrum.find("_")
+    spectrum_name_prefix = spectrum[:underscore]
+    spectrum_name_suffix = spectrum[underscore + 1:]
+    if "DPt_3" in spectrum_name_suffix and not "DPt_30" in spectrum_name_suffix:
+        spectrum_name_suffix = spectrum_name_suffix.replace("DPt_3", "DPt_30")
+    hStat = DMesonJetUtils.GetObject(file, "default/{prefix}_{suffix}_{normalization}/GeneratorLevel_{prefix}".format(prefix=spectrum_name_prefix, suffix=spectrum_name_suffix, normalization=normalization))
+    if not hStat:
+        print("Cannot get theory cross section with statistical uncertainty!")
+        exit(1)
+    hSyst = DMesonJetUtils.GetObject(file, "SystematicUncertainty/{prefix}_{suffix}_{normalization}//GeneratorLevel_{prefix}/GeneratorLevel_{prefix}_CentralAsymmSyst".format(prefix=spectrum_name_prefix, suffix=spectrum_name_suffix, normalization=normalization))
+    if not hSyst:
+        print("Cannot get theory cross section lower systematic uncertainty!")
+        exit(1)
+
+    hStat.Scale(scale)
+    for ipoint in range(0, hSyst.GetN()):
+        hSyst.SetPointEYlow(ipoint, hSyst.GetErrorYlow(ipoint) * scale)
+        hSyst.SetPointEYhigh(ipoint, hSyst.GetErrorYhigh(ipoint) * scale)
+        hSyst.SetPoint(ipoint, hSyst.GetX()[ipoint], hSyst.GetY()[ipoint] * scale)
+
+    return hStat, hSyst
 
 def GetD0JetTheoryCrossSection(input_path, gen, proc, ts, scale, spectrum, jet_type, axis, normalization, data_minx, data_maxx):
     fname = "{input_path}/FastSim_{gen}_{proc}_{ts}/FastSimAnalysis_ccbar_{gen}_{proc}_{ts}.root".format(input_path=input_path, gen=gen, proc=proc, ts=ts)
