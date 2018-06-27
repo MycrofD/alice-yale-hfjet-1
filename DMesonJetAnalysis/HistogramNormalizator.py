@@ -12,7 +12,9 @@ class NormalizationType(Enum):
 
     @classmethod
     def from_string(cls, norm_type_str):
-        if norm_type_str == "cross_section":
+        if norm_type_str in NormalizationType.__members__:
+            return NormalizationType[norm_type_str]
+        elif norm_type_str == "cross_section":
             return cls.CrossSection
         elif norm_type_str == "distribution":
             return cls.Distribution
@@ -26,10 +28,13 @@ class Normalizator:
         self.fNormalizationType = NormalizationType.from_string(normalization)
         self.fNormalizationOption = ""
         self.fNormalizedHistogram = None
+        self.fScale = 1.0
+        self.fXmin = 0
+        self.fXmax = -1
         print("Normalizator '{}' for histogram '{}'".format(self.fNormalizationType, self.fHistogram.GetName()))
 
     def GetCrossSectionNormalization(self):
-        return 1.0
+        return self.fScale
 
     def CalculateIntegralAndError(self, exclude_bin):
         integral = 0
@@ -37,6 +42,9 @@ class Normalizator:
         for ibin in range(1, self.fHistogram.GetNbinsX() + 1):
             if ibin == exclude_bin:
                 continue
+            if self.fXmin < self.fXmax:
+                if self.fHistogram.GetXaxis().GetBinCenter(ibin) < self.fXmin or self.fHistogram.GetXaxis().GetBinCenter(ibin) > self.fXmax:
+                    continue
             integral += self.fHistogram.GetBinContent(ibin)
             error2 += self.fHistogram.GetBinError(ibin) ** 2
         return integral, error2
@@ -45,6 +53,11 @@ class Normalizator:
         print("Performing normalization '{}' for histogram '{}'".format(self.fNormalizationType, self.fHistogram.GetName()))
         if self.fNormalizationType == NormalizationType.CrossSection:
             self.fNormalizedHistogram = self.fHistogram.Clone(self.fHistogram.GetName())
+            if self.fXmin < self.fXmax:
+                for ibin in range(1, self.fHistogram.GetNbinsX() + 1):
+                    if self.fHistogram.GetXaxis().GetBinCenter(ibin) < self.fXmin or self.fHistogram.GetXaxis().GetBinCenter(ibin) > self.fXmax:
+                        self.fNormalizedHistogram.SetBinContent(ibin, 0)
+                        self.fNormalizedHistogram.SetBinError(ibin, 0)
             print("Scaling by {} with option '{}'".format(self.GetCrossSectionNormalization(), self.fNormalizationOption))
             self.fNormalizedHistogram.Scale(self.GetCrossSectionNormalization(), self.fNormalizationOption)
         elif self.fNormalizationType == NormalizationType.Distribution:
@@ -58,6 +71,10 @@ class Normalizator:
             for ibin in range(1, self.fHistogram.GetNbinsX() + 1):
                 print("\n")
                 print("Bin {}: {} +/- {} (rel err {})".format(ibin, self.fHistogram.GetBinContent(ibin), self.fHistogram.GetBinError(ibin), self.fHistogram.GetBinError(ibin) / self.fHistogram.GetBinContent(ibin)))
+                if self.fXmin < self.fXmax:
+                    if self.fHistogram.GetXaxis().GetBinCenter(ibin) < self.fXmin or self.fHistogram.GetXaxis().GetBinCenter(ibin) > self.fXmax:
+                        print("Skipping this bin because outside of requested range [{}, {}]".format(self.fXmin, self.fXmax))
+                        continue
                 if self.fHistogram.GetBinContent(ibin) == 0:
                     continue
                 I_minus_A, I_minus_A_err2 = self.CalculateIntegralAndError(ibin)
@@ -104,4 +121,4 @@ class MCSimulationNormalizator(Normalizator):
         self.GetCrossSectionNormalization = self.GetCrossSectionNormalizationMCSimulation
 
     def GetCrossSectionNormalizationMCSimulation(self):
-        return 1.0
+        return self.fScale

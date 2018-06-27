@@ -416,6 +416,9 @@ def PrepareFDhist_dpt(spectrum, ts, FDhistogram_old, bResponseFile, cResponseFil
     FDhistogram_orig = FDhistogram_old.Rebin(len(dptbins) - 1, FDhistogram_old.GetName(), array.array('d', dptbins))
     FDhistogram_orig.SetName("GeneratorLevel_DPtSpectrum")
     normalizator = HistogramNormalizator.MCSimulationNormalizator(FDhistogram_orig, spectrum["normalization"])
+    if "xmin" in spectrum and "xmax" in spectrum:
+        normalizator.fXmin = spectrum["xmin"]
+        normalizator.fXmax = spectrum["xmax"]
     FDhistogram_orig = normalizator.NormalizeHistogram()
     dpt[FDhistogram_orig.GetName()] = FDhistogram_orig
 
@@ -465,6 +468,13 @@ def PrepareFDhist_dpt(spectrum, ts, FDhistogram_old, bResponseFile, cResponseFil
     return result
 
 def PrepareFDhist_jet(spectrum, ts, FDhistogram_old, bResponseFile, cResponseFile, bResponseFile_efficiency, cResponseFile_efficiency, unfolding_debug):
+    if "xmin" in spectrum and "xmax" in spectrum:
+        xmin = spectrum["xmin"]
+        xmax = spectrum["xmax"]
+    else:
+        xmin = 0
+        xmax = -1
+    
     dmeson = spectrum["d_meson"]
     dmeson_prompt = "Prompt_{}".format(dmeson)
     dmeson_nonprompt = "NonPrompt_{}".format(dmeson)
@@ -593,6 +603,8 @@ def PrepareFDhist_jet(spectrum, ts, FDhistogram_old, bResponseFile, cResponseFil
     FDhistogram_jetx_orig = FDhistogram_orig.ProjectionX("{}_{}_DPt_{}".format(FDhistogram_orig.GetName(), jet_var_name, ptdmin * 10), FDhistogram_orig.GetYaxis().FindBin(ptdmin), FDhistogram_orig.GetNbinsY() + 1)
     FDhistogram_jetx_orig.SetName("GeneratorLevel_{}".format(spectrumName))
     normalizator = HistogramNormalizator.MCSimulationNormalizator(FDhistogram_jetx_orig, spectrum["normalization"])
+    normalizator.fXmin = xmin
+    normalizator.fXmax = xmax
     FDhistogram_jetx_orig = normalizator.NormalizeHistogram()
     FDhistogram_jetx_orig.GetXaxis().SetTitle(xaxis_title)
     FDhistogram_jetx_orig.GetYaxis().SetTitle(yaxis_title)
@@ -603,6 +615,8 @@ def PrepareFDhist_jet(spectrum, ts, FDhistogram_old, bResponseFile, cResponseFil
         FDhistogram_jetx = FDhistogram.ProjectionX("{}_{}_DPt_{}".format(FDhistogram.GetName(), jet_var_name, ptdmin * 10), FDhistogram.GetYaxis().FindBin(ptdmin), FDhistogram.GetNbinsY() + 1)
         FDhistogram_jetx.SetName("GeneratorLevel_{}_bEfficiencyMultiply".format(spectrumName))
         normalizator = HistogramNormalizator.MCSimulationNormalizator(FDhistogram_jetx, spectrum["normalization"])
+        normalizator.fXmin = xmin
+        normalizator.fXmax = xmax
         FDhistogram_jetx = normalizator.NormalizeHistogram()
         FDhistogram_jetx.GetXaxis().SetTitle(xaxis_title)
         FDhistogram_jetx.GetYaxis().SetTitle(yaxis_title)
@@ -615,6 +629,8 @@ def PrepareFDhist_jet(spectrum, ts, FDhistogram_old, bResponseFile, cResponseFil
         FDhistogram_fineBins_jetx = FDhistogram_fineBins.ProjectionX("{}_{}_DPt_{}".format(FDhistogram_fineBins.GetName(), jet_var_name, ptdmin * 10), FDhistogram_fineBins.GetYaxis().FindBin(ptdmin), FDhistogram_fineBins.GetNbinsY() + 1)
         FDhistogram_fineBins_jetx.SetName("GeneratorLevel_{}_FineBins_bEfficiencyMultiply".format(spectrumName))
         normalizator = HistogramNormalizator.MCSimulationNormalizator(FDhistogram_fineBins_jetx, spectrum["normalization"])
+        normalizator.fXmin = xmin
+        normalizator.fXmax = xmax
         FDhistogram_fineBins_jetx = normalizator.NormalizeHistogram()
         FDhistogram_fineBins_jetx.GetXaxis().SetTitle(xaxis_title)
         FDhistogram_fineBins_jetx.GetYaxis().SetTitle(yaxis_title)
@@ -651,6 +667,8 @@ def PrepareFDhist_jet(spectrum, ts, FDhistogram_old, bResponseFile, cResponseFil
         FDhistogram_efficiency_jetx = FDhistogram_efficiency.ProjectionX("{}_{}_DPt_{}".format(FDhistogram_efficiency.GetName(), jet_var_name, ptdmin * 10), FDhistogram_efficiency.GetYaxis().FindBin(ptdmin), FDhistogram_efficiency.GetNbinsY() + 1)
         FDhistogram_efficiency_jetx.SetName("GeneratorLevel_{}_bEfficiencyMultiply_cEfficiencyDivide".format(spectrumName))
         normalizator = HistogramNormalizator.MCSimulationNormalizator(FDhistogram_efficiency_jetx, spectrum["normalization"])
+        normalizator.fXmin = xmin
+        normalizator.fXmax = xmax
         FDhistogram_efficiency_jetx = normalizator.NormalizeHistogram()
         FDhistogram_efficiency_jetx.GetXaxis().SetTitle(xaxis_title)
         FDhistogram_efficiency_jetx.GetYaxis().SetTitle(yaxis_title)
@@ -663,6 +681,8 @@ def PrepareFDhist_jet(spectrum, ts, FDhistogram_old, bResponseFile, cResponseFil
         FDhistogram_fineBins_efficiency_jetx = FDhistogram_fineBins_efficiency.ProjectionX("{}_{}_DPt_{}".format(FDhistogram_fineBins_efficiency.GetName(), jet_var_name, ptdmin * 10), FDhistogram_fineBins_efficiency.GetYaxis().FindBin(ptdmin), FDhistogram_fineBins_efficiency.GetNbinsY() + 1)
         FDhistogram_fineBins_efficiency_jetx.SetName("GeneratorLevel_{}_FineBins_bEfficiencyMultiply_cEfficiencyDivide".format(spectrumName))
         normalizator = HistogramNormalizator.MCSimulationNormalizator(FDhistogram_fineBins_efficiency_jetx, spectrum["normalization"])
+        normalizator.fXmin = xmin
+        normalizator.fXmax = xmax
         FDhistogram_fineBins_efficiency_jetx = normalizator.NormalizeHistogram()
         FDhistogram_fineBins_efficiency_jetx.GetXaxis().SetTitle(xaxis_title)
         FDhistogram_fineBins_efficiency_jetx.GetYaxis().SetTitle(yaxis_title)

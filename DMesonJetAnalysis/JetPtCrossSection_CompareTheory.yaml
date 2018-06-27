@@ -5,19 +5,19 @@ name: CompareTheory
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
-data: JetPtSpectrum_DPt_30_Systematics
+data: JetPtCrossSection_DPt_30_Systematics
 theory_spectrum: JetPtSpectrum_DPt_3
 jet_type: Charged_R040
 logy: yes
 canvas_w: 700
-canvas_h: 900
+canvas_h: 700
 x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
 y_axis_title: "#frac{d^{2}#sigma}{d#it{p}_{T,jet}^{ch}d#it{#eta}_{jet}} [mb (GeV/#it{c})^{-1}]"
 
 # Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
-name_prefix: JetPtSpectrum
+name_prefix: JetPtCrossSection
 title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}"]
-normalize: no
+normalization: CrossSection
 miny: 6.0e-6
 maxy: 1.0e+0
 minr: 0.0
@@ -35,14 +35,14 @@ D0JetRate:
   miny: 6.0e-6
   maxy: 5.0e+2
   minr: 0.005
-  maxr: 0.0659
+  maxr: 0.1319
   theory_legend:
-    x: 0.44
-    y: 0.70
+    x: 0.40
+    y: 0.78
     n_columns: 1
   data_legend:
-    x: 0.56
-    y: 0.86
+    x: 0.62
+    y: 0.92
 
 # MC definitions
 theory:
@@ -90,7 +90,6 @@ theory:
     gen: pythia6
     proc: mb
     ts: 1520882421
-    jet_type: ""
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: PYTHIA 8 Monash-2013

@@ -1,26 +1,29 @@
 #!/usr/bin/env python
 # python script to compare D0 jet spectrum with theory
 # use it with
-# JetPtSpectrum_ComparePYTHIA6vs8.yaml
-# JetPtSpectrum_CompareHerwig.yaml
-# JetPtSpectrum_ComparePowheg.yaml
-# JetPtSpectrum_CompareTheory.yaml
-# JetPtSpectrum_CompareFullVsCharged.yaml
-# JetPtSpectrum_ComparePtDCut.yaml
+# JetPtCrossSection_ComparePYTHIA6vs8.yaml
+# JetPtCrossSection_CompareHerwig.yaml
+# JetPtCrossSection_ComparePowheg.yaml
+# JetPtCrossSection_CompareTheory.yaml
+# JetPtCrossSection_CompareFullVsCharged.yaml
+# JetPtCrossSection_ComparePtDCut.yaml
 
-# JetZSpectrum_JetPt_5_15_ComparePYTHIA6vs8.yaml
-# JetZSpectrum_JetPt_5_15_CompareHerwig.yaml
-# JetZSpectrum_JetPt_5_15_ComparePowheg.yaml
-# JetZSpectrum_JetPt_5_15_CompareTheory.yaml
-# JetZSpectrum_JetPt_5_15_CompareFullVsCharged.yaml
-# JetZSpectrum_JetPt_5_15_ComparePtDCut.yaml
+# JetZDistr_JetPt_5_15_ComparePYTHIA6vs8.yaml
+# JetZDistr_JetPt_5_15_CompareHerwig.yaml
+# JetZDistr_JetPt_5_15_ComparePowheg.yaml
+# JetZDistr_JetPt_5_15_CompareTheory.yaml
+# JetZDistr_JetPt_5_15_CompareFullVsCharged.yaml
+# JetZDistr_JetPt_5_15_ComparePtDCut.yaml
 
-# JetZSpectrum_JetPt_15_30_ComparePYTHIA6vs8.yaml
-# JetZSpectrum_JetPt_15_30_CompareHerwig.yaml
-# JetZSpectrum_JetPt_15_30_ComparePowheg.yaml
-# JetZSpectrum_JetPt_15_30_CompareTheory.yaml
-# JetZSpectrum_JetPt_15_30_CompareFullVsCharged.yaml
-# JetZSpectrum_JetPt_15_30_ComparePtDCut.yaml
+# JetZDistr_JetPt_15_30_ComparePYTHIA6vs8.yaml
+# JetZDistr_JetPt_15_30_CompareHerwig.yaml
+# JetZDistr_JetPt_15_30_ComparePowheg.yaml
+# JetZDistr_JetPt_15_30_CompareTheory.yaml
+# JetZDistr_JetPt_15_30_CompareFullVsCharged.yaml
+# JetZDistr_JetPt_15_30_ComparePtDCut.yaml
+
+# JetZCrossSection_JetPt_5_15_CompareTheory.yaml
+# JetZCrossSection_JetPt_15_30_CompareTheory.yaml
 
 import argparse
 import yaml
@@ -31,7 +34,7 @@ import LoadTheoryCrossSections
 
 globalList = []
 
-def GetMeasuredCrossSection(input_path, file_name):
+def GetMeasuredCrossSection(input_path, file_name, scale):
     fname = "{}/{}.root".format(input_path, file_name)
     file = ROOT.TFile(fname)
     if not file or file.IsZombie():
@@ -45,6 +48,11 @@ def GetMeasuredCrossSection(input_path, file_name):
     if not hSyst:
         print("Cannot get measured cross section with systematic uncertainty!")
         exit(1)
+    hStat.Scale(scale)
+    for ipoint in range(0, hSyst.GetN()):
+        hSyst.SetPointEYlow(ipoint, hSyst.GetErrorYlow(ipoint) * scale)
+        hSyst.SetPointEYhigh(ipoint, hSyst.GetErrorYhigh(ipoint) * scale)
+        hSyst.SetPoint(ipoint, hSyst.GetX()[ipoint], hSyst.GetY()[ipoint] * scale)
     return hStat, hSyst
 
 def GetTheoryCrossSectionAll(config, axis):
@@ -174,6 +182,8 @@ def PlotCrossSections(dataStat, dataSyst, config):
         ratioSyst.SetPoint(ibin, ratioSyst.GetX()[ibin], 1.0)
     
     for ibin in range(1, ratioStat.GetNbinsX()+1):
+        if ratioStat.GetBinContent(ibin) == 0:
+            continue
         ratioStat.SetBinError(ibin, ratioStat.GetBinError(ibin) / ratioStat.GetBinContent(ibin))
         ratioStat.SetBinContent(ibin, 1.0)
 
@@ -287,7 +297,11 @@ def main(config):
     ROOT.gStyle.SetOptTitle(0)
     ROOT.gStyle.SetOptStat(0)
 
-    dataStat, dataSyst = GetMeasuredCrossSection(config["input_path"], config["data"])
+    if "scale" in config:
+        scale = config["scale"]
+    else:
+        scale = 1.0
+    dataStat, dataSyst = GetMeasuredCrossSection(config["input_path"], config["data"], scale)
     GetTheoryCrossSectionAll(config, dataStat.GetXaxis())
     canvas = PlotCrossSections(dataStat, dataSyst, config)
     canvas.SaveAs("{}/{}.pdf".format(config["input_path"], canvas.GetName()))

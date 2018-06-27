@@ -69,6 +69,8 @@ def CalculateChi2(stat1, syst1, stat2, syst2):
     for ibin in range(1, stat1.GetNbinsX() + 1):
         tot_err2 = stat1.GetBinError(ibin) ** 2 + syst1.GetErrorY(ibin - 1) ** 2 + stat2.GetBinError(ibin) ** 2 + syst2.GetErrorY(ibin - 1) ** 2
         diff2 = (stat1.GetBinContent(ibin) - stat2.GetBinContent(ibin)) ** 2
+        if tot_err2 == 0:
+            continue
         chi2 += diff2 / tot_err2
     p = 1 - stats.chi2.cdf(chi2, stat1.GetNbinsX())
 
@@ -108,7 +110,7 @@ def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySyst):
     globalList.append(h)
     h.Draw("axis")
     h.GetYaxis().SetTitle("Probability Density")
-    h.GetYaxis().SetRangeUser(0.0001, 5.0)
+    h.GetYaxis().SetRangeUser(0.0001, 6)
     h.GetYaxis().SetTitleFont(43)
     h.GetYaxis().SetTitleSize(26)
     h.GetYaxis().SetLabelFont(43)
@@ -120,9 +122,11 @@ def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySyst):
     globalList.append(dataSyst_copy)
 
     dataStat_copy = dataStat.DrawCopy("same p e0 x0")
+    dataStat_copy.GetXaxis().SetRangeUser(0.4,1)
     globalList.append(dataStat_copy)
 
     theoryStat_copy = theoryStat.DrawCopy("same p e0 x0")
+    theoryStat_copy.GetXaxis().SetRangeUser(0.4,1)
     globalList.append(theoryStat_copy)
     theoryStat_copy.SetLineColor(ROOT.kBlue + 2)
     theoryStat_copy.SetMarkerColor(ROOT.kBlue + 2)
@@ -151,6 +155,8 @@ def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySyst):
     globalList.append(ratioTheoryStat)
     
     for ipoint in range(0, ratioTheorySyst.GetN()):
+        if ratioDataSyst.GetY()[ipoint] == 0:
+            continue
         ratioTheorySyst.SetPointEYlow(ipoint, ratioTheorySyst.GetErrorYlow(ipoint) / ratioDataSyst.GetY()[ipoint])
         ratioTheorySyst.SetPointEYhigh(ipoint, ratioTheorySyst.GetErrorYhigh(ipoint) / ratioDataSyst.GetY()[ipoint])
         ratioTheorySyst.SetPoint(ipoint, ratioTheorySyst.GetX()[ipoint], ratioTheorySyst.GetY()[ipoint] / ratioDataSyst.GetY()[ipoint])
@@ -160,6 +166,8 @@ def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySyst):
         ratioDataSyst.SetPoint(ipoint, ratioDataSyst.GetX()[ipoint], 1.0)
     
     for ibin in range(1, ratioDataStat.GetNbinsX() + 1):
+        if ratioDataStat.GetBinContent(ibin) == 0:
+            continue
         ratioTheoryStat.SetBinError(ibin, ratioTheoryStat.GetBinError(ibin) / ratioDataStat.GetBinContent(ibin))
         ratioTheoryStat.SetBinContent(ibin, ratioTheoryStat.GetBinContent(ibin) / ratioDataStat.GetBinContent(ibin))
 

@@ -2,8 +2,13 @@
 
 import ROOT
 import DMesonJetUtils
+import HistogramNormalizator
 
 def GetD0JetTheoryCrossSectionAll(config, axis):
+    if "scale" in config:
+        scale = config["scale"]
+    else:
+        scale = 1.0
     for t in config["theory"]:
         if not t["active"]: continue
         if "spectrum_name" in t:
@@ -14,30 +19,28 @@ def GetD0JetTheoryCrossSectionAll(config, axis):
             jet_type = t["jet_type"]
         else:
             jet_type = config["jet_type"]
-        if "normalize" in config:
-            normalize = config["normalize"]
+        if "normalization" in config:
+            normalization = config["normalization"]
         else:
-            normalize = False
-        if "scale" in t and not normalize:
-            scale = t["scale"]
-        else:
-            scale = None
+            normalization = "CrossSection"
+        if "scale" in t and normalization != "Distribution":
+            scale *= t["scale"]
 
-        if normalize:
-            if "data_minx" in config and "data_maxx" in config:
-                data_minx = config["data_minx"]
-                data_maxx = config["data_maxx"]
-            else:
-                print("Error: requsted normalization, but did not provide minx and maxx via the fields 'data_minx' and 'data_maxx'. Aborting.")
-                exit(1)
+        if "data_minx" in config and "data_maxx" in config:
+            data_minx = config["data_minx"]
+            data_maxx = config["data_maxx"]
         else:
-            data_minx = None
-            data_maxx = None
+            data_minx = 0
+            data_maxx = -1
+            
+        if normalization == "Distribution" and data_maxx < data_minx:
+            print("Error: requsted normalization, but did not provide minx and maxx via the fields 'data_minx' and 'data_maxx'. Aborting.")
+            exit(1)
 
-        h = GetD0JetTheoryCrossSection(config["input_path"], t["gen"], t["proc"], t["ts"], scale, spectrum_name, jet_type, axis, normalize, data_minx, data_maxx)
+        h = GetD0JetTheoryCrossSection(config["input_path"], t["gen"], t["proc"], t["ts"], scale, spectrum_name, jet_type, axis, normalization, data_minx, data_maxx)
         t["histogram"] = h
 
-def GetD0JetTheoryCrossSection(input_path, gen, proc, ts, scale, spectrum, jet_type, axis, normalize, data_minx, data_maxx):
+def GetD0JetTheoryCrossSection(input_path, gen, proc, ts, scale, spectrum, jet_type, axis, normalization, data_minx, data_maxx):
     fname = "{input_path}/FastSim_{gen}_{proc}_{ts}/FastSimAnalysis_ccbar_{gen}_{proc}_{ts}.root".format(input_path=input_path, gen=gen, proc=proc, ts=ts)
     file = ROOT.TFile(fname)
     if not file or file.IsZombie():
@@ -49,15 +52,13 @@ def GetD0JetTheoryCrossSection(input_path, gen, proc, ts, scale, spectrum, jet_t
         exit(1)
 
     h = DMesonJetUtils.Rebin1D(h_orig, axis)
-    if normalize:
-        h.Scale(1.0 / h.Integral(h.GetXaxis().FindBin(data_minx*1.0001), h.GetXaxis().FindBin(data_maxx*0.9999)), "width")
-    else:
-        if scale:
-            h.Scale(scale, "width")
-        else:
-            h.Scale(1.0, "width")
+    normalizator = HistogramNormalizator.MCSimulationNormalizator(h, normalization)
+    normalizator.fScale = scale
+    normalizator.fXmin = data_minx
+    normalizator.fXmax = data_maxx
+    h_normalized = normalizator.NormalizeHistogram()
 
-    return h
+    return h_normalized
 
 def GetInclusiveJetTheoryCrossSectionAll(config):
     inclusive_jet_cross_sections = dict()

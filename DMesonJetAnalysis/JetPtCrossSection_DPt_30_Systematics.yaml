@@ -1,4 +1,4 @@
-name: JetPtSpectrum_DPt_30_Systematics
+name: JetPtCrossSection_DPt_30_Systematics
 input_path: /Volumes/DATA/ALICE/JetResults
 normalization: cross_section
 default:

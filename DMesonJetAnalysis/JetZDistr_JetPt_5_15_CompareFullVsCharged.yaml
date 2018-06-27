@@ -1,10 +1,10 @@
 # use it with
 # CompareCrossSectionDataVsTheory.py
-name: CompareTheory
+name: CompareFullVsCharged
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
-data: JetZSpectrum_JetPt_5_15_Systematics
+data: JetZDistr_JetPt_5_15_Systematics
 theory_spectrum: JetZSpectrum_DPt_2_JetPt_5_15
 jet_type: Charged_R040
 logy: no
@@ -14,9 +14,9 @@ x_axis_title: "#it{z}_{||}^{ch}"
 y_axis_title: "Probability Density"
 
 # Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
-name_prefix: JetZSpectrum_JetPt_5_15
-title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
-normalize: yes
+name_prefix: JetZDistr_JetPt_5_15
+title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "POWHEG + PYTHIA 6", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
+normalization: Distribution
 data_minx: 0.2
 data_maxx: 1.0
 minx: 0
@@ -35,26 +35,19 @@ data_legend:
 # MC definitions
 theory:
 -
-  title: PYTHIA 6 Perugia-2011
-  active: yes
-  gen: pythia6
+  title: MC, Charged
+  gen: powheg+pythia6
   proc: charm
-  ts: 1520422008
+  ts: 1520017218
   color: 418 # kGreen+2
   line: 1
+  active: yes
 -
-  title: POWHEG (ccbar) + PYTHIA 6 
+  title: MC, Full
   active: yes
   gen: powheg+pythia6
   proc: charm
   ts: 1520017218
-  color: 602 # kBlue+2
-  line: 9
--
-  title: POWHEG (dijet) + PYTHIA 6 
-  active: yes
-  gen: powheg+pythia6
-  proc: dijet
-  ts: 1527252990
-  color: 617 # kMagenta+1
-  line: 2
+  jet_type: Full_R040
+  color: 923 # kGray+2
+  line: 1

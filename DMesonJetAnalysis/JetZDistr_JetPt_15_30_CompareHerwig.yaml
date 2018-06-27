@@ -1,10 +1,10 @@
 # use it with
 # CompareCrossSectionDataVsTheory.py
-name: CompareFullVsCharged
+name: CompareHerwig
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
-data: JetZSpectrum_JetPt_15_30_Systematics
+data: JetZDistr_JetPt_15_30_Systematics
 theory_spectrum: JetZSpectrum_DPt_6_JetPt_15_30
 jet_type: Charged_R040
 logy: no
@@ -14,9 +14,9 @@ x_axis_title: "#it{z}_{||}^{ch}"
 y_axis_title: "Probability Density"
 
 # Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
-name_prefix: JetZSpectrum_JetPt_15_30
+name_prefix: JetZDistr_JetPt_15_30
 title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
-normalize: yes
+normalization: Distribution
 data_minx: 0.4
 data_maxx: 1.0
 minx: 0
@@ -35,19 +35,36 @@ data_legend:
 # MC definitions
 theory:
 -
-  title: MC, Charged
-  gen: powheg+pythia6
+  title: PYTHIA 6 Perugia-2011
+  active: yes
+  gen: pythia6
   proc: charm
-  ts: 1520017218
+  ts: 1520422008
   color: 418 # kGreen+2
-  line: 1
-  active: yes
+  line: 2
 -
-  title: MC, Full
+  title: POWHEG (ccbar) + PYTHIA 6 
   active: yes
   gen: powheg+pythia6
   proc: charm
   ts: 1520017218
-  jet_type: Full_R040
-  color: 923 # kGray+2
+  color: 602 # kBlue+2
+  line: 2
+-
+  title: HERWIG 7 (MEHeavyQuark)
+  active: yes
+  gen: herwig
+  proc: charm_lo
+  ts: 1529169979
+  color: 617 # kMagenta+1
   line: 1
+  scale: 1.0e+3
+-
+  title: HERWIG 7 (MEQCD2to2)
+  active: yes
+  gen: herwig
+  proc: dijet_lo
+  ts: 1529264639
+  color: 801 # kOrange+1
+  line: 1
+  scale: 1.0e+3

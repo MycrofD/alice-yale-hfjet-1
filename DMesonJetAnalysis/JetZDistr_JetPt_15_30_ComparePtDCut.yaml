@@ -4,7 +4,7 @@ name: ComparePtDCut
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
-data: JetZSpectrum_JetPt_15_30_Systematics
+data: JetZDistr_JetPt_15_30_Systematics
 theory_spectrum: JetZSpectrum_DPt_6_JetPt_15_30
 jet_type: Charged_R040
 logy: no
@@ -14,9 +14,9 @@ x_axis_title: "#it{z}_{||}^{ch}"
 y_axis_title: "Probability Density"
 
 # Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
-name_prefix: JetZSpectrum_JetPt_5_15
+name_prefix: JetZDistr_JetPt_5_15
 title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5, with D^{0}"]
-normalize: yes
+normalization: Distribution
 data_minx: 0.2
 data_maxx: 1.0
 minx: 0

@@ -10,30 +10,28 @@ inclusive_theory_spectrum: JetPtTwoBins
 jet_type: Charged_R040
 min_jet_pt: 5
 max_jet_pt: 15
-canvas_w: 800
-canvas_h: 900
+canvas_w: 700
+canvas_h: 700
 x_axis_title: "#it{z}_{||}^{ch}"
-y_axis_title: "#frac{#it{R}(#it{z}_{||}^{ch})}{#Delta#it{z}_{||}^{ch}}"
+y_axis_title: "#it{R}(#it{z}_{||}^{ch}) / #Delta#it{z}_{||}^{ch}"
 
 # Specific to cross section plot (CompareD0JetRateVsZDataVsTheory.py)
 name_prefix: D0JetRateVsZ_JetPt_5_15
-title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, 5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
+title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
 normalize: no
 data_minx: 0.2
 data_maxx: 1.0
 minx: 0
 maxx: 1
 miny: -0.009
-maxy: 0.14
+maxy: 0.28
 minr: 0
 maxr: 2.2
 theory_legend:
-  x: 0.19
-  y: 0.65
+  x: 0.15
   n_columns: 1
 data_legend:
-  x: 0.58
-  y: 0.65
+  x: 0.15
 
 # MC definitions
 theory:
@@ -88,5 +86,4 @@ theory:
     gen: pythia8
     proc: mb
     ts: 1521277750
-    jet_type: ""
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root

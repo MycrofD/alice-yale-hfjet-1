@@ -1,6 +1,8 @@
 name: JetZDistr_JetPt_15_30_Systematics
 input_path: /Volumes/DATA/ALICE/JetResults
 normalization: distribution
+xmin: 0.4
+xmax: 1.0
 default:
   title: "Central Values"
   input_name: Unfolding_LHC10_Train1116_LHC15i2_Train1399_efficiency_mt_refl_DoubleGaus

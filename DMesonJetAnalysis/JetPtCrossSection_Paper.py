@@ -10,7 +10,7 @@ globalList = []
 input_path = "/Volumes/DATA/ALICE/JetResults"
 
 def GetMeasuredCrossSection():
-    fname = "{0}/JetPtSpectrum_DPt_30_Systematics.root".format(input_path)
+    fname = "{0}/JetPtCrossSection_DPt_30_Systematics.root".format(input_path)
     file = ROOT.TFile(fname)
     if not file or file.IsZombie():
         print("Could not open file {0}".format(fname))
@@ -43,7 +43,7 @@ def GetTheoryCrossSection():
     return hStat, hSyst
 
 def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySyst):
-    cname = "D0JetCrossSection_Paper"
+    cname = "JetPtCrossSection_Paper"
     canvas = ROOT.TCanvas(cname, cname, 700, 750)
     globalList.append(canvas)
     canvas.Divide(1, 2)

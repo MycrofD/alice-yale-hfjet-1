@@ -1,7 +1,7 @@
 # use it with
 # CompareCrossSectionDataVsTheory.py
 # CompareD0JetRateVsJetPtDataVsTheory.py
-name: CompareHerwig
+name: CompareTheory_RHIG_Grant
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
@@ -9,66 +9,50 @@ data: JetPtSpectrum_DPt_30_Systematics
 theory_spectrum: JetPtSpectrum_DPt_3
 jet_type: Charged_R040
 logy: yes
-canvas_w: 700
-canvas_h: 900
+canvas_w: 650
+canvas_h: 700
 x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
 y_axis_title: "#frac{d^{2}#sigma}{d#it{p}_{T,jet}^{ch}d#it{#eta}_{jet}} [mb (GeV/#it{c})^{-1}]"
 
 # Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
-name_prefix: JetPtSpectrum
+name_prefix: JetPtCrossSection
 title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}"]
-normalize: no
+normalization: CrossSection
 miny: 6.0e-6
 maxy: 1.0e+0
 minr: 0.0
-maxr: 3.99
+maxr: 2.99
 theory_legend:
-  x: 0.54
-  y: 0.69
+  x: 0.45
   n_columns: 1
 data_legend:
-  x: 0.62
-  y: 0.86
+  x: 0.555
 
 # Specific to D0-jet rate (CompareD0JetRateVsJetPtDataVsTheory.py)
 D0JetRate:
   name_prefix: D0JetRateVsJetPt
-  title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5"]
+  title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "|#it{#eta}_{jet}| < 0.5"]
   miny: 6.0e-6
   maxy: 5.0e+2
   minr: 0.005
   maxr: 0.0659
   theory_legend:
-    x: 0.45
-    y: 0.75
+    x: 0.44
+    y: 0.70
     n_columns: 1
   data_legend:
-    x: 0.18
-    y: 0.75
+    x: 0.56
+    y: 0.86
 
 # MC definitions
 theory:
 -
-  title: PYTHIA 6 Perugia-2011
-  active: yes
-  gen: pythia6
-  proc: charm
-  ts: 1520422008
-  color: 418 # kGreen+2
-  line: 2
-  inclusive:
-    gen: pythia6
-    proc: mb
-    ts: 1520882421
-    jet_type: ""
-    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
--
-  title: POWHEG (ccbar) + PYTHIA 6 
+  title: POWHEG + PYTHIA 6 
   active: yes
   gen: powheg+pythia6
   proc: charm
   ts: 1520017218
-  color: 602 # kBlue+2
+  color: 617 # kMagenta+1
   line: 2
   inclusive:
     gen: powheg+pythia6
@@ -76,28 +60,28 @@ theory:
     ts: 1527252990
     file_name: FastSimAnalysis_inclusive_jets.root
 -
-  title: HERWIG 7 (MEHeavyQuark)
+  title: PYTHIA 6 (Perugia-2011)
   active: yes
-  gen: herwig
-  proc: charm_lo
-  ts: 1529169979
-  color: 617 # kMagenta+1
-  line: 1
+  gen: pythia6
+  proc: charm
+  ts: 1520422008
+  color: 602 # kBlue+2
+  line: 7
   inclusive:
-    gen: herwig
-    proc: dijet_lo
-    ts: 1529264639
+    gen: pythia6
+    proc: mb
+    ts: 1520882421
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
-  title: HERWIG 7 (MEQCD2to2)
+  title: PYTHIA 8 (Monash-2013)
   active: yes
-  gen: herwig
-  proc: dijet_lo
-  ts: 1529264639
-  color: 801 # kOrange+1
-  line: 1
+  gen: pythia8
+  proc: charm
+  ts: 1520426239
+  color: 418 # kGreen+2
+  line: 9
   inclusive:
-    gen: herwig
-    proc: dijet_lo
-    ts: 1529264639
+    gen: pythia8
+    proc: mb
+    ts: 1521277750
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root

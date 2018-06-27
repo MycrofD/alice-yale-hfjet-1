@@ -59,6 +59,8 @@ spectra:
 -
   variable_name: JetZ
   normalization: distribution
+  xmin: 0.2
+  xmax: 1.0
   variable_title: "#it{z}_{||}^{ch}"
   d_meson: "D0_D0toKpiCuts"
   d_pt_cuts: [2]
@@ -68,12 +70,14 @@ spectra:
 -
   variable_name: JetZ
   normalization: distribution
+  xmin: 0.4
+  xmax: 1.0
   variable_title: "#it{z}_{||}^{ch}"
   d_meson: "D0_D0toKpiCuts"
   d_pt_cuts: [6]
   jet_pt_cuts: [15, 30]
   d_pt_bins: [6, 7, 8, 10, 12, 16, 30]
-  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]  
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]
 variations:
 -
   name: default

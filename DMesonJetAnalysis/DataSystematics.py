@@ -85,6 +85,8 @@ def LoadHistograms(config):
     h.GetXaxis().SetTitle(xaxis_title)
     h.GetYaxis().SetTitle(yaxis_title)
     normalizator = HistogramNormalizator.DataNormalizator(h, config["normalization"], events[config["default"]["input_name"]])
+    normalizator.fXmin = config["xmin"]
+    normalizator.fXmax = config["xmax"]
     h = normalizator.NormalizeHistogram()
     histograms["default"] = h
     v_types = ["variations", "up_variations", "low_variations"]
@@ -99,6 +101,8 @@ def LoadHistograms(config):
                     if not h:
                         exit(1)
                     normalizator = HistogramNormalizator.DataNormalizator(h, config["normalization"], events[v["input_name"]])
+                    normalizator.fXmin = config["xmin"]
+                    normalizator.fXmax = config["xmax"]
                     h_copy = normalizator.NormalizeHistogram()
                     h_copy.SetTitle(v["histogram_title"])
                     h_copy.GetXaxis().SetTitle(xaxis_title)
@@ -175,16 +179,16 @@ def CompareVariations(config, histograms):
     comp.fX1LegSpectrum = 0.45
     comp.fLegLineHeight = 0.05
     comp.fGridyRatio = True
-    if "JetPtSpectrum" in config["name"]:
+    if "JetPtCrossSection" in config["name"]:
         comp.fDoSpectraPlot = "logy"
         comp.fLogUpperSpace = 5
-    elif "JetZSpectrum" in config["name"]:
+    elif "JetZ" in config["name"]:
         comp.fDoSpectraPlot = "lineary"
         comp.fLinUpperSpace = 1.1
     r = comp.CompareSpectra(baseline, variations)
-    if "JetPtSpectrum" in config["name"]:
+    if "JetPtCrossSection" in config["name"]:
         comp.fMainHistogram.SetMinimum(1e-6)
-    elif "JetZSpectrum_JetPt_15_30" in config["name"]:
+    elif "JetPt_15_30" in config["name"]:
         comp.fMainHistogram.SetMinimum(2e-4)
     for obj in r:
         globalList.append(obj)
@@ -222,6 +226,8 @@ def GenerateUncertainties(config, histograms):
     x = []
 
     for ibin in range(1, baseline.GetNbinsX() + 1):
+        if baseline.GetBinContent(ibin) == 0:
+            continue
         ivar = 0
         for s in config["sources"]:
             if not s["active"]: continue
@@ -306,6 +312,14 @@ def GenerateUncertainties(config, histograms):
 
     fixed_unc2 = fixed_syst_unc ** 2
     for ibin in range(1, baseline.GetNbinsX() + 1):
+        x.append(baseline.GetXaxis().GetBinCenter(ibin))
+        xerrup.append(baseline.GetXaxis().GetBinWidth(ibin) / 2)
+        xerrlow.append(baseline.GetXaxis().GetBinWidth(ibin) / 2)
+        if baseline.GetBinContent(ibin) == 0:
+            y.append(0)
+            yerrup.append(0)
+            yerrlow.append(0)
+            continue
         tot_syst_unc_up2 = 0
         tot_syst_unc_low2 = 0
         ivar = 0
@@ -358,9 +372,6 @@ def GenerateUncertainties(config, histograms):
         y.append(baseline.GetBinContent(ibin))
         yerrup.append(tot_syst_unc_up * baseline.GetBinContent(ibin))
         yerrlow.append(tot_syst_unc_low * baseline.GetBinContent(ibin))
-        x.append(baseline.GetXaxis().GetBinCenter(ibin))
-        xerrup.append(baseline.GetXaxis().GetBinWidth(ibin) / 2)
-        xerrlow.append(baseline.GetXaxis().GetBinWidth(ibin) / 2)
 
     centralSystUnc = ROOT.TGraphAsymmErrors(baseline.GetNbinsX(),
                                             numpy.array(x, dtype=float), numpy.array(y, dtype=float),
@@ -388,9 +399,9 @@ def PlotSystematicUncertaintySummary(name, results):
     colorsUp.append(ROOT.kBlack)
 
     print("Source & \\multicolumn{{{0}}}{{c}}{{Uncertainty (\\%)}} \\\\ \\hline".format(tot_unc_up.GetNbinsX()))
-    if "JetZSpectrum" in name or "JetZCrossSection" in name:
+    if "JetZDistr" in name or "JetZCrossSection" in name:
         print(" & ".join(["\\zpar\\"] + ["{0:.1f} - {1:.1f}".format(tot_unc_up.GetXaxis().GetBinLowEdge(ibin), tot_unc_up.GetXaxis().GetBinUpEdge(ibin)) for ibin in range(1, tot_unc_up.GetNbinsX() + 1)]) + "\\\\ \hline")
-    elif "JetPtSpectrum" in name:
+    elif "JetPtCrossSection" in name:
         print(" & ".join(["\\ptchjet\\ (\\GeVc)"] + ["{0:.0f} - {1:.0f}".format(tot_unc_up.GetXaxis().GetBinLowEdge(ibin), tot_unc_up.GetXaxis().GetBinUpEdge(ibin)) for ibin in range(1, tot_unc_up.GetNbinsX() + 1)]) + "\\\\ \hline")
 
     h = results["Uncertainties"]["tot_unc_low"]
@@ -478,7 +489,7 @@ def PlotSpectrumStatAndSyst(name, results):
 
     h.GetXaxis().SetTitle(xaxis_title)
     h.GetYaxis().SetTitle(yaxis_title)
-    if "JetPtSpectrum" in name:
+    if "JetPtCrossSection" in name:
         h.GetYaxis().SetRangeUser(5e-6, 4e-2)
         canvas.SetLogy()
     elif "JetZ" in name:
@@ -486,12 +497,12 @@ def PlotSpectrumStatAndSyst(name, results):
         if "JetPt_15_30" in name:
             if "CrossSection" in name:
                 h.GetYaxis().SetRangeUser(-0.001, 0.016)
-            elif "Spectrum" in name:
+            elif "Distr" in name:
                 h.GetYaxis().SetRangeUser(0, 5.0)
         else:
             if "CrossSection" in name:
                 h.GetYaxis().SetRangeUser(-0.02, 0.36)
-            elif "Spectrum" in name:
+            elif "Distr" in name:
                 h.GetYaxis().SetRangeUser(0, 3.5)
 
     syst_copy = syst.Clone("central_syst_unc_copy")

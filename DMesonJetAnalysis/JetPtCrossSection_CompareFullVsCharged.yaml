@@ -15,9 +15,9 @@ x_axis_title: "#it{p}_{T,jet} (GeV/#it{c})"
 y_axis_title: "#frac{d^{2}#sigma}{d#it{p}_{T,jet}d#it{#eta}_{jet}} [mb (GeV/#it{c})^{-1}]"
 
 # Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
-name_prefix: JetPtSpectrum
+name_prefix: JetPtCrossSection
 title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "POWHEG+PYTHIA 6", "Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5 with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}"]
-normalize: no
+normalization: CrossSection
 miny: 6.0e-6
 maxy: 1.0e-1
 minr: 0.0

@@ -58,14 +58,14 @@ def PlotCrossSections(dataStat, dataSyst, config):
     padMain = canvas.cd(1)
     padMain.SetPad(0, 0.35, 1, 1)
     padMain.SetBottomMargin(0)
-    padMain.SetLeftMargin(0.18)
+    padMain.SetLeftMargin(0.12)
     padMain.SetRightMargin(0.05)
     padMain.SetTicks(1, 1)
     padRatio = canvas.cd(2)
     padRatio.SetPad(0, 0., 1, 0.35)
     padRatio.SetTopMargin(0)
     padRatio.SetBottomMargin(0.27)
-    padRatio.SetLeftMargin(0.18)
+    padRatio.SetLeftMargin(0.12)
     padRatio.SetRightMargin(0.05)
     padRatio.SetGridy()
     padRatio.SetTicks(1, 1)
@@ -89,7 +89,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
     h.GetYaxis().SetTitleSize(26)
     h.GetYaxis().SetLabelFont(43)
     h.GetYaxis().SetLabelSize(22)
-    h.GetYaxis().SetTitleOffset(1.9)
+    h.GetYaxis().SetTitleOffset(1.4)
     h.GetYaxis().SetTitle(dataStat.GetYaxis().GetTitle())
     if "y_axis_title" in config:
         h.GetYaxis().SetTitle(config["y_axis_title"])
@@ -170,6 +170,8 @@ def PlotCrossSections(dataStat, dataSyst, config):
         if not t["active"]: continue
         r = t["histogram_plot"].Clone()
         for ibin in range(1, r.GetNbinsX() + 1):
+            if t["histogram_plot"].GetBinContent(ibin) == 0:
+                continue
             r.SetBinError(ibin, t["histogram_plot"].GetBinError(ibin) / t["histogram_plot"].GetBinContent(ibin))
             r.SetBinContent(ibin, t["histogram_plot"].GetBinContent(ibin) / dataStat_copy.GetBinContent(ibin))
         r.SetLineColor(t["color"])
@@ -188,7 +190,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
     y1 = 0.87
     y2 = y1 - 0.07 * len(config["title"])
     padMain.cd()
-    paveALICE = ROOT.TPaveText(0.19, y1, 0.55, y2, "NB NDC")
+    paveALICE = ROOT.TPaveText(0.14, y1, 0.55, y2, "NB NDC")
     globalList.append(paveALICE)
     paveALICE.SetBorderSize(0)
     paveALICE.SetFillStyle(0)
@@ -270,6 +272,8 @@ def PlotCrossSections(dataStat, dataSyst, config):
 def NormalizeData(config, d0jet_stat, d0jet_syst, incl_stat, incl_syst):
     xsec_tot, stat_xsec_tot, syst_xsec_tot = GetTotalCrossSection(incl_stat, incl_syst, config["min_jet_pt"], config["max_jet_pt"])
     for ibin in range(1, d0jet_stat.GetNbinsX() + 1):
+        if d0jet_stat.GetBinContent(ibin) == 0:
+            continue
         y = d0jet_stat.GetBinContent(ibin) / xsec_tot
         stat_err = math.sqrt((d0jet_stat.GetBinError(ibin) / d0jet_stat.GetBinContent(ibin)) ** 2 + (stat_xsec_tot / xsec_tot) ** 2) * y
         syst_err = math.sqrt((d0jet_syst.GetErrorY(ibin - 1) / d0jet_stat.GetBinContent(ibin)) ** 2 + (syst_xsec_tot / xsec_tot) ** 2) * y
@@ -291,6 +295,8 @@ def NormalizeTheory(config):
         xsec_tot, stat_xsec_tot, _ = GetTotalCrossSection(t["inclusive"]["histogram"], None, config["min_jet_pt"], config["max_jet_pt"])
         h = t["histogram"]
         for ibin in range(1, h.GetNbinsX() + 1):
+            if h.GetBinContent(ibin) == 0:
+                continue
             y = h.GetBinContent(ibin) / xsec_tot
             stat_err = math.sqrt((h.GetBinError(ibin) / h.GetBinContent(ibin)) ** 2 + (stat_xsec_tot / xsec_tot) ** 2) * y
             h.SetBinContent(ibin, y)

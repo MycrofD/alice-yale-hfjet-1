@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # python script to compare measured  D0 and inclusive jet cross sections with theory
 # us it with
-# JetPtSpectrum_ComparePYTHIA6vs8.yaml
-# JetPtSpectrum_CompareHerwig.yaml
-# JetPtSpectrum_ComparePowheg.yaml
-# JetPtSpectrum_CompareTheory.yaml
-# JetPtSpectrum_CompareFullVsCharged.yaml
-# JetPtSpectrum_ComparePtDCut.yaml
+# JetPtCrossSection_ComparePYTHIA6vs8.yaml
+# JetPtCrossSection_CompareHerwig.yaml
+# JetPtCrossSection_ComparePowheg.yaml
+# JetPtCrossSection_CompareTheory.yaml
+# JetPtCrossSection_CompareFullVsCharged.yaml
+# JetPtCrossSection_ComparePtDCut.yaml
 
 import argparse
 import math
@@ -230,21 +230,25 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     canvas.Divide(1, 2)
     padMain = canvas.cd(1)
     padMain.SetPad(0, 0.35, 1, 1)
+    padMain.SetTopMargin(0.05)
     padMain.SetBottomMargin(0)
-    padMain.SetLeftMargin(0.15)
+    padMain.SetLeftMargin(0.18)
+    padMain.SetRightMargin(0.05)
     padMain.SetTicks(1, 1)
     if config["logy"]: padMain.SetLogy()
     padRatio = canvas.cd(2)
     padRatio.SetPad(0, 0., 1, 0.35)
     padRatio.SetTopMargin(0)
     padRatio.SetBottomMargin(0.27)
-    padRatio.SetLeftMargin(0.15)
+    padRatio.SetLeftMargin(0.18)
+    padRatio.SetRightMargin(0.05)
     padRatio.SetGridy()
     padRatio.SetTicks(1, 1)
 
     padMain.cd()
-    hAxis.Draw("axis")
-    globalList.append(hAxis)
+    hAxis_copy = hAxis.DrawCopy("axis")
+    hAxis_copy.GetYaxis().SetTitleOffset(2.2)
+    globalList.append(hAxis_copy)
 
     d0jet_syst_copy.Draw("2")
     d0jet_stat_copy.Draw("same p x0 e0")
@@ -262,8 +266,8 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
         d0jet_h.Draw("same e0")
 
     padRatio.cd()
-    hAxisRatio.Draw("axis")
-    globalList.append(hAxisRatio)
+    hAxisRatio_copy = hAxisRatio.DrawCopy("axis")
+    globalList.append(hAxisRatio_copy)
 
     ratioSyst.Draw("2")
     ratioStat.Draw("same p x0 e0")
@@ -278,9 +282,9 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
 
     padMain.cd()
 
-    y1 = 0.87
+    y1 = 0.92
     y2 = y1 - 0.06 * len(config["D0JetRate"]["title"])
-    paveALICE = ROOT.TPaveText(0.16, y1, 0.55, y2, "NB NDC")
+    paveALICE = ROOT.TPaveText(0.19, y1, 0.55, y2, "NB NDC")
     globalList.append(paveALICE)
     paveALICE.SetBorderSize(0)
     paveALICE.SetFillStyle(0)
@@ -381,22 +385,22 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     if "canvas_h" in config:
         canvas_h = config["canvas_h"]
     else:
-        canvas_h = 600
+        canvas_h = 700
     if "canvas_w" in config:
         canvas_w = config["canvas_w"]
     else:
-        canvas_w = 600
+        canvas_w = 700
     canvas_ratio = ROOT.TCanvas(cname, cname, canvas_w, canvas_h)
     globalList.append(canvas_ratio)
     canvas_ratio.SetTicks(1, 1)
-    canvas_ratio.SetLeftMargin(0.10)
+    canvas_ratio.SetLeftMargin(0.13)
     canvas_ratio.SetTopMargin(0.05)
     canvas_ratio.SetRightMargin(0.05)
 
     canvas_ratio.cd()
     hAxisRatio.Draw("axis")
-    hAxisRatio.GetXaxis().SetTitleOffset(1.2)
-    hAxisRatio.GetYaxis().SetRangeUser(0, 0.075)
+    hAxisRatio.GetYaxis().SetTitleOffset(1.6)
+    hAxisRatio.GetYaxis().SetRangeUser(0, 0.15)
     globalList.append(hAxisRatio)
 
     ratioSyst.Draw("2")
@@ -414,18 +418,18 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
 
     # Now plotting labels
 
-    y1 = 0.90
-    y2 = y1 - 0.06 * (len(config["D0JetRate"]["title"]) + 1)
-    paveALICE = ROOT.TPaveText(0.14, y1, 0.55, y2, "NB NDC")
+    y1 = 0.94
+    y2 = y1 - 0.06 * (len(config["D0JetRate"]["title"]))
+    paveALICE = ROOT.TPaveText(0.15, y1, 0.55, y2, "NB NDC")
     globalList.append(paveALICE)
     paveALICE.SetBorderSize(0)
     paveALICE.SetFillStyle(0)
     paveALICE.SetTextFont(43)
     paveALICE.SetTextSize(22)
     paveALICE.SetTextAlign(12)
-    for line in config["D0JetRate"]["title"]: 
+    for line in config["D0JetRate"]["title"][:-1]: 
         paveALICE.AddText(line)
-    paveALICE.AddText("with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}")
+    paveALICE.AddText(config["D0JetRate"]["title"][-1] + ", with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}")
     paveALICE.Draw()
 
     n_leg_columns = 1
@@ -449,9 +453,9 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
             leg1.AddEntry(t["ratio_copy_histogram"], t["title"], "l")
     leg1.Draw()
 
-    y1 = 0.90
+    y1 = 0.93
     y2 = y1 - 0.09
-    x1 = 0.62
+    x1 = 0.58
     x2 = x1 + 0.30
     leg1 = ROOT.TLegend(x1, y1, x2, y2, "", "NB NDC")
     globalList.append(leg1)

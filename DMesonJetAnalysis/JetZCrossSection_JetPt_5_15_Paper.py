@@ -123,7 +123,7 @@ def PlotCrossSections(dataStat, dataSyst, theoryStat, theorySyst):
     globalList.append(h)
     h.Draw("axis")
     h.GetYaxis().SetTitle("#frac{d^{3}#sigma}{d#it{z}_{||}^{ch}d#it{p}_{T,jet}^{ch}d#it{#eta}} (GeV/#it{c})^{-1}")
-    h.GetYaxis().SetRangeUser(-0.002, 0.03)
+    h.GetYaxis().SetRangeUser(-0.002, 0.032)
     h.GetYaxis().SetTitleFont(43)
     h.GetYaxis().SetTitleSize(26)
     h.GetYaxis().SetLabelFont(43)
