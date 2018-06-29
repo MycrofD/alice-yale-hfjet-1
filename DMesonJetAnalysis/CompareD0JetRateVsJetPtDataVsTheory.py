@@ -16,6 +16,7 @@ import ROOT
 import DMesonJetUtils
 import LoadInclusiveJetSpectrum
 import LoadTheoryCrossSections
+import HistogramNormalizator
 
 globalList = []
 
@@ -81,8 +82,10 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
         t["histogram_plot"] = incl_h
 
     for t in config["theory"]:
-        if not t["active"]: continue
-        if not t["inclusive"]: continue
+        if not t["active"]:
+            continue
+        if not t["inclusive"]:
+            continue
         d0jet_h = t["histogram"].Clone("_".join([t["gen"], t["proc"]]))
         globalList.append(d0jet_h)
         d0jet_h.SetLineColor(t["color"])
@@ -91,84 +94,26 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
         d0jet_h.SetMarkerColor(t["color"])
         t["histogram_plot"] = d0jet_h
 
-    ratioSyst = d0jet_syst_copy.Clone("ratioSyst")
-    globalList.append(ratioSyst)
-
-    ratioStat = d0jet_stat_copy.Clone("ratioStat")
-    globalList.append(ratioStat)
-
-    xsec_incl_tot = 0.0
-    stat_xsec_incl_tot2 = 0.0
-    syst_xsec_incl_tot = 0.0
-
-    xsec_d0_tot = 0.0
-    stat_xsec_d0_tot2 = 0.0
-    syst_xsec_d0_tot = 0.0
-
-    avg_tot = 0.0
-    stat_avg_tot = 0.0
-    syst_avg_tot = 0.0
-
-    avg_flat = 0.0
-    sum_of_w_avg_flat = 0.0
-    stat_avg_flat2 = 0.0
-    syst_avg_flat2 = 0.0
-
-    for ibin in range(0, ratioSyst.GetN()):
-        ratioSyst.SetPoint(ibin, ratioSyst.GetX()[ibin], d0jet_syst_copy.GetY()[ibin] / incl_syst_copy.GetY()[ibin])
-        syst_erry2 = ((d0jet_syst_copy.GetErrorY(ibin) / d0jet_syst_copy.GetY()[ibin]) ** 2 + (incl_syst_copy.GetErrorY(ibin) / incl_syst_copy.GetY()[ibin]) ** 2 - 2 * 0.035 ** 2) * ratioSyst.GetY()[ibin] ** 2
-        syst_erry = math.sqrt(syst_erry2)
-        ratioSyst.SetPointError(ibin, ratioSyst.GetErrorX(ibin), ratioSyst.GetErrorX(ibin), syst_erry, syst_erry)
-
-        xsec_incl_tot += incl_stat_copy.GetBinContent(ibin + 1)
-        stat_xsec_incl_tot2 += incl_stat_copy.GetBinError(ibin + 1) ** 2
-        syst_xsec_incl_tot += incl_syst_copy.GetErrorY(ibin)  # take the weighted average of the rel unc
-
-        ratioStat.SetBinContent(ibin + 1, d0jet_stat_copy.GetBinContent(ibin + 1) / incl_stat_copy.GetBinContent(ibin + 1))
-        stat_err_y2 = ((d0jet_stat_copy.GetBinError(ibin + 1) / d0jet_stat_copy.GetBinContent(ibin + 1)) ** 2 + (incl_stat_copy.GetBinError(ibin + 1) / incl_stat_copy.GetBinContent(ibin + 1)) ** 2) * ratioStat.GetBinContent(ibin + 1) ** 2
-        stat_err_y = math.sqrt(stat_err_y2)
-        ratioStat.SetBinError(ibin + 1, stat_err_y)
-
-        tot_err_y2 = stat_err_y2 + syst_erry2
-        tot_err_y = math.sqrt(tot_err_y2)
-
-        xsec_d0_tot += d0jet_stat_copy.GetBinContent(ibin + 1)
-        stat_xsec_d0_tot2 += d0jet_stat_copy.GetBinError(ibin + 1) ** 2
-        syst_xsec_d0_tot += d0jet_syst_copy.GetErrorY(ibin)  # take the weithed average of the rel unc
-
-        if ratioSyst.GetX()[ibin] > 8:
-            avg_flat += ratioStat.GetBinContent(ibin + 1) / tot_err_y
-            sum_of_w_avg_flat += 1.0 / tot_err_y
-            stat_avg_flat2 += stat_err_y2 / tot_err_y2
-            syst_avg_flat2 += syst_erry2 / tot_err_y2
-
-        print("Bin {}, x = {}, ratio = {} +/- {} (stat) +/- {} (syst)".format(ibin, ratioSyst.GetX()[ibin], ratioStat.GetBinContent(ibin + 1), stat_err_y, syst_erry))
-
-    stat_xsec_incl_tot = math.sqrt(stat_xsec_incl_tot2)
-    stat_xsec_d0_tot = math.sqrt(stat_xsec_d0_tot2)
-
-    avg_tot = xsec_d0_tot / xsec_incl_tot
-    stat_avg_tot = math.sqrt(stat_xsec_incl_tot2 / xsec_incl_tot ** 2 + stat_xsec_d0_tot2 / xsec_d0_tot ** 2) * avg_tot
-
-    syst_xsec_incl_tot2 = syst_xsec_incl_tot ** 2
-    syst_xsec_d0_tot2 = syst_xsec_d0_tot ** 2
-
-    syst_avg_tot = math.sqrt(syst_xsec_incl_tot2 / xsec_incl_tot ** 2 + syst_xsec_d0_tot2 / xsec_d0_tot ** 2) * avg_tot
-
-    avg_flat /= sum_of_w_avg_flat
-    stat_avg_flat = math.sqrt(stat_avg_flat2) / sum_of_w_avg_flat
-    syst_avg_flat = math.sqrt(syst_avg_flat2) / sum_of_w_avg_flat
-
-    print("Average ratio in full range: {} +/- {} (stat) +/- {} (syst)".format(avg_tot, stat_avg_tot, syst_avg_tot))
-    print("Average ratio in flat region (pt > 8 GeV/c): {} +/- {} (stat) +/- {} (syst)".format(avg_flat, stat_avg_flat, syst_avg_flat))
+    normalizator = HistogramNormalizator.Normalizator(d0jet_stat_copy, "ratio")
+    normalizator.fNormalizationHistogram = incl_stat
+    normalizator.fNormalizationGraph = incl_syst
+    normalizator.NormalizeHistogram(d0jet_syst)
+    ratioStat = normalizator.fNormalizedHistogram
+    ratioSyst = normalizator.fNormalizedGraph
 
     for t in config["theory"]:
-        if not t["active"]: continue
-        if not t["inclusive"]: continue
+        if not t["active"]:
+            continue
+        if not t["inclusive"]:
+            continue
         incl_h = t["inclusive"]["histogram_plot"]
         d0jet_h = t["histogram_plot"]
-        hratio = d0jet_h.Clone("_".join([t["gen"], t["proc"], "over", t["inclusive"]["gen"], t["inclusive"]["proc"]]))
-        hratio.Divide(incl_h)
+
+        normalizator = HistogramNormalizator.Normalizator(d0jet_h, "ratio")
+        normalizator.fNormalizationHistogram = incl_h
+        normalizator.NormalizeHistogram()
+        hratio = normalizator.fNormalizedHistogram
+        hratio.SetName("_".join([t["gen"], t["proc"], "over", t["inclusive"]["gen"], t["inclusive"]["proc"]]))
         t["ratio_histogram"] = hratio
 
     # Done with all the preparations, now plotting

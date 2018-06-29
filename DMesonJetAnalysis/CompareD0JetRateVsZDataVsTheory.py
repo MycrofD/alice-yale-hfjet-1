@@ -14,6 +14,7 @@ import ROOT
 import DMesonJetUtils
 import LoadInclusiveJetSpectrum
 import LoadTheoryCrossSections
+import HistogramNormalizator
 
 globalList = []
 
@@ -270,21 +271,15 @@ def PlotCrossSections(dataStat, dataSyst, config):
     return canvas
 
 def NormalizeData(config, d0jet_stat, d0jet_syst, incl_stat, incl_syst):
-    xsec_tot, stat_xsec_tot, syst_xsec_tot = GetTotalCrossSection(incl_stat, incl_syst, config["min_jet_pt"], config["max_jet_pt"])
-    for ibin in range(1, d0jet_stat.GetNbinsX() + 1):
-        if d0jet_stat.GetBinContent(ibin) == 0:
-            continue
-        y = d0jet_stat.GetBinContent(ibin) / xsec_tot
-        stat_err = math.sqrt((d0jet_stat.GetBinError(ibin) / d0jet_stat.GetBinContent(ibin)) ** 2 + (stat_xsec_tot / xsec_tot) ** 2) * y
-        syst_err = math.sqrt((d0jet_syst.GetErrorY(ibin - 1) / d0jet_stat.GetBinContent(ibin)) ** 2 + (syst_xsec_tot / xsec_tot) ** 2) * y
-        d0jet_stat.SetBinContent(ibin, y)
-        d0jet_stat.SetBinError(ibin, stat_err)
-        d0jet_syst.SetPointError(ibin - 1, d0jet_syst.GetErrorX(ibin - 1), d0jet_syst.GetErrorX(ibin - 1), syst_err, syst_err)
-        d0jet_syst.SetPoint(ibin - 1, d0jet_stat.GetXaxis().GetBinCenter(ibin), y)
-    d0jet_stat.GetYaxis().SetTitle("R(#it{p}_{T, ch jet},#it{z}) / #Delta#it{z}")
-    d0jet_syst.GetYaxis().SetTitle("R(#it{p}_{T, ch jet},#it{z}) / #Delta#it{z}")
-    d0jet_stat.GetXaxis().SetTitle("#it{z}_{||}^{ch jet}")
-    d0jet_syst.GetXaxis().SetTitle("#it{z}_{||}^{ch jet}")
+    normalizator = HistogramNormalizator.Normalizator(d0jet_stat, "rate")
+    normalizator.fNormalizationGraph = incl_syst
+    normalizator.fNormalizationHistogram = incl_stat
+    normalizator.fNormalizationXmin = config["min_jet_pt"]
+    normalizator.fNormalizationXmax = config["max_jet_pt"]
+    normalizator.NormalizeHistogram(d0jet_syst)
+    d0jet_stat = normalizator.fNormalizedHistogram
+    d0jet_syst = normalizator.fNormalizedGraph
+    return d0jet_stat, d0jet_syst
 
 def NormalizeTheory(config):
     for t in config["theory"]:
@@ -292,40 +287,12 @@ def NormalizeTheory(config):
             continue
         if not "inclusive" in t or not "histogram" in t["inclusive"] or not "histogram" in t:
             continue
-        xsec_tot, stat_xsec_tot, _ = GetTotalCrossSection(t["inclusive"]["histogram"], None, config["min_jet_pt"], config["max_jet_pt"])
-        h = t["histogram"]
-        for ibin in range(1, h.GetNbinsX() + 1):
-            if h.GetBinContent(ibin) == 0:
-                continue
-            y = h.GetBinContent(ibin) / xsec_tot
-            stat_err = math.sqrt((h.GetBinError(ibin) / h.GetBinContent(ibin)) ** 2 + (stat_xsec_tot / xsec_tot) ** 2) * y
-            h.SetBinContent(ibin, y)
-            h.SetBinError(ibin, stat_err)
-        h.GetYaxis().SetTitle("R(#it{p}_{T, ch jet},#it{z}) / #Delta#it{z}")
-        h.GetXaxis().SetTitle("#it{z}_{||}^{ch jet}")
-
-def GetTotalCrossSection(stat, syst, minpt, maxpt):
-    xsec_tot = 0
-    stat_xsec_tot2 = 0
-    syst_xsec_tot = 0
-    for ibin in range(1, stat.GetNbinsX() + 1):
-        if stat.GetXaxis().GetBinCenter(ibin) < minpt:
-            continue
-        if stat.GetXaxis().GetBinCenter(ibin) > maxpt:
-            break
-        binw = stat.GetXaxis().GetBinWidth(ibin)
-        xsec = stat.GetBinContent(ibin)
-        xsec_tot += xsec * binw
-        stat_xsec_tot2 += (stat.GetBinError(ibin) * binw) ** 2
-        if syst:
-            syst_xsec_tot += syst.GetErrorY(ibin - 1) * binw  # take the weighted average of the rel unc
-        print("Cross section in bin [{}, {}] is {} +/- {}".format(stat.GetXaxis().GetBinLowEdge(ibin), stat.GetXaxis().GetBinUpEdge(ibin), xsec, stat.GetBinError(ibin)))
-
-    stat_xsec_tot = math.sqrt(stat_xsec_tot2)
-
-    print("The total cross section for '{}' is {:.4f} +/- {:.4f} (stat) +/- {:.4f} (syst)".format(stat.GetName(), xsec_tot, stat_xsec_tot, syst_xsec_tot))
-
-    return xsec_tot, stat_xsec_tot, syst_xsec_tot
+        normalizator = HistogramNormalizator.Normalizator(t["histogram"], "rate")
+        normalizator.fNormalizationHistogram = t["inclusive"]["histogram"]
+        normalizator.fNormalizationXmin = config["min_jet_pt"]
+        normalizator.fNormalizationXmax = config["max_jet_pt"]
+        normalizator.NormalizeHistogram()
+        t["histogram"] = normalizator.fNormalizedHistogram
 
 def main(config):
     ROOT.TH1.AddDirectory(False)
@@ -336,7 +303,8 @@ def main(config):
     incl_stat, incl_syst = GetInclJetCrossSection([config["min_jet_pt"], config["max_jet_pt"]])
     GetD0JetTheoryCrossSectionAll(config, d0jet_stat.GetXaxis())
     GetInclusiveJetTheoryCrossSectionAll(config)
-    NormalizeData(config, d0jet_stat, d0jet_syst, incl_stat, incl_syst)
+
+    d0jet_stat, d0jet_syst = NormalizeData(config, d0jet_stat, d0jet_syst, incl_stat, incl_syst)
     NormalizeTheory(config)
 
     canvas = PlotCrossSections(d0jet_stat, d0jet_syst, config)
