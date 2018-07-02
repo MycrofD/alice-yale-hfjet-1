@@ -1,6 +1,6 @@
 # use it with
 # CompareD0JetRateVsZDataVsTheory.py
-name: CompareTheory
+name: ComparePtDCut
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
@@ -36,60 +36,56 @@ data_legend:
 # MC definitions
 theory:
 -
-  title: POWHEG (ccbar) + PYTHIA 6
-  active: yes
-  gen: powheg+pythia6
-  proc: charm
-  ts: 1520017218
-  color: 802 # kOrange+2
-  line: 6
-  inclusive:
-    line: 6
-    color: 802 # kOrange+2
-    title: POWHEG (dijet) + PYTHIA 6 
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
--
-  title: POWHEG (dijet) + PYTHIA 6 
-  active: yes
-  gen: powheg+pythia6
-  proc: dijet
-  ts: 1527252990
-  color: 418 # kGreen+2
-  line: 7
-  inclusive:
-    line: 2
-    color: 802 # kOrange+2
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
--
-  title: PYTHIA 6 Perugia-2011
+  title: "PYTHIA 6 Perugia-2011, #it{p}_{T,D} > 6 GeV/#it{c}"
   active: yes
   gen: pythia6
   proc: charm
   ts: 1520422008
-  color: 602 # kBlue+2
-  line: 5
+  color: 418 # kGreen+2
+  line: 1
   inclusive:
-    line: 2
     gen: pythia6
     proc: mb
     ts: 1520882421
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
-  title: PYTHIA 8 Monash-2013
+  title: "PYTHIA 6 Perugia-2011, #it{p}_{T,D} > 0"
+  spectrum_name: JetZSpectrum_DPt_0_JetPt_15_30
   active: yes
-  gen: pythia8
+  gen: pythia6
   proc: charm
-  ts: 1520426239
+  ts: 1520422008
   color: 617 # kMagenta+1
   line: 2
   inclusive:
-    gen: pythia8
+    gen: pythia6
     proc: mb
-    ts: 1521277750
+    ts: 1520882421
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+-
+  title: "POWHEG (ccbar) + PYTHIA 6, #it{p}_{T,D} > 6 GeV/#it{c}"
+  active: yes
+  gen: powheg+pythia6
+  proc: charm
+  ts: 1520017218
+  color: 602 # kBlue+2
+  line: 1
+  inclusive:
+    gen: powheg+pythia6
+    proc: dijet
+    ts: 1527252990
+    file_name: FastSimAnalysis_inclusive_jets.root
+-
+  title: "POWHEG (ccbar) + PYTHIA 6, #it{p}_{T,D} > 0"
+  spectrum_name: JetZSpectrum_DPt_0_JetPt_15_30
+  active: yes
+  gen: powheg+pythia6
+  proc: charm
+  ts: 1520017218
+  color: 802 # kOrange+2
+  line: 3
+  inclusive:
+    gen: powheg+pythia6
+    proc: dijet
+    ts: 1527252990
+    file_name: FastSimAnalysis_inclusive_jets.root

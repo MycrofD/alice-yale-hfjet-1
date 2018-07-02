@@ -101,6 +101,9 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
     ratioStat = normalizator.fNormalizedHistogram
     ratioSyst = normalizator.fNormalizedGraph
 
+    globalList.append(ratioStat)
+    globalList.append(ratioSyst)
+
     for t in config["theory"]:
         if not t["active"]:
             continue
@@ -325,6 +328,7 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
 def DrawRatioCanvas(config, ratioSyst, ratioStat):
     hAxisRatio = GenerateHistogramRatioAxis(config, ratioStat.GetXaxis().GetBinLowEdge(1), ratioStat.GetXaxis().GetBinUpEdge(ratioStat.GetXaxis().GetNbins()))    
     hAxisRatio.GetYaxis().SetTitleOffset(1.3)
+    hAxisRatio.GetXaxis().SetTitleOffset(1)
 
     cname = "{}_{}_Ratio".format(config["D0JetRate"]["name_prefix"], config["name"])
     if "canvas_h" in config:
@@ -350,6 +354,7 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
 
     ratioSyst.Draw("2")
     ratioStat_copy = ratioStat.DrawCopy("same p e0 x0")
+    globalList.append(ratioStat_copy)
 
     line_styles = [2, 4, 7, 3, 5, 6, 8, 9]
     for t, line_style in zip(config["theory"], line_styles):
@@ -378,7 +383,7 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     paveALICE.Draw()
 
     n_leg_columns = 1
-    y1 = 0.25
+    y1 = 0.28
     active_t = len([t for t in config["theory"] if "histogram_plot" in t])
     y2 = y1 - 0.04 * active_t / n_leg_columns
     x1 = 0.35

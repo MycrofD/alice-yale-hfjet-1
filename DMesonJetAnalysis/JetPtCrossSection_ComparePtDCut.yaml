@@ -5,7 +5,7 @@ name: ComparePtDCut
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
-data: JetPtSpectrum_DPt_30_Systematics
+data: JetPtCrossSection_DPt_30_Systematics
 theory_spectrum: JetPtSpectrum_DPt_3
 jet_type: Charged_R040
 logy: yes
@@ -31,7 +31,7 @@ data_legend:
 # Specific to D0-jet rate (CompareD0JetRateVsJetPtDataVsTheory.py)
 D0JetRate:
   name_prefix: D0JetRateVsJetPt
-  title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV, Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5"]
+  title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "|#it{#eta}_{jet}| < 0.5"]
   miny: 6.0e-6
   maxy: 2.0e+3
   minr: 0.005
@@ -55,12 +55,10 @@ theory:
   line: 1
   inclusive:
     title: PYTHIA 6 Perugia-2011
-    line: 1
-    color: 802 # kOrange+2
+    color: 819 # kSpring-1
     gen: pythia6
     proc: mb
     ts: 1520882421
-    jet_type: ""
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: "PYTHIA 6 Perugia-2011, #it{p}_{T,D} > 0"
@@ -69,16 +67,14 @@ theory:
   gen: pythia6
   proc: charm
   ts: 1520422008
-  color: 922 # kGray+2
-  line: 1
+  color: 617 # kMagenta+1
+  line: 2
   inclusive:
     title: PYTHIA 6 Perugia-2011
-    line: 1
-    color: 802 # kOrange+2
+    color: 822 # kViolet+2
     gen: pythia6
     proc: mb
     ts: 1520882421
-    jet_type: ""
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: "POWHEG (ccbar) + PYTHIA 6, #it{p}_{T,D} > 3 GeV/#it{c}"
@@ -87,9 +83,9 @@ theory:
   proc: charm
   ts: 1520017218
   color: 602 # kBlue+2
-  line: 9
+  line: 1
   inclusive:
-    line: 9
+    line: 1
     color: 433 # kCyan+1
     title: POWHEG (dijet) + PYTHIA 6 
     gen: powheg+pythia6
@@ -103,10 +99,10 @@ theory:
   gen: powheg+pythia6
   proc: charm
   ts: 1520017218
-  color: 922 # kGray+2
-  line: 9
+  color: 802 # kOrange+2
+  line: 3
   inclusive:
-    line: 9
+    line: 1
     color: 433 # kCyan+1
     title: POWHEG (dijet) + PYTHIA 6 
     gen: powheg+pythia6

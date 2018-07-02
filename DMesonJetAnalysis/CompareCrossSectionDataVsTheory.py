@@ -293,8 +293,8 @@ def PlotCrossSections(dataStat, dataSyst, config):
         elif t["type"] == "stat+syst":
             entry = leg1.AddEntry(None, t["title"], "pf")
             entry.SetFillStyle(0)
-            entry.SetLineColor(t["histogram_plot"].GetLineColor())
-            entry.SetLineWidth(t["histogram_plot"].GetLineWidth())
+            entry.SetLineColor(t["systematics_plot"].GetLineColor())
+            entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
             entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
             entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
 
