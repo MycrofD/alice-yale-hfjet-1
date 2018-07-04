@@ -1,0 +1,199 @@
+name: PromptDJets_Powheg_ccbar_1483386026
+input_path: /Volumes/DATA/ALICE/JetResults
+analysis_name: FastSimAnalysis_ccbar
+generator: powheg_charm
+inclusive:
+  analysis_name: FastSimAnalysis_inclusive_jets
+  generator: powheg+pythia6_dijet
+spectra:
+-
+  variable_name: DPt
+  normalization: cross_section
+  variable_title: "#it{p}_{T,D}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: []
+  jet_pt_cuts: [5, 30]
+  d_pt_bins: [2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+-
+  variable_name: JetPt
+  normalization: cross_section
+  variable_title: "#it{p}_{T,jet}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: []
+  jet_pt_cuts: []
+  d_pt_bins: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+  jet_pt_bins: [5, 6, 8, 10, 14, 20, 30]
+-
+  variable_name: JetPt
+  normalization: cross_section
+  variable_title: "#it{p}_{T,jet}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [2]
+  jet_pt_cuts: []
+  d_pt_bins: [2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+  jet_pt_bins: [5, 6, 8, 10, 14, 20, 30]
+-
+  variable_name: JetPt
+  normalization: cross_section
+  variable_title: "#it{p}_{T,jet}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [3]
+  jet_pt_cuts: []
+  d_pt_bins: [3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+  jet_pt_bins: [5, 6, 8, 10, 14, 20, 30]
+-
+  variable_name: JetZ
+  normalization: cross_section
+  variable_title: "#it{z}_{||}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [2]
+  jet_pt_cuts: [5, 15]
+  d_pt_bins: [2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]
+-
+  variable_name: JetZ
+  normalization: cross_section
+  variable_title: "#it{z}_{||}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [6]
+  jet_pt_cuts: [15, 30]
+  d_pt_bins: [6, 7, 8, 10, 12, 16, 30]
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]  
+-
+  variable_name: JetZ
+  normalization: distribution
+  normalization_configuration:
+    xmin: 0.2
+    xmax: 1.0
+  variable_title: "#it{z}_{||}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [2]
+  jet_pt_cuts: [5, 15]
+  d_pt_bins: [2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]
+-
+  variable_name: JetZ
+  normalization: distribution
+  normalization_configuration:
+    xmin: 0.4
+    xmax: 1.0
+  variable_title: "#it{z}_{||}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [6]
+  jet_pt_cuts: [15, 30]
+  d_pt_bins: [6, 7, 8, 10, 12, 16, 30]
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]
+-
+  variable_name: JetPt
+  normalization: ratio
+  normalization_configuration:
+    spectrum_name: JetPt
+  variable_title: "#it{p}_{T,jet}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [3]
+  jet_pt_cuts: []
+  d_pt_bins: [3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+  jet_pt_bins: [5, 6, 8, 10, 14, 20, 30]
+-
+  variable_name: JetZ
+  normalization: rate
+  normalization_configuration:
+    spectrum_name: JetPtTwoBins
+  variable_title: "#it{z}_{||}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [2]
+  jet_pt_cuts: [5, 15]
+  d_pt_bins: [2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 30]
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]
+-
+  variable_name: JetZ
+  normalization: rate
+  normalization_configuration:
+    spectrum_name: JetPtTwoBins
+  variable_title: "#it{z}_{||}^{ch}"
+  d_meson: "D0_D0toKpiCuts"
+  d_pt_cuts: [6]
+  jet_pt_cuts: [15, 30]
+  d_pt_bins: [6, 7, 8, 10, 12, 16, 30]
+  d_z_bins: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]  
+variations:
+-
+  name: default
+  active: yes
+  systematic: yes
+  title: "Central Values"
+  ts: 1483386026
+  inclusive_ts: 1527252990
+  #stage: 2
+-
+  name: mass_low
+  active: yes
+  systematic: yes
+  title: "#it{m}_{c} = 1.3 GeV/#it{c}^{2}"
+  ts: 1484078952
+  inclusive_ts: 1527252990
+  #stage: 2
+-
+  name: mass_high
+  active: yes
+  systematic: yes
+  title: "#it{m}_{c} = 1.7 GeV/#it{c}^{2}"
+  ts: 1484079666
+  inclusive_ts: 1527252990
+  #stage: 2
+-
+  name: PDF_MSTW2008nlo68cl
+  active: yes
+  systematic: yes
+  title: "PDF = MSTW2008nlo68cl (21200)" 
+  ts: 1484231826
+  inclusive_ts: 1530009737
+  #stage: 2
+-
+  name: facscfact2_renscfact2
+  active: yes
+  systematic: yes
+  title: "#mu_{F} = 2.0, #mu_{R} = 2.0"
+  ts: 1483403348
+  inclusive_ts: 1529879111
+  #stage: 0
+-
+  name: facscfact05_renscfact05
+  active: yes
+  systematic: yes
+  title: "#mu_{F} = 0.5, #mu_{R} = 0.5"
+  ts: 1483403545
+  inclusive_ts: 1529753406
+  #stage: 0
+-
+  name: facscfact1_renscfact05
+  active: yes
+  systematic: yes
+  title: "#mu_{F} = 1.0, #mu_{R} = 0.5"
+  ts: 1483619159
+  inclusive_ts: 1529740363
+  #stage: 0
+-
+  name: facscfact05_renscfact1
+  active: yes
+  systematic: yes
+  title: "#mu_{F} = 0.5, #mu_{R} = 1.0"
+  ts: 1483623504
+  inclusive_ts: 1529607313
+  #stage: 0
+-
+  name: facscfact2_renscfact1
+  active: yes
+  systematic: yes
+  title: "#mu_{F} = 2.0, #mu_{R} = 1.0"
+  ts: 1483623768
+  inclusive_ts: 1529998246
+  #stage: 0
+-
+  name: facscfact1_renscfact2
+  active: yes
+  systematic: yes
+  title: "#mu_{F} = 1.0, #mu_{R} = 2.0"
+  ts: 1483629804
+  inclusive_ts: 1530005849
+  #stage: -1
