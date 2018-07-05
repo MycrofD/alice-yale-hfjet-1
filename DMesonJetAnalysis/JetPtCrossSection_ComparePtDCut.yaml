@@ -1,6 +1,5 @@
 # use it with
 # CompareCrossSectionDataVsTheory.py
-# CompareD0JetRateVsJetPtDataVsTheory.py
 name: ComparePtDCut
 
 # General
@@ -14,7 +13,6 @@ canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
 
-# Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
 name_prefix: JetPtCrossSection
 normalization: CrossSection
 miny: 2.0e-5
