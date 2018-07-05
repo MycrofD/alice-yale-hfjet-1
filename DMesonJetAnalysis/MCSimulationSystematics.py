@@ -145,7 +145,8 @@ def PlotFSspectraAndSyst(spectra, results):
         hname = name[name.rfind("/") + 1:]
         syst = results["SystematicUncertainty"][name]["{0}_CentralAsymmSyst".format(hname)]
         canvas = ROOT.TCanvas("{0}_canvas".format(name), "{0}_canvas".format(name))
-        if not "JetZ" in name: canvas.SetLogy()
+        if not "JetZ" in name and not normalization == "ratio": 
+            canvas.SetLogy()
         canvas.SetLeftMargin(0.13)
         canvas.cd()
         syst_copy = syst.Clone()
@@ -348,7 +349,7 @@ def CompareVariations(variations, spectra, results):
     result = OrderedDict()
 
     for name, normalization in spectra:
-        if "JetZ" in name:
+        if "JetZ" in name and not normalization == "ratio":
             comp_template.fDoSpectraPlot = "lineary"
             comp_template.fX1LegSpectrum = 0.15
             comp_template.fX2LegSpectrum = 0.70
@@ -865,6 +866,9 @@ def LoadInclusiveHistogram(file_name, spectra):
             if not h:
                 print("Could not find histogram '{}'!".format(objname))
                 exit(1)
+            # undo the bin width normalization in the normalization histogram
+            for ibin in range(1, h.GetNbinsX() + 1):
+                h.SetBinContent(ibin, h.GetBinContent(ibin) * h.GetXaxis().GetBinWidth(ibin))
             result.append(h)
         else:
             result.append(None)
