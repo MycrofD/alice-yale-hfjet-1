@@ -511,9 +511,9 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
         if not "histogram_plot" in t:
             continue
         if not "type" in t or t["type"] == "stat-only":
-            leg1.AddEntry(t["histogram_plot"], "D^{{0}} Jets, {}".format(t["title"]), "l")
+            leg1.AddEntry(t["histogram_plot"], t["title"], "l")
         elif t["type"] == "stat+syst":
-            entry = leg1.AddEntry(None, "D^{{0}} Jets, {}".format(t["title"]), "pf")
+            entry = leg1.AddEntry(None, t["title"], "pf")
             entry.SetFillStyle(0)
             entry.SetLineColor(t["systematics_plot"].GetLineColor())
             entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
