@@ -1,7 +1,7 @@
 input_path: /Volumes/DATA/ALICE/JetResults
 name: InclusiveJetCompareTheory
-prefix: FastSim_powheg+pythia6_dijet
-file_name: FastSimAnalysis_inclusive_jets.root
+prefix: ___
+file_name: ___
 jet_type: Charged_R040
 histograms:
 -
@@ -20,27 +20,31 @@ list:
 -
   ts: 1520882421
   active: yes
-  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
   prefix: FastSim_pythia6_mb
-  title: "PYTHIA6 Perugia-2011"
+  title: "PYTHIA 6 Perugia-2011"
+  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   ts: 1521277750
   active: yes
-  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
   prefix: FastSim_pythia8_mb
-  title: "PYTHIA8 Monash-2013"
+  title: "PYTHIA 8 Monash-2013"
+  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   ts: 1527252990
   active: yes
-  title: "POWHEG+PYTHIA6"
+  title: "POWHEG dijet + PYTHIA 6"
+  prefix: FastSim_powheg+pythia6_dijet
+  file_name: FastSimAnalysis_inclusive_jets.root
 -
   ts: 1529262323
   active: yes
   prefix: FastSim_powheg+pythia6_dijet_lo
-  title: "POWHEG(LO)+PYTHIA6"
+  title: "POWHEG dijet LO + PYTHIA 6"
+  file_name: FastSimAnalysis_inclusive_jets.root
 -
-  ts: 1529264639
+  ts: 1530007919
   active: yes
-  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
   prefix: FastSim_herwig_dijet_lo
-  title: "HERWIG7"
+  title: "Herwig++ 7"
+  file_name: FastSimAnalysis_inclusive_jets.root
+  scale: 1.0e+3

@@ -20,26 +20,28 @@ import LoadInclusiveJetSpectrum
 
 globalList = []
 
-def LoadHistograms(config, ts, file_name, prefix, title, jet_type):
+def LoadHistograms(config, ts, file_name, prefix, title, jet_type, scale):
     result = dict()
     full_file_name = "{}/{}_{}/{}".format(config["input_path"], prefix, ts, file_name)
     myfile = ROOT.TFile(full_file_name, "read")
-    for element in config["histograms"]:
+    for hdef in config["histograms"]:
         if jet_type:
-            hname = "{}/{}".format(jet_type, element["name"])
+            hname = "{}/{}".format(jet_type, hdef["name"])
         else:
-            hname = element["name"]
+            hname = hdef["name"]
             jet_type = "Charged_R040"
         h = DMesonJetUtils.GetObject(myfile, hname)
         if not h: 
             continue
-        if "bins" in element:
+        if "bins" in hdef:
             h_orig = h
-            h = DMesonJetUtils.Rebin1D_fromBins(h_orig, "{}_rebinned".format(h_orig.GetName()), len(element["bins"])-1, numpy.array(element["bins"], dtype=numpy.float))
-        if "max" in element and "min" in element:
-            h.GetXaxis().SetRangeUser(element["min"], element["max"])
+            h = DMesonJetUtils.Rebin1D_fromBins(h_orig, "{}_rebinned".format(h_orig.GetName()), len(hdef["bins"])-1, numpy.array(hdef["bins"], dtype=numpy.float))
+        if "max" in hdef and "min" in hdef:
+            h.GetXaxis().SetRangeUser(hdef["min"], hdef["max"])
+        if scale:
+            h.Scale(scale)
         h.SetTitle(title)
-        hname_result = "{}/{}".format(jet_type, element["name"])
+        hname_result = "{}/{}".format(jet_type, hdef["name"])
         result[hname_result] = h.Clone(hname_result)
         globalList.append(result[hname_result])
     return result
@@ -67,7 +69,11 @@ def main(config):
             jet_type = element["jet_type"]
         else:
             jet_type = config["jet_type"]
-        histograms.append(LoadHistograms(config, element["ts"], file_name, prefix, element["title"], jet_type))
+        if "scale" in element:
+            scale = element["scale"]
+        else:
+            scale = 1.0
+        histograms.append(LoadHistograms(config, element["ts"], file_name, prefix, element["title"], jet_type, scale))
     for hdef in config["histograms"]:
         if "jet_type" in hdef:
             jet_type = hdef["jet_type"]

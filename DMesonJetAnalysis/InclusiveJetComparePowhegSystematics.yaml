@@ -1,0 +1,51 @@
+input_path: /Volumes/DATA/ALICE/JetResults
+name: InclusiveJetComparePowhegSystematics
+prefix: FastSim_powheg+pythia6_dijet
+file_name: FastSimAnalysis_inclusive_jets.root
+jet_type: Charged_R040
+histograms:
+-
+  name: JetPt
+  measured: no
+-
+  name: JetPtExtended
+  measured: no
+-
+  name: PtHard
+  measured: no
+  bins: [3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200]
+  min_ratio: 0.8
+  max_ratio: 2.5
+list:
+-
+  ts: 1527252990
+  active: yes
+  title: "Central points"
+-
+  ts: 1529879111
+  active: yes
+  title: "#mu_{F} = 2.0, #mu_{R} = 2.0"
+-
+  ts: 1529753406
+  active: yes
+  title: "#mu_{F} = 0.5, #mu_{R} = 0.5"
+-
+  ts: 1529740363
+  active: yes
+  title: "#mu_{F} = 1.0, #mu_{R} = 0.5"
+-
+  ts: 1529607313
+  active: yes
+  title: "#mu_{F} = 0.5, #mu_{R} = 1.0"
+-
+  ts: 1529998246
+  active: yes
+  title: "#mu_{F} = 2.0, #mu_{R} = 1.0"
+-
+  ts: 1530005849
+  active: yes
+  title: "#mu_{F} = 1.0, #mu_{R} = 2.0"
+-
+  ts: 1530009737
+  active: yes
+  title: "PDF = MSTW2008nlo68cl (21200)"
