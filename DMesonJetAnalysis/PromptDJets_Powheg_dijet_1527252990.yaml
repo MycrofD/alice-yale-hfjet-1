@@ -1,4 +1,4 @@
-name: PromptDJets_Powheg_ccbar_1527252990
+name: PromptDJets_Powheg_dijet_1527252990
 input_path: /Volumes/DATA/ALICE/JetResults
 analysis_name: FastSimAnalysis_ccbar
 generator: powheg+pythia6_dijet
