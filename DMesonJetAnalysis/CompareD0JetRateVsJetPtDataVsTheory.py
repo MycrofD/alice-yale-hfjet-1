@@ -332,7 +332,7 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
         x1 = config["theory_legend"]["x"]
     else:
         x1 = 0.16
-    x2 = x1 + 0.65
+    x2 = x1 + 0.50
     if x2 > 0.95:
         x2 = 0.95
 
@@ -344,7 +344,7 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     leg1.SetTextFont(43)
     leg1.SetTextSize(config["theory_legend"]["font_size"])
     leg1.SetTextAlign(12)
-    leg1.SetMargin(0.15)
+    leg1.SetMargin(0.10)
     for t in config["theory"]: 
         if not "histogram_plot" in t:
             continue
@@ -404,7 +404,8 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     return canvas
 
 def DrawRatioCanvas(config, ratioSyst, ratioStat):
-    hAxisRatio = GenerateHistogramRatioAxis(config, ratioStat.GetXaxis().GetBinLowEdge(1), ratioStat.GetXaxis().GetBinUpEdge(ratioStat.GetXaxis().GetNbins()))    
+    hAxisRatio = GenerateHistogramRatioAxis(config, ratioStat.GetXaxis().GetBinLowEdge(1), ratioStat.GetXaxis().GetBinUpEdge(ratioStat.GetXaxis().GetNbins()))
+    hAxisRatio.GetXaxis().SetTitleOffset(config["axis"]["x_offset"] * 0.35)
 
     cname = "{}_{}_Ratio".format(config["name_prefix"], config["name"])
     if "canvas_h" in config:
@@ -421,6 +422,7 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     canvas_ratio.SetLeftMargin(config["left_margin"])
     canvas_ratio.SetBottomMargin(config["bottom_margin"] * 0.35)
     canvas_ratio.SetRightMargin(0.05)
+    canvas_ratio.SetTopMargin(0.05)
 
     canvas_ratio.cd()
     hAxisRatio.Draw("axis")
@@ -453,7 +455,7 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
         x1 = config["title"]["x"]
     else:
         x1 = 0.19
-    y2 = y1 - 0.07 * len(config["title"]["text"])
+    y2 = y1 - 0.045 * len(config["title"]["text"])
     x2 = x1 + 0.36
     if x2 > 0.99:
         x2 = 0.99
@@ -489,12 +491,12 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     else:
         y1 = y2 - 0.03
     active_t = len([t for t in config["theory"] if "histogram_plot" in t])
-    y2 = y1 - 0.06 * active_t / n_leg_columns
+    y2 = y1 - 0.04 * active_t / n_leg_columns
     if "theory_legend" in config and "x" in config["theory_legend"]:
         x1 = config["theory_legend"]["x"]
     else:
         x1 = 0.16
-    x2 = x1 + 0.65
+    x2 = x1 + 0.50
     if x2 > 0.95:
         x2 = 0.95
 
@@ -506,7 +508,7 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     leg1.SetTextFont(43)
     leg1.SetTextSize(config["theory_legend"]["font_size"])
     leg1.SetTextAlign(12)
-    leg1.SetMargin(0.15)
+    leg1.SetMargin(0.1)
     for t in config["theory"]: 
         if not "histogram_plot" in t:
             continue
@@ -528,7 +530,7 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
         y1 = config["data_legend"]["y"]
     else:
         y1 = y2 - 0.02
-    y2 = y1 - 0.12
+    y2 = y1 - 0.05
     if "data_legend" in config and "x" in config["data_legend"]:
         x1 = config["data_legend"]["x"]
     else:

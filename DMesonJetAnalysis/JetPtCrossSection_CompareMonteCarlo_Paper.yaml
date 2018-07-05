@@ -1,6 +1,6 @@
 # use it with
 # CompareCrossSectionDataVsTheory.py
-name: ComparePythiaVsHerwig_Paper
+name: CompareMonteCarlo_Paper
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
@@ -61,19 +61,17 @@ theory:
   line: 6
 -
   title: Herwig++ 7 MEHeavyQuark
-  active: yes
+  active: no
   gen: herwig
   proc: charm_lo
   ts: 1530008529
   color: 903 # kPink+3
   line: 4
-  scale: 1.0e+3
 -
   title: Herwig++ 7 MEQCD2to2
-  active: yes
+  active: no
   gen: herwig
   proc: dijet_lo
   ts: 1530007919
   color: 797 # kOrange-3
   line: 8
-  scale: 1.0e+3

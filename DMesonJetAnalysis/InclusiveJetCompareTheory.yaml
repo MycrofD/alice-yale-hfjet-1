@@ -43,8 +43,7 @@ list:
   file_name: FastSimAnalysis_inclusive_jets.root
 -
   ts: 1530007919
-  active: yes
+  active: no
   prefix: FastSim_herwig_dijet_lo
   title: "Herwig++ 7"
-  file_name: FastSimAnalysis_inclusive_jets.root
-  scale: 1.0e+3
+  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
