@@ -6,9 +6,9 @@ import HistogramNormalizator
 
 def GetD0JetTheoryCrossSectionAll(config, axis):
     if "scale" in config:
-        scale = config["scale"]
+        scale_base = config["scale"]
     else:
-        scale = 1.0
+        scale_base = 1.0
     for t in config["theory"]:
         if not t["active"]: continue
         if "spectrum_name" in t:
@@ -19,6 +19,7 @@ def GetD0JetTheoryCrossSectionAll(config, axis):
             normalization = config["normalization"]
         else:
             normalization = "CrossSection"
+        scale = scale_base
         if "scale" in t and normalization != "Distribution":
             scale *= t["scale"]
         if "jet_type" in t:

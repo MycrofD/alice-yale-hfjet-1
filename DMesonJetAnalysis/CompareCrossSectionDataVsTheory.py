@@ -74,14 +74,14 @@ def PlotCrossSections(dataStat, dataSyst, config):
     padMain = canvas.cd(1)
     padMain.SetPad(0, 0.35, 1, 1)
     padMain.SetBottomMargin(0)
-    padMain.SetLeftMargin(0.18)
+    padMain.SetLeftMargin(config["left_margin"])
     padMain.SetRightMargin(0.05)
     padMain.SetTicks(1, 1)
     padRatio = canvas.cd(2)
     padRatio.SetPad(0, 0., 1, 0.35)
     padRatio.SetTopMargin(0)
-    padRatio.SetBottomMargin(0.27)
-    padRatio.SetLeftMargin(0.18)
+    padRatio.SetBottomMargin(config["bottom_margin"])
+    padRatio.SetLeftMargin(config["left_margin"])
     padRatio.SetRightMargin(0.05)
     padRatio.SetGridy()
     padRatio.SetTicks(1, 1)
@@ -105,14 +105,11 @@ def PlotCrossSections(dataStat, dataSyst, config):
     globalList.append(h)
     h.GetYaxis().SetRangeUser(config["miny"], config["maxy"])
     h.GetYaxis().SetTitleFont(43)
-    h.GetYaxis().SetTitleSize(26)
-    h.GetYaxis().SetTitleOffset(1.9)
+    h.GetYaxis().SetTitleSize(config["axis"]["font_size"])
+    h.GetYaxis().SetTitleOffset(config["axis"]["y_offset"])
     h.GetYaxis().SetLabelFont(43)
-    h.GetYaxis().SetLabelSize(22)
-    if "y_axis_title" in config:
-        h.GetYaxis().SetTitle(config["y_axis_title"])
-    else:
-        h.GetYaxis().SetTitle(dataStat.GetYaxis().GetTitle())
+    h.GetYaxis().SetLabelSize(config["axis"]["font_size"] - 3)
+    h.GetYaxis().SetTitle(config["axis"]["y_title"])
 
     dataSyst_copy = dataSyst.Clone("{0}_copy".format(dataSyst.GetName()))
     dataSyst_copy.Draw("2")
@@ -148,8 +145,14 @@ def PlotCrossSections(dataStat, dataSyst, config):
         elif t["type"] == "stat+syst":
             hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
             hSyst.SetLineColor(t["color"])
+            hSyst.SetFillColor(t["color"])
             hSyst.SetLineWidth(2)
-            hSyst.SetFillStyle(0)
+            if "line" in t:
+                hSyst.SetLineStyle(t["line"])
+            if "fill" in t:
+                hSyst.SetFillStyle(t["fill"])
+            else:
+                hSyst.SetFillStyle(0)
             hSyst.Draw("2")
             globalList.append(hSyst)
             t["systematics_plot"] = hSyst
@@ -169,21 +172,18 @@ def PlotCrossSections(dataStat, dataSyst, config):
     globalList.append(hRatio)
     hRatio.GetYaxis().SetTitle("MC / Data")
     hRatio.GetXaxis().SetTitleFont(43)
-    hRatio.GetXaxis().SetTitleSize(26)
+    hRatio.GetXaxis().SetTitleSize(config["axis"]["font_size"])
     hRatio.GetXaxis().SetLabelFont(43)
-    hRatio.GetXaxis().SetLabelSize(22)
+    hRatio.GetXaxis().SetLabelSize(config["axis"]["font_size"] - 3)
     hRatio.GetYaxis().SetTitleFont(43)
-    hRatio.GetYaxis().SetTitleSize(26)
+    hRatio.GetYaxis().SetTitleSize(config["axis"]["font_size"])
     hRatio.GetYaxis().SetLabelFont(43)
-    hRatio.GetYaxis().SetLabelSize(22)
-    hRatio.GetYaxis().SetTitleOffset(1.4)
-    hRatio.GetXaxis().SetTitleOffset(2.9)
+    hRatio.GetYaxis().SetLabelSize(config["axis"]["font_size"] - 3)
+    hRatio.GetYaxis().SetTitleOffset(config["axis"]["y_offset"])
+    hRatio.GetXaxis().SetTitleOffset(config["axis"]["x_offset"])
     hRatio.GetYaxis().SetRangeUser(config["minr"], config["maxr"])
     hRatio.GetYaxis().SetNdivisions(509)
-    if "x_axis_title" in config:
-        hRatio.GetXaxis().SetTitle(config["x_axis_title"])
-    else:
-        hRatio.GetXaxis().SetTitle(dataStat.GetXaxis().GetTitle())
+    hRatio.GetXaxis().SetTitle(config["axis"]["x_title"])
 
     ratioSyst = dataSyst_copy.Clone("ratioSyst")
     globalList.append(ratioSyst)
@@ -236,17 +236,28 @@ def PlotCrossSections(dataStat, dataSyst, config):
             r.Draw("same p e0 x0")
     padMain.cd()
 
-    y1 = 0.90
-    y2 = y1 - 0.07 * len(config["title"])
+    if "y" in config["title"]:
+        y1 = config["title"]["y"]
+    else:
+        y1 = 0.90
+    if "x" in config["title"]:
+        x1 = config["title"]["x"]
+    else:
+        x1 = 0.19
+    y2 = y1 - 0.07 * len(config["title"]["text"])
+    x2 = x1 + 0.36
+    if x2 > 0.99:
+        x2 = 0.99
     padMain.cd()
-    paveALICE = ROOT.TPaveText(0.19, y1, 0.55, y2, "NB NDC")
+    paveALICE = ROOT.TPaveText(x1, y1, x2, y2, "NB NDC")
     globalList.append(paveALICE)
     paveALICE.SetBorderSize(0)
     paveALICE.SetFillStyle(0)
     paveALICE.SetTextFont(43)
-    paveALICE.SetTextSize(22)
+    paveALICE.SetTextSize(config["title"]["font_size"])
     paveALICE.SetTextAlign(13)
-    for line in config["title"]: paveALICE.AddText(line)
+    for line in config["title"]["text"]: 
+        paveALICE.AddText(line)
     paveALICE.Draw()
 
     if "theory_legend" in config and "n_columns" in config["theory_legend"]:
@@ -274,7 +285,9 @@ def PlotCrossSections(dataStat, dataSyst, config):
         x1 = config["theory_legend"]["x"]
     else:
         x1 = 0.16
-    x2 = 0.85
+    x2 = x1 + 0.65
+    if x2 > 0.95:
+        x2 = 0.95
 
     leg1 = ROOT.TLegend(x1, y1, x2, y2, "", "NB NDC")
     globalList.append(leg1)
@@ -282,7 +295,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
     leg1.SetBorderSize(0)
     leg1.SetFillStyle(0)
     leg1.SetTextFont(43)
-    leg1.SetTextSize(19)
+    leg1.SetTextSize(config["theory_legend"]["font_size"])
     leg1.SetTextAlign(12)
     leg1.SetMargin(0.15)
     for t in config["theory"]: 
@@ -295,6 +308,8 @@ def PlotCrossSections(dataStat, dataSyst, config):
             entry.SetFillStyle(0)
             entry.SetLineColor(t["systematics_plot"].GetLineColor())
             entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
+            entry.SetFillColor(t["systematics_plot"].GetFillColor())
+            entry.SetFillStyle(t["systematics_plot"].GetFillStyle())
             entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
             entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
 
@@ -315,7 +330,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
     leg1.SetBorderSize(0)
     leg1.SetFillStyle(0)
     leg1.SetTextFont(43)
-    leg1.SetTextSize(20)
+    leg1.SetTextSize(config["data_legend"]["font_size"])
     leg1.SetTextAlign(12)
     leg1.SetMargin(0.2)
     leg1.AddEntry(dataStat_copy, "Data", "p")
