@@ -52,6 +52,10 @@ def GetD0JetTheoryCrossSectionAll(config, axis):
             hStat, hSyst = GetD0JetTheoryCrossSectionStatSyst(config["input_path"], file_name, scale, spectrum_name, normalization)
             t["histogram"] = hStat
             t["systematics"] = hSyst
+            if "ratio" in t and t["ratio"]:
+                hStat, hSyst = GetD0JetTheoryCrossSectionStatSyst(config["input_path"], file_name, scale, spectrum_name, "Ratio")
+                t["ratio_histogram"] = hStat
+                t["ratio_systematics"] = hSyst
 
 def GetD0JetTheoryCrossSectionStatSyst(input_path, file_name, scale, spectrum, normalization):
     fname = "{}/{}".format(input_path, file_name)

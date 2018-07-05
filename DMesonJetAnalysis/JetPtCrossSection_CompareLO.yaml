@@ -43,22 +43,6 @@ data_legend:
   x: 0.22
   y: 0.19
 
-# Specific to D0-jet rate (CompareD0JetRateVsJetPtDataVsTheory.py)
-D0JetRate:
-  name_prefix: D0JetRateVsJetPt
-  title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5"]
-  miny: 6.0e-6
-  maxy: 1.0e+2
-  minr: 0.001
-  maxr: 0.0659
-  theory_legend:
-    x: 0.43
-    y: 0.76
-    n_columns: 1
-  data_legend:
-    x: 0.61
-    y: 0.875
-
 # MC definitions
 theory:
 -
@@ -69,7 +53,6 @@ theory:
   ts: 1520422008
   color: 617 # kMagenta+1
   line: 1
-  inclusive: no
 -
   title: PYTHIA 6 LO
   active: yes
@@ -78,7 +61,6 @@ theory:
   ts: 1521276365
   color: 888 # kViolet+8
   line: 2
-  inclusive: no
 -
   title: POWHEG hvq + PYTHIA 6 
   active: yes
@@ -87,13 +69,6 @@ theory:
   ts: 1520017218
   color: 602 # kBlue+2
   line: 1
-  inclusive:
-    color: 617 # kMagenta+1
-    title: POWHEG (dijet) + PYTHIA 6 
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
 -
   title: POWHEG hvq LO + PYTHIA 6 
   active: yes
@@ -102,13 +77,6 @@ theory:
   ts: 1528976386
   color: 867 # kAzure+7
   line: 2
-  inclusive:
-    color: 888 # kViolet+8
-    title: POWHEG dijet LO + PYTHIA 6 
-    gen: powheg+pythia6
-    proc: dijet_lo
-    ts: 1529262323
-    file_name: FastSimAnalysis_inclusive_jets.root
 -
   title: POWHEG dijet + PYTHIA 6 
   active: yes
@@ -117,13 +85,6 @@ theory:
   ts: 1527252990
   color: 434 # kCyan+2
   line: 1
-  inclusive:
-    color: 617 # kMagenta+1
-    title: POWHEG dijet + PYTHIA 6 
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
 -
   title: POWHEG dijet LO + PYTHIA 6 
   active: yes
@@ -132,10 +93,3 @@ theory:
   ts: 1529262323
   color: 842 # kTeal+2
   line: 2
-  inclusive:
-    color: 888 # kViolet+8
-    title: POWHEG dijet LO + PYTHIA 6 
-    gen: powheg+pythia6
-    proc: dijet_lo
-    ts: 1529262323
-    file_name: FastSimAnalysis_inclusive_jets.root

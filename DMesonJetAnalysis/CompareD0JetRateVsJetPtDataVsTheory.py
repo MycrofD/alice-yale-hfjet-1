@@ -84,15 +84,34 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
     for t in config["theory"]:
         if not t["active"]:
             continue
-        if not t["inclusive"]:
-            continue
-        d0jet_h = t["histogram"].Clone("_".join([t["gen"], t["proc"]]))
-        globalList.append(d0jet_h)
-        d0jet_h.SetLineColor(t["color"])
-        d0jet_h.SetLineStyle(t["line"])
-        d0jet_h.SetLineWidth(2)
-        d0jet_h.SetMarkerColor(t["color"])
-        t["histogram_plot"] = d0jet_h
+        if not "type" in t or t["type"] == "stat-only":
+            d0jet_h = t["histogram"].Clone("_".join([t["gen"], t["proc"]]))
+            globalList.append(d0jet_h)
+            d0jet_h.SetLineColor(t["color"])
+            d0jet_h.SetLineStyle(t["line"])
+            d0jet_h.SetLineWidth(2)
+            d0jet_h.SetMarkerColor(t["color"])
+            t["histogram_plot"] = d0jet_h
+        elif t["type"] == "stat+syst":
+            hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
+            hSyst.SetLineColor(t["color"])
+            hSyst.SetFillColor(t["color"])
+            hSyst.SetLineWidth(2)
+            if "line" in t:
+                hSyst.SetLineStyle(t["line"])
+            if "fill" in t:
+                hSyst.SetFillStyle(t["fill"])
+            else:
+                hSyst.SetFillStyle(0)
+            globalList.append(hSyst)
+            t["systematics_plot"] = hSyst
+
+            hStat = t["histogram"].Clone("{0}_copy".format(t["histogram"].GetName()))
+            hStat.SetMarkerStyle(getattr(ROOT, t["marker"]))
+            hStat.SetLineColor(t["color"])
+            hStat.SetMarkerColor(t["color"])
+            globalList.append(hStat)
+            t["histogram_plot"] = hStat
 
     normalizator = HistogramNormalizator.Normalizator(d0jet_stat_copy, "ratio")
     normalizator.fNormalizationHistogram = incl_stat
@@ -109,15 +128,36 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
             continue
         if not t["inclusive"]:
             continue
-        incl_h = t["inclusive"]["histogram_plot"]
-        d0jet_h = t["histogram_plot"]
 
-        normalizator = HistogramNormalizator.Normalizator(d0jet_h, "ratio")
-        normalizator.fNormalizationHistogram = incl_h
-        normalizator.NormalizeHistogram()
-        hratio = normalizator.fNormalizedHistogram
-        hratio.SetName("_".join([t["gen"], t["proc"], "over", t["inclusive"]["gen"], t["inclusive"]["proc"]]))
-        t["ratio_histogram"] = hratio
+        if not "type" in t or t["type"] == "stat-only":
+            incl_h = t["inclusive"]["histogram_plot"]
+            d0jet_h = t["histogram_plot"]
+            normalizator = HistogramNormalizator.Normalizator(d0jet_h, "ratio")
+            normalizator.fNormalizationHistogram = incl_h
+            normalizator.NormalizeHistogram()
+            hratio = normalizator.fNormalizedHistogram
+            hratio.SetName("_".join([t["gen"], t["proc"], "over", t["inclusive"]["gen"], t["inclusive"]["proc"]]))
+            t["ratio_histogram"] = hratio
+        elif t["type"] == "stat+syst":
+            hSyst = t["ratio_systematics"].Clone("{0}_copy".format(t["ratio_systematics"].GetName()))
+            hSyst.SetLineColor(t["color"])
+            hSyst.SetFillColor(t["color"])
+            hSyst.SetLineWidth(2)
+            if "line" in t:
+                hSyst.SetLineStyle(t["line"])
+            if "fill" in t:
+                hSyst.SetFillStyle(t["fill"])
+            else:
+                hSyst.SetFillStyle(0)
+            globalList.append(hSyst)
+            t["ratio_systematics_plot"] = hSyst
+
+            hStat = t["ratio_histogram"].Clone("{0}_copy".format(t["ratio_histogram"].GetName()))
+            hStat.SetMarkerStyle(getattr(ROOT, t["marker"]))
+            hStat.SetLineColor(t["color"])
+            hStat.SetMarkerColor(t["color"])
+            globalList.append(hStat)
+            t["ratio_histogram_plot"] = hStat
 
     # Done with all the preparations, now plotting
 
@@ -131,40 +171,38 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
 
 def GenerateHistogramAxis(config, xmin, xmax):
     hAxis = ROOT.TH1I("axis", "axis", 1000, xmin, xmax)
+    hAxis.GetYaxis().SetRangeUser(config["miny"], config["maxy"])
     hAxis.GetYaxis().SetTitleFont(43)
-    hAxis.GetYaxis().SetTitleSize(23)
+    hAxis.GetYaxis().SetTitleSize(config["axis"]["font_size"])
+    hAxis.GetYaxis().SetTitleOffset(config["axis"]["y_offset"])
     hAxis.GetYaxis().SetLabelFont(43)
-    hAxis.GetYaxis().SetLabelSize(22)
-    hAxis.GetYaxis().SetTitleOffset(1.7)
-    hAxis.GetYaxis().SetRangeUser(config["D0JetRate"]["miny"], config["D0JetRate"]["maxy"])
-    if "y_axis_title" in config:
-        hAxis.GetYaxis().SetTitle(config["y_axis_title"])
+    hAxis.GetYaxis().SetLabelSize(config["axis"]["font_size"] - 3)
+    hAxis.GetYaxis().SetTitle(config["axis"]["y_title"])
     return hAxis
 
 def GenerateHistogramRatioAxis(config, xmin, xmax):
     hAxisRatio = ROOT.TH1I("axis", "axis", 1000, xmin, xmax)
-    hAxisRatio.GetXaxis().SetTitleFont(43)
-    hAxisRatio.GetXaxis().SetTitleSize(23)
-    hAxisRatio.GetXaxis().SetTitleOffset(2.9)
-    hAxisRatio.GetXaxis().SetLabelFont(43)
     hAxisRatio.GetYaxis().SetTitle("#it{R}(#it{p}_{T,jet}^{ch})")
+    hAxisRatio.GetXaxis().SetTitleFont(43)
+    hAxisRatio.GetXaxis().SetTitleSize(config["axis"]["font_size"])
+    hAxisRatio.GetXaxis().SetLabelFont(43)
+    hAxisRatio.GetXaxis().SetLabelSize(config["axis"]["font_size"] - 3)
     hAxisRatio.GetYaxis().SetTitleFont(43)
-    hAxisRatio.GetYaxis().SetTitleSize(23)
-    hAxisRatio.GetYaxis().SetTitleOffset(1.9)
-    hAxisRatio.GetYaxis().SetRangeUser(config["D0JetRate"]["minr"], config["D0JetRate"]["maxr"])
-    hAxisRatio.GetXaxis().SetLabelSize(22)
+    hAxisRatio.GetYaxis().SetTitleSize(config["axis"]["font_size"])
     hAxisRatio.GetYaxis().SetLabelFont(43)
-    hAxisRatio.GetYaxis().SetLabelSize(22)
+    hAxisRatio.GetYaxis().SetLabelSize(config["axis"]["font_size"] - 3)
+    hAxisRatio.GetYaxis().SetTitleOffset(config["axis"]["y_offset"])
+    hAxisRatio.GetXaxis().SetTitleOffset(config["axis"]["x_offset"])
+    hAxisRatio.GetYaxis().SetRangeUser(config["minr"], config["maxr"])
     hAxisRatio.GetYaxis().SetNdivisions(509)
-    if "x_axis_title" in config:
-        hAxisRatio.GetXaxis().SetTitle(config["x_axis_title"])
+    hAxisRatio.GetXaxis().SetTitle(config["axis"]["x_title"])
     return hAxisRatio
 
 def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy, incl_syst_copy, ratioSyst, ratioStat, inclusive_jet_cross_sections):
     hAxis = GenerateHistogramAxis(config, d0jet_stat_copy.GetXaxis().GetBinLowEdge(1), d0jet_stat_copy.GetXaxis().GetBinUpEdge(d0jet_stat_copy.GetXaxis().GetNbins()))
     hAxisRatio = GenerateHistogramRatioAxis(config, d0jet_stat_copy.GetXaxis().GetBinLowEdge(1), d0jet_stat_copy.GetXaxis().GetBinUpEdge(d0jet_stat_copy.GetXaxis().GetNbins()))
 
-    cname = "{}_{}".format(config["D0JetRate"]["name_prefix"], config["name"])
+    cname = "{}_{}".format(config["name_prefix"], config["name"])
     if "canvas_h" in config:
         canvas_h = config["canvas_h"]
     else:
@@ -178,17 +216,16 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     canvas.Divide(1, 2)
     padMain = canvas.cd(1)
     padMain.SetPad(0, 0.35, 1, 1)
-    padMain.SetTopMargin(0.05)
     padMain.SetBottomMargin(0)
-    padMain.SetLeftMargin(0.18)
+    padMain.SetLeftMargin(config["left_margin"])
     padMain.SetRightMargin(0.05)
     padMain.SetTicks(1, 1)
     if config["logy"]: padMain.SetLogy()
     padRatio = canvas.cd(2)
     padRatio.SetPad(0, 0., 1, 0.35)
     padRatio.SetTopMargin(0)
-    padRatio.SetBottomMargin(0.27)
-    padRatio.SetLeftMargin(0.18)
+    padRatio.SetBottomMargin(config["bottom_margin"])
+    padRatio.SetLeftMargin(config["left_margin"])
     padRatio.SetRightMargin(0.05)
     padRatio.SetGridy()
     padRatio.SetTicks(1, 1)
@@ -204,14 +241,22 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     incl_stat_copy.Draw("same p x0 e0")
 
     for t in inclusive_jet_cross_sections.itervalues():
-        incl_h = t["histogram_plot"]
-        incl_h.Draw("same e0")
+        if "histogram_plot" in t:
+            incl_h = t["histogram_plot"]
+            incl_h.Draw("same e0")
 
     for t in config["theory"]:
-        if not t["active"]: continue
-        if not t["inclusive"]: continue
-        d0jet_h = t["histogram_plot"]
-        d0jet_h.Draw("same e0")
+        if not t["active"]:
+            continue
+        if not "type" in t or t["type"] == "stat-only":
+            d0jet_h = t["histogram_plot"]
+            d0jet_h.Draw("same e0")
+        elif t["type"] == "stat+syst":
+            hSyst = t["systematics_plot"]
+            hSyst.Draw("2")
+
+            hStat = t["histogram_plot"]
+            hStat.Draw("same p e0 x0")
 
     padRatio.cd()
     hAxisRatio_copy = hAxisRatio.DrawCopy("axis")
@@ -221,29 +266,48 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     ratioStat.Draw("same p x0 e0")
 
     for t in config["theory"]:
-        if not t["active"]: continue
-        if not t["inclusive"]: continue
-        hratio = t["ratio_histogram"]
-        hratio.Draw("same")
+        if not t["active"]:
+            continue
+        if not "type" in t or t["type"] == "stat-only":
+            hratio = t["ratio_histogram"]
+            hratio.Draw("same")
+        elif t["type"] == "stat+syst":
+            hSyst = t["ratio_systematics_plot"]
+            hSyst.Draw("2")
+
+            hStat = t["ratio_histogram_plot"]
+            hStat.Draw("same p e0 x0")
 
     # Now plotting labels
 
     padMain.cd()
 
-    y1 = 0.92
-    y2 = y1 - 0.06 * len(config["D0JetRate"]["title"])
-    paveALICE = ROOT.TPaveText(0.19, y1, 0.55, y2, "NB NDC")
+    if "y" in config["title"]:
+        y1 = config["title"]["y"]
+    else:
+        y1 = 0.90
+    if "x" in config["title"]:
+        x1 = config["title"]["x"]
+    else:
+        x1 = 0.19
+    y2 = y1 - 0.07 * len(config["title"]["text"])
+    x2 = x1 + 0.36
+    if x2 > 0.99:
+        x2 = 0.99
+    padMain.cd()
+    paveALICE = ROOT.TPaveText(x1, y1, x2, y2, "NB NDC")
     globalList.append(paveALICE)
     paveALICE.SetBorderSize(0)
     paveALICE.SetFillStyle(0)
     paveALICE.SetTextFont(43)
-    paveALICE.SetTextSize(22)
-    paveALICE.SetTextAlign(12)
-    for line in config["D0JetRate"]["title"]: paveALICE.AddText(line)
+    paveALICE.SetTextSize(config["title"]["font_size"])
+    paveALICE.SetTextAlign(13)
+    for line in config["title"]["text"]: 
+        paveALICE.AddText(line)
     paveALICE.Draw()
 
-    if "theory_legend" in config["D0JetRate"] and "n_columns" in config["D0JetRate"]["theory_legend"]:
-        n_leg_columns = config["D0JetRate"]["theory_legend"]["n_columns"]
+    if "theory_legend" in config and "n_columns" in config["theory_legend"]:
+        n_leg_columns = config["theory_legend"]["n_columns"]
     else:
         max_length = 0
         for t in config["theory"]: 
@@ -257,18 +321,20 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
         else:
             n_leg_columns = 2
 
-    if "theory_legend" in config["D0JetRate"] and "y" in config["D0JetRate"]["theory_legend"]:
-        y1 = config["D0JetRate"]["theory_legend"]["y"]
+    if "theory_legend" in config and "y" in config["theory_legend"]:
+        y1 = config["theory_legend"]["y"]
     else:
         y1 = y2 - 0.03
     active_t = len([t for t in config["theory"] if "histogram_plot" in t])
     active_t += len([t for t in inclusive_jet_cross_sections.itervalues() if "histogram_plot" in t])
     y2 = y1 - 0.06 * active_t / n_leg_columns
-    if "theory_legend" in config["D0JetRate"] and "x" in config["D0JetRate"]["theory_legend"]:
-        x1 = config["D0JetRate"]["theory_legend"]["x"]
+    if "theory_legend" in config and "x" in config["theory_legend"]:
+        x1 = config["theory_legend"]["x"]
     else:
         x1 = 0.16
-    x2 = 0.85
+    x2 = x1 + 0.65
+    if x2 > 0.95:
+        x2 = 0.95
 
     leg1 = ROOT.TLegend(x1, y1, x2, y2, "", "NB NDC")
     globalList.append(leg1)
@@ -276,24 +342,36 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     leg1.SetBorderSize(0)
     leg1.SetFillStyle(0)
     leg1.SetTextFont(43)
-    leg1.SetTextSize(19)
+    leg1.SetTextSize(config["theory_legend"]["font_size"])
     leg1.SetTextAlign(12)
-    leg1.SetMargin(0.08)
-    for t in config["theory"]:
-        if "histogram_plot" in t:
+    leg1.SetMargin(0.15)
+    for t in config["theory"]: 
+        if not "histogram_plot" in t:
+            continue
+        if not "type" in t or t["type"] == "stat-only":
             leg1.AddEntry(t["histogram_plot"], "D^{{0}} Jets, {}".format(t["title"]), "l")
+        elif t["type"] == "stat+syst":
+            entry = leg1.AddEntry(None, "D^{{0}} Jets, {}".format(t["title"]), "pf")
+            entry.SetFillStyle(0)
+            entry.SetLineColor(t["systematics_plot"].GetLineColor())
+            entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
+            entry.SetFillColor(t["systematics_plot"].GetFillColor())
+            entry.SetFillStyle(t["systematics_plot"].GetFillStyle())
+            entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
+            entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
     for t in inclusive_jet_cross_sections.itervalues():
         if "histogram_plot" in t: 
             leg1.AddEntry(t["histogram_plot"], "Inclusive Jets, {}".format(t["title"]), "l")
+
     leg1.Draw()
 
-    if "data_legend" in config["D0JetRate"] and "y" in config["D0JetRate"]["data_legend"]:
-        y1 = config["D0JetRate"]["data_legend"]["y"]
+    if "data_legend" in config and "y" in config["data_legend"]:
+        y1 = config["data_legend"]["y"]
     else:
         y1 = y2 - 0.02
     y2 = y1 - 0.12
-    if "data_legend" in config["D0JetRate"] and "x" in config["D0JetRate"]["data_legend"]:
-        x1 = config["D0JetRate"]["data_legend"]["x"]
+    if "data_legend" in config and "x" in config["data_legend"]:
+        x1 = config["data_legend"]["x"]
     else:
         x1 = 0.16
     x2 = x1 + 0.30
@@ -302,7 +380,7 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     leg1.SetBorderSize(0)
     leg1.SetFillStyle(0)
     leg1.SetTextFont(43)
-    leg1.SetTextSize(19)
+    leg1.SetTextSize(config["data_legend"]["font_size"])
     leg1.SetTextAlign(12)
     leg1.SetMargin(0.2)
     entry = leg1.AddEntry(None, "D^{0} Jets, #it{p}_{T,D} > 3 GeV/#it{c}", "pf")
@@ -327,10 +405,8 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
 
 def DrawRatioCanvas(config, ratioSyst, ratioStat):
     hAxisRatio = GenerateHistogramRatioAxis(config, ratioStat.GetXaxis().GetBinLowEdge(1), ratioStat.GetXaxis().GetBinUpEdge(ratioStat.GetXaxis().GetNbins()))    
-    hAxisRatio.GetYaxis().SetTitleOffset(1.3)
-    hAxisRatio.GetXaxis().SetTitleOffset(1)
 
-    cname = "{}_{}_Ratio".format(config["D0JetRate"]["name_prefix"], config["name"])
+    cname = "{}_{}_Ratio".format(config["name_prefix"], config["name"])
     if "canvas_h" in config:
         canvas_h = config["canvas_h"]
     else:
@@ -342,52 +418,85 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     canvas_ratio = ROOT.TCanvas(cname, cname, canvas_w, canvas_h)
     globalList.append(canvas_ratio)
     canvas_ratio.SetTicks(1, 1)
-    canvas_ratio.SetLeftMargin(0.13)
-    canvas_ratio.SetTopMargin(0.05)
+    canvas_ratio.SetLeftMargin(config["left_margin"])
+    canvas_ratio.SetBottomMargin(config["bottom_margin"] * 0.35)
     canvas_ratio.SetRightMargin(0.05)
 
     canvas_ratio.cd()
     hAxisRatio.Draw("axis")
-    hAxisRatio.GetYaxis().SetTitleOffset(1.6)
-    hAxisRatio.GetYaxis().SetRangeUser(0, 0.15)
     globalList.append(hAxisRatio)
 
     ratioSyst.Draw("2")
     ratioStat_copy = ratioStat.DrawCopy("same p e0 x0")
     globalList.append(ratioStat_copy)
 
-    line_styles = [2, 4, 7, 3, 5, 6, 8, 9]
-    for t, line_style in zip(config["theory"], line_styles):
-        if not t["active"]: continue
-        if not t["inclusive"]: continue
-        hratio = t["ratio_histogram"]
-        hratio_copy = hratio.DrawCopy("same")
-        hratio_copy.SetLineStyle(line_style)
-        hratio_copy.SetLineWidth(3)
-        t["ratio_copy_histogram"] = hratio_copy
+    for t in config["theory"]:
+        if not t["active"]:
+            continue
+        if not "type" in t or t["type"] == "stat-only":
+            hratio = t["ratio_histogram"]
+            hratio.Draw("same")
+        elif t["type"] == "stat+syst":
+            hSyst = t["ratio_systematics_plot"]
+            hSyst.Draw("2")
+
+            hStat = t["ratio_histogram_plot"]
+            hStat.Draw("same p e0 x0")
 
     # Now plotting labels
 
-    y1 = 0.94
-    y2 = y1 - 0.06 * (len(config["D0JetRate"]["title"]))
-    paveALICE = ROOT.TPaveText(0.15, y1, 0.55, y2, "NB NDC")
+    if "y" in config["title"]:
+        y1 = config["title"]["y"]
+    else:
+        y1 = 0.90
+    if "x" in config["title"]:
+        x1 = config["title"]["x"]
+    else:
+        x1 = 0.19
+    y2 = y1 - 0.07 * len(config["title"]["text"])
+    x2 = x1 + 0.36
+    if x2 > 0.99:
+        x2 = 0.99
+
+    paveALICE = ROOT.TPaveText(x1, y1, x2, y2, "NB NDC")
     globalList.append(paveALICE)
     paveALICE.SetBorderSize(0)
     paveALICE.SetFillStyle(0)
     paveALICE.SetTextFont(43)
-    paveALICE.SetTextSize(22)
-    paveALICE.SetTextAlign(12)
-    for line in config["D0JetRate"]["title"][:-1]: 
+    paveALICE.SetTextSize(config["title"]["font_size"])
+    paveALICE.SetTextAlign(13)
+    for line in config["title"]["text"]: 
         paveALICE.AddText(line)
-    paveALICE.AddText(config["D0JetRate"]["title"][-1] + ", with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}")
     paveALICE.Draw()
 
-    n_leg_columns = 1
-    y1 = 0.28
+    if "theory_legend" in config and "n_columns" in config["theory_legend"]:
+        n_leg_columns = config["theory_legend"]["n_columns"]
+    else:
+        max_length = 0
+        for t in config["theory"]: 
+            if not "histogram_plot" in t:
+                continue
+            if len(t["title"]) > max_length:
+                max_length = len(t["title"])
+
+        if max_length > 40:
+            n_leg_columns = 1
+        else:
+            n_leg_columns = 2
+
+    if "theory_legend" in config and "y" in config["theory_legend"]:
+        y1 = config["theory_legend"]["y"]
+    else:
+        y1 = y2 - 0.03
     active_t = len([t for t in config["theory"] if "histogram_plot" in t])
-    y2 = y1 - 0.04 * active_t / n_leg_columns
-    x1 = 0.35
-    x2 = 0.80
+    y2 = y1 - 0.06 * active_t / n_leg_columns
+    if "theory_legend" in config and "x" in config["theory_legend"]:
+        x1 = config["theory_legend"]["x"]
+    else:
+        x1 = 0.16
+    x2 = x1 + 0.65
+    if x2 > 0.95:
+        x2 = 0.95
 
     leg1 = ROOT.TLegend(x1, y1, x2, y2, "", "NB NDC")
     globalList.append(leg1)
@@ -395,30 +504,53 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     leg1.SetBorderSize(0)
     leg1.SetFillStyle(0)
     leg1.SetTextFont(43)
-    leg1.SetTextSize(22)
+    leg1.SetTextSize(config["theory_legend"]["font_size"])
     leg1.SetTextAlign(12)
-    leg1.SetMargin(0.08)
-    for t in config["theory"]:
-        if "histogram_plot" in t:
-            leg1.AddEntry(t["ratio_copy_histogram"], t["title"], "l")
+    leg1.SetMargin(0.15)
+    for t in config["theory"]: 
+        if not "histogram_plot" in t:
+            continue
+        if not "type" in t or t["type"] == "stat-only":
+            leg1.AddEntry(t["histogram_plot"], "D^{{0}} Jets, {}".format(t["title"]), "l")
+        elif t["type"] == "stat+syst":
+            entry = leg1.AddEntry(None, "D^{{0}} Jets, {}".format(t["title"]), "pf")
+            entry.SetFillStyle(0)
+            entry.SetLineColor(t["systematics_plot"].GetLineColor())
+            entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
+            entry.SetFillColor(t["systematics_plot"].GetFillColor())
+            entry.SetFillStyle(t["systematics_plot"].GetFillStyle())
+            entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
+            entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
+
     leg1.Draw()
 
-    y1 = 0.93
-    y2 = y1 - 0.09
-    x1 = 0.58
+    if "data_legend" in config and "y" in config["data_legend"]:
+        y1 = config["data_legend"]["y"]
+    else:
+        y1 = y2 - 0.02
+    y2 = y1 - 0.12
+    if "data_legend" in config and "x" in config["data_legend"]:
+        x1 = config["data_legend"]["x"]
+    else:
+        x1 = 0.16
     x2 = x1 + 0.30
     leg1 = ROOT.TLegend(x1, y1, x2, y2, "", "NB NDC")
     globalList.append(leg1)
     leg1.SetBorderSize(0)
     leg1.SetFillStyle(0)
     leg1.SetTextFont(43)
-    leg1.SetTextSize(22)
+    leg1.SetTextSize(config["data_legend"]["font_size"])
     leg1.SetTextAlign(12)
     leg1.SetMargin(0.2)
-    entry = leg1.AddEntry(ratioStat, "Data", "pe")
-    entry = leg1.AddEntry(ratioSyst, "Systematic Uncertainty", "f")
+    entry = leg1.AddEntry(None, "Data", "pf")
+    entry.SetFillStyle(ratioSyst.GetFillStyle())
+    entry.SetFillColor(ratioSyst.GetFillColor())
+    entry.SetLineColor(ratioSyst.GetFillColor())
+    entry.SetMarkerColor(ratioStat.GetMarkerColor())
+    entry.SetMarkerStyle(ratioStat.GetMarkerStyle())
     leg1.Draw()
 
+    canvas_ratio.RedrawAxis("g")
     canvas_ratio.RedrawAxis()
 
     return canvas_ratio

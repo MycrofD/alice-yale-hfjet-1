@@ -1,5 +1,5 @@
 # use it with
-# CompareCrossSectionDataVsTheory.py
+# CompareD0JetRateVsJetPtDataVsTheory.py
 name: ComparePowheg_Paper
 
 # General
@@ -13,18 +13,17 @@ canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
 
-# Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
-name_prefix: JetPtCrossSection
+name_prefix: D0JetRateVsJetPt
 normalization: CrossSection
 miny: 2.0e-5
-maxy: 1.0e-1
+maxy: 5.0e+1
 minr: 0.0
-maxr: 2.99
+maxr: 0.99
 title:
-  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "|#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}"]
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}"]
   font_size: 19
-  x: 0.34
-  y: 0.89
+  x: 0.19
+  y: 0.91
 axis:
   x_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
   y_title: "#frac{d^{2}#sigma}{d#it{p}_{T,jet}^{ch}d#it{#eta}_{jet}} [mb (GeV/#it{c})^{-1}]"
@@ -34,13 +33,13 @@ axis:
 theory_legend:
   font_size: 16
   n_columns: 1
-  x: 0.194
-  y: 0.15
+  x: 0.34
+  y: 0.66
 data_legend:
   font_size: 16
   combine_syst: no
-  x: 0.62
-  y: 0.56
+  x: 0.21
+  y: 0.15
 
 # MC definitions
 theory:
@@ -52,6 +51,15 @@ theory:
   color: 602 # kBlue+2
   marker: kOpenCircle
   fill: 3345
+  inclusive:
+    title: POWHEG dijet + PYTHIA 6
+    gen: powheg+pythia6
+    proc: dijet
+    ts: 1527252990
+    file_name: FastSimAnalysis_inclusive_jets.root
+    line: 2
+    color: 418 # kGreen+2
+  ratio: yes
 -
   title: POWHEG dijet + PYTHIA 6
   type: stat+syst
@@ -60,3 +68,12 @@ theory:
   color: 418 # kGreen+2
   marker: kOpenSquare
   fill: 3354
+  inclusive:
+    title: POWHEG dijet + PYTHIA 6
+    gen: powheg+pythia6
+    proc: dijet
+    ts: 1527252990
+    file_name: FastSimAnalysis_inclusive_jets.root
+    line: 2
+    color: 418 # kGreen+2
+  ratio: yes

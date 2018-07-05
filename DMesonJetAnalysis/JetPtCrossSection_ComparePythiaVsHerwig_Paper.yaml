@@ -52,11 +52,6 @@ theory:
   ts: 1520422008
   color: 857 # kAzure-3
   line: 2
-  inclusive:
-    gen: pythia6
-    proc: mb
-    ts: 1520882421
-    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: PYTHIA 8 Monash-2013
   active: yes
@@ -65,11 +60,6 @@ theory:
   ts: 1520426239
   color: 819 # kSpring-1
   line: 6
-  inclusive:
-    gen: pythia8
-    proc: mb
-    ts: 1521277750
-    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: Herwig++ 7 MEHeavyQuark
   active: yes
@@ -79,11 +69,6 @@ theory:
   color: 903 # kPink+3
   line: 4
   scale: 1.0e+3
-  inclusive:
-    gen: herwig
-    proc: dijet_lo
-    ts: 1530007919
-    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: Herwig++ 7 MEQCD2to2
   active: yes
@@ -93,8 +78,3 @@ theory:
   color: 797 # kOrange-3
   line: 8
   scale: 1.0e+3
-  inclusive:
-    gen: herwig
-    proc: dijet_lo
-    ts: 1530007919
-    file_name: FastSimAnalysis_inclusive_jets_unweighted.root

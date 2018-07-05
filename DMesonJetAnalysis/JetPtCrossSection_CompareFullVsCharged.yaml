@@ -1,6 +1,5 @@
 # use it with
 # CompareCrossSectionDataVsTheory.py
-# CompareD0JetRateVsJetPtDataVsTheory.py
 name: CompareFullVsCharged
 
 # General
@@ -43,21 +42,6 @@ data_legend:
   x: 0.23
   y: 0.23
 
-# Specific to D0-jet rate (CompareD0JetRateVsJetPtDataVsTheory.py)
-D0JetRate:
-  name_prefix: D0JetRateVsJetPt
-  title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "POWHEG+PYTHIA 6", "Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5"]
-  miny: 6.0e-6
-  maxy: 2.0e+2
-  minr: 0.001
-  maxr: 0.0659
-  theory_legend:
-    x: 0.54
-    y: 0.83
-    n_columns: 1
-  data_legend:
-    x: 0.64
-
 # MC definitions
 theory:    
 -
@@ -68,12 +52,6 @@ theory:
   ts: 1520017218
   color: 418 # kGreen+2
   line: 1
-  inclusive:
-    line: 2
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
 -
   title: MC Full
   active: yes
@@ -83,9 +61,3 @@ theory:
   jet_type: Full_R040
   color: 922 # kGray+1
   line: 1
-  inclusive:
-    line: 2
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
