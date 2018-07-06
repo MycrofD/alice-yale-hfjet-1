@@ -19,15 +19,15 @@ bottom_margin: 0.27
 name_prefix: D0JetRateVsZ_JetPt_15_30
 data_minx: 0.4
 data_maxx: 1.0
-miny: -0.01
+miny: -0.049
 maxy: 0.3
 minr: 0
 maxr: 3.99
 title:
-  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets", "Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}", "|#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
   font_size: 18
-  x: 0.21
-  y: 0.86
+  x: 0.20
+  y: 0.88
 axis:
   x_title: "#it{z}_{||}^{ch}"
   y_title: "#it{R}(#it{z}_{||}^{ch}) / #Delta#it{z}_{||}^{ch}"
@@ -37,13 +37,13 @@ axis:
 theory_legend:
   font_size: 16
   n_columns: 1
-  x: 0.21
-  y: 0.54
+  x: 0.215
+  y: 0.15
 data_legend:
   font_size: 16
   combine_syst: no
-  x: 0.205
-  y: 0.36
+  x: 0.215
+  y: 0.28
 
 # MC definitions
 theory:

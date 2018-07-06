@@ -22,7 +22,7 @@ maxr: 2.99
 title:
   text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "|#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}"]
   font_size: 19
-  x: 0.40
+  x: 0.34
   y: 0.89
 axis:
   x_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
@@ -33,8 +33,8 @@ axis:
 theory_legend:
   font_size: 16
   n_columns: 1
-  x: 0.22
-  y: 0.27
+  x: 0.205
+  y: 0.15
 data_legend:
   font_size: 16
   combine_syst: no

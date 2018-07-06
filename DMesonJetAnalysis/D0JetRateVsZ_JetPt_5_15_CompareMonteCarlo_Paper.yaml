@@ -19,7 +19,7 @@ name_prefix: D0JetRateVsZ_JetPt_5_15
 data_minx: 0.2
 data_maxx: 1.0
 miny: -0.01
-maxy: 0.2
+maxy: 0.26
 minr: 0
 maxr: 2.49
 title:
@@ -36,13 +36,13 @@ axis:
 theory_legend:
   font_size: 16
   n_columns: 1
-  x: 0.56
-  y: 0.19
+  x: 0.205
+  y: 0.50
 data_legend:
   font_size: 16
   combine_syst: no
-  x: 0.23
-  y: 0.53
+  x: 0.205
+  y: 0.36
 
 # MC definitions
 theory:
