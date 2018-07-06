@@ -539,6 +539,9 @@ def PrepareFDhist_jet(spectrum, ts, FDhistogram_old, inclusive_histogram, bRespo
         if "normalization_configuration" in spectrum and ("xmin" in spectrum["normalization_configuration"] and "xmax" in spectrum["normalization_configuration"]):
             normalizator.fXmin = spectrum["normalization_configuration"]["xmin"]
             normalizator.fXmax = spectrum["normalization_configuration"]["xmax"]
+        if spectrum["normalization"] == "rate" and "jet_pt_cuts" in spectrum:
+            normalizator.fNormalizationXmin = spectrum["jet_pt_cuts"][0]
+            normalizator.fNormalizationXmax = spectrum["jet_pt_cuts"][1]
         if spectrum["normalization"] == "ratio" or spectrum["normalization"] == "rate":
             if inclusive_histogram:
                 normalizator.fNormalizationHistogram = inclusive_histogram
@@ -866,9 +869,10 @@ def LoadInclusiveHistogram(file_name, spectra):
             if not h:
                 print("Could not find histogram '{}'!".format(objname))
                 exit(1)
-            # undo the bin width normalization in the normalization histogram
-            for ibin in range(1, h.GetNbinsX() + 1):
-                h.SetBinContent(ibin, h.GetBinContent(ibin) * h.GetXaxis().GetBinWidth(ibin))
+            if spectrum["normalization"] == "ratio":
+                # undo the bin width normalization in the normalization histogram
+                for ibin in range(1, h.GetNbinsX() + 1):
+                    h.SetBinContent(ibin, h.GetBinContent(ibin) * h.GetXaxis().GetBinWidth(ibin))
             result.append(h)
         else:
             result.append(None)
