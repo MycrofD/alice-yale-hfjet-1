@@ -1,6 +1,6 @@
 # use it with
-# CompareCrossSectionDataVsTheory.py
-name: CompareFullVsCharged
+# CompareD0JetRateVsJetPtDataVsTheory.py
+name: CompareMonteCarlo_FullVsCharged
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
@@ -13,17 +13,17 @@ canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
 
-name_prefix: JetPtCrossSection
+name_prefix: D0JetRateVsJetPt
 normalization: CrossSection
 miny: 2.0e-5
-maxy: 1.0e-1
+maxy: 5.0e+2
 minr: 0.0
-maxr: 2.99
+maxr: 0.129
 title:
-  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "POWHEG+PYTHIA 6", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}"]
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "PYTHIA 6 Perugia 2011", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, |#it{#eta}_{jet}| < 0.5", "with D^{0}"]
   font_size: 19
-  x: 0.34
-  y: 0.89
+  x: 0.21
+  y: 0.91
 axis:
   x_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
   y_title: "#frac{d^{2}#sigma}{d#it{p}_{T,jet}^{ch}d#it{#eta}_{jet}} [mb (GeV/#it{c})^{-1}]"
@@ -33,30 +33,46 @@ axis:
 theory_legend:
   font_size: 16
   n_columns: 1
-  x: 0.51
-  y: 0.55
+  x: 0.50
+  y: 0.67
 data_legend:
   font_size: 16
   combine_syst: no
-  x: 0.23
-  y: 0.23
+  x: 0.21
+  y: 0.15
 
 # MC definitions
 theory:    
 -
   title: MC Charged
   active: yes
-  gen: powheg+pythia6
+  gen: pythia6
   proc: charm
-  ts: 1520017218
+  ts: 1520422008
   color: 418 # kGreen+2
   line: 2
+  inclusive:
+    title: MC Charged
+    gen: pythia6
+    proc: mb
+    ts: 1520882421
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+    line: 4
+    color: 817 # kSpring-3
 -
   title: MC Full
   active: yes
-  gen: powheg+pythia6
+  gen: pythia6
   proc: charm
-  ts: 1520017218
+  ts: 1520422008
   jet_type: Full_R040
   color: 602 # kBlue+2
   line: 7
+  inclusive:
+    title: MC Full
+    gen: pythia6
+    proc: mb
+    ts: 1520882421
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+    line: 5
+    color: 857 # kAzure-3

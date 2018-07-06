@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # python script to compare D0 jet spectrum with theory
 # use it with
-# JetPtCrossSection_ComparePYTHIA6vs8.yaml
-# JetPtCrossSection_CompareHerwig.yaml
-# JetPtCrossSection_ComparePowheg.yaml
-# JetPtCrossSection_CompareTheory.yaml
 # JetPtCrossSection_CompareFullVsCharged.yaml
+# JetPtCrossSection_CompareLO.yaml
+# JetPtCrossSection_CompareMonteCarlo_Paper.yaml
+# JetPtCrossSection_ComparePowheg_Paper.yaml
 # JetPtCrossSection_ComparePtDCut.yaml
+# JetPtCrossSection_CompareSystematicsPowheg_ccbar.yaml
 
 # JetZDistr_JetPt_5_15_ComparePYTHIA6vs8.yaml
 # JetZDistr_JetPt_5_15_CompareHerwig.yaml

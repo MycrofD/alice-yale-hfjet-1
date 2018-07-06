@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # python script to compare measured  D0 and inclusive jet cross sections with theory
 # us it with
-# JetPtCrossSection_ComparePYTHIA6vs8.yaml
-# JetPtCrossSection_CompareHerwig.yaml
-# JetPtCrossSection_ComparePowheg.yaml
-# JetPtCrossSection_CompareTheory.yaml
-# JetPtCrossSection_CompareFullVsCharged.yaml
-# JetPtCrossSection_ComparePtDCut.yaml
+# D0JetRateVsJetPt_CompareMonteCarlo_OnlyRatio_Paper.yaml
+# D0JetRateVsJetPt_CompareMonteCarlo_SpectrumRatio_Paper.yaml
+# D0JetRateVsJetPt_ComparePowheg_Paper.yaml
 
 import argparse
 import math

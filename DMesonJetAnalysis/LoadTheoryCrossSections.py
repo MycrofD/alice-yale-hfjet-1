@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from collections import OrderedDict
 import ROOT
 import DMesonJetUtils
 import HistogramNormalizator
@@ -106,7 +107,7 @@ def GetD0JetTheoryCrossSection(input_path, gen, proc, ts, scale, spectrum, jet_t
     return h_normalized
 
 def GetInclusiveJetTheoryCrossSectionAll(config):
-    inclusive_jet_cross_sections = dict()
+    inclusive_jet_cross_sections = OrderedDict()
     if "inclusive_theory_spectrum" in config:
         spectrum_name = config["inclusive_theory_spectrum"]
     else:
