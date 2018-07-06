@@ -10,58 +10,68 @@ inclusive_theory_spectrum: JetPtTwoBins
 jet_type: Charged_R040
 min_jet_pt: 5
 max_jet_pt: 15
-canvas_w: 800
-canvas_h: 900
-x_axis_title: "#it{z}_{||}^{ch}"
-y_axis_title: "#frac{#it{R}(#it{z}_{||}^{ch})}{#Delta#it{z}_{||}^{ch}}"
+canvas_w: 550
+canvas_h: 600
+left_margin: 0.19
+bottom_margin: 0.27
 
-# Specific to cross section plot (CompareD0JetRateVsZDataVsTheory.py)
 name_prefix: D0JetRateVsZ_JetPt_5_15
-title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "POWHEG+PYTHIA 6", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
-normalize: no
 data_minx: 0.2
 data_maxx: 1.0
-minx: 0
-maxx: 1
-miny: -0.009
-maxy: 0.12
-minr: 0.001
-maxr: 2.99
-theory_legend:
-  x: 0.19
-  n_columns: 1
-data_legend:
-  x: 0.6
+miny: -0.01
+maxy: 0.2
+minr: 0
+maxr: 2.49
+title:
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "PYTHIA 6 Perugia 2011", "Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
+  font_size: 18
+  x: 0.21
   y: 0.87
+axis:
+  x_title: "#it{z}_{||}^{ch}"
+  y_title: "#it{R}(#it{z}_{||}^{ch}) / #Delta#it{z}_{||}^{ch}"
+  x_offset: 2.8
+  y_offset: 2.1
+  font_size: 20
+theory_legend:
+  font_size: 16
+  n_columns: 1
+  x: 0.21
+  y: 0.28
+data_legend:
+  font_size: 16
+  combine_syst: no
+  x: 0.21
+  y: 0.46
 
 # MC definitions
 theory:    
 -
-  title: MC, Charged
+  title: MC Charged
   active: yes
-  gen: powheg+pythia6
+  gen: pythia6
   proc: charm
-  ts: 1520017218
+  ts: 1520422008
   color: 418 # kGreen+2
-  line: 1
+  line: 2
   inclusive:
-    line: 2
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
+    title: MC Charged
+    gen: pythia6
+    proc: mb
+    ts: 1520882421
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
-  title: MC, Full
+  title: MC Full
   active: yes
-  gen: powheg+pythia6
+  gen: pythia6
   proc: charm
-  ts: 1520017218
+  ts: 1520422008
   jet_type: Full_R040
-  color: 923 # kGray+2
-  line: 1
+  color: 602 # kBlue+2
+  line: 7
   inclusive:
-    line: 2
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
+    title: MC Full
+    gen: pythia6
+    proc: mb
+    ts: 1520882421
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root

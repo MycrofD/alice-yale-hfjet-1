@@ -10,108 +10,117 @@ inclusive_theory_spectrum: JetPtTwoBins
 jet_type: Charged_R040
 min_jet_pt: 5
 max_jet_pt: 15
-canvas_w: 800
-canvas_h: 900
-x_axis_title: "#it{z}_{||}^{ch}"
-y_axis_title: "#frac{#it{R}(#it{z}_{||}^{ch})}{#Delta#it{z}_{||}^{ch}}"
+canvas_w: 550
+canvas_h: 600
+left_margin: 0.19
+bottom_margin: 0.27
 
-# Specific to cross section plot (CompareD0JetRateVsZDataVsTheory.py)
 name_prefix: D0JetRateVsZ_JetPt_5_15
-title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, 5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
-normalize: no
 data_minx: 0.2
 data_maxx: 1.0
-minx: 0
-maxx: 1
-miny: -0.009
-maxy: 0.14
+miny: -0.01
+maxy: 0.3
 minr: 0
-maxr: 2.2
+maxr: 2.49
+title:
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV, Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5, with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
+  font_size: 17
+  x: 0.21
+  y: 0.885
+axis:
+  x_title: "#it{z}_{||}^{ch}"
+  y_title: "#it{R}(#it{z}_{||}^{ch}) / #Delta#it{z}_{||}^{ch}"
+  x_offset: 2.8
+  y_offset: 2.1
+  font_size: 20
 theory_legend:
-  x: 0.19
-  y: 0.65
+  font_size: 16
   n_columns: 1
+  x: 0.205
+  y: 0.70
 data_legend:
-  x: 0.58
-  y: 0.65
+  font_size: 16
+  combine_syst: no
+  x: 0.205
+  y: 0.33
 
 # MC definitions
 theory:
 -
-  title: POWHEG (ccbar) + PYTHIA 6 
-  active: yes
-  gen: powheg+pythia6
-  proc: charm
-  ts: 1520017218
-  color: 802 # kOrange+2
-  line: 1
-  inclusive:
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
--
-  title: POWHEG (LO, ccbar) + PYTHIA 6
-  active: yes
-  gen: powheg+pythia6
-  proc: charm_lo
-  ts: 1528976386
-  color: 617 # kMagenta+1
-  line: 2
-  inclusive:
-    gen: powheg+pythia6
-    proc: dijet_lo
-    ts: 1529262323
-    file_name: FastSimAnalysis_inclusive_jets.root
--
-  title: POWHEG (dijet) + PYTHIA 6
-  active: yes
-  gen: powheg+pythia6
-  proc: dijet
-  ts: 1527252990
-  color: 418 # kGreen+2
-  line: 1
-  inclusive:
-    gen: powheg+pythia6
-    proc: dijet
-    ts: 1527252990
-    file_name: FastSimAnalysis_inclusive_jets.root
--
-  title: POWHEG (LO, dijet) + PYTHIA 6
-  active: yes
-  gen: powheg+pythia6
-  proc: dijet_lo
-  ts: 1529262323
-  color: 839 # kTeal-1
-  line: 4
-  inclusive:
-    gen: powheg+pythia6
-    proc: dijet_lo
-    ts: 1529262323
-    file_name: FastSimAnalysis_inclusive_jets.root
--
-  title: PYTHIA 6 (Perugia-2011)
+  title: PYTHIA 6 Perugia-2011
   active: yes
   gen: pythia6
   proc: charm
   ts: 1520422008
-  color: 602 # kBlue+2
-  line: 1
+  color: 617 # kMagenta+1
+  line: 2
   inclusive:
     gen: pythia6
     proc: mb
     ts: 1520882421
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
-  title: PYTHIA 6 (LO, Perugia-2011)
+  title: PYTHIA 6 LO
   active: yes
   gen: pythia6
   proc: charm_lo
   ts: 1521276365
-  color: 862 # kAzure+2
-  line: 7
+  color: 888 # kViolet+8
+  line: 4
   inclusive:
     gen: pythia6
     proc: mb
     ts: 1520882421
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+-
+  title: POWHEG hvq + PYTHIA 6 
+  active: yes
+  gen: powheg+pythia6
+  proc: charm
+  ts: 1520017218
+  color: 602 # kBlue+2
+  line: 7
+  inclusive:
+    gen: powheg+pythia6
+    proc: dijet
+    ts: 1527252990
+    file_name: FastSimAnalysis_inclusive_jets.root
+-
+  title: POWHEG hvq LO + PYTHIA 6 
+  active: yes
+  gen: powheg+pythia6
+  proc: charm_lo
+  ts: 1528976386
+  color: 867 # kAzure+7
+  line: 5
+  inclusive:
+    gen: powheg+pythia6
+    proc: dijet_lo
+    ts: 1529262323
+    file_name: FastSimAnalysis_inclusive_jets.root
+-
+  title: POWHEG dijet + PYTHIA 6 
+  active: yes
+  gen: powheg+pythia6
+  proc: dijet
+  ts: 1527252990
+  color: 434 # kCyan+2
+  line: 8
+  inclusive:
+    gen: powheg+pythia6
+    proc: dijet
+    ts: 1527252990
+    file_name: FastSimAnalysis_inclusive_jets.root
+-
+  title: POWHEG dijet LO + PYTHIA 6 
+  active: yes
+  gen: powheg+pythia6
+  proc: dijet_lo
+  ts: 1529262323
+  color: 842 # kTeal+2
+  line: 6
+  inclusive:
+    gen: powheg+pythia6
+    proc: dijet_lo
+    ts: 1529262323
+    file_name: FastSimAnalysis_inclusive_jets.root

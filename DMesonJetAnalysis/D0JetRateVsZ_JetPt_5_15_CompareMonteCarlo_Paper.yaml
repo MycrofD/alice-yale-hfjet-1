@@ -1,0 +1,112 @@
+# use it with
+# CompareD0JetRateVsZDataVsTheory.py
+name: CompareMonteCarlo_Paper
+
+# General
+input_path: /Volumes/DATA/ALICE/JetResults
+data: JetZCrossSection_JetPt_5_15_Systematics
+theory_spectrum: JetZSpectrum_DPt_2_JetPt_5_15
+inclusive_theory_spectrum: JetPtTwoBins
+jet_type: Charged_R040
+min_jet_pt: 5
+max_jet_pt: 15
+canvas_w: 550
+canvas_h: 600
+left_margin: 0.19
+bottom_margin: 0.27
+
+name_prefix: D0JetRateVsZ_JetPt_5_15
+data_minx: 0.2
+data_maxx: 1.0
+miny: -0.01
+maxy: 0.2
+minr: 0
+maxr: 2.49
+title:
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
+  font_size: 18
+  x: 0.21
+  y: 0.86
+axis:
+  x_title: "#it{z}_{||}^{ch}"
+  y_title: "#it{R}(#it{z}_{||}^{ch}) / #Delta#it{z}_{||}^{ch}"
+  x_offset: 2.8
+  y_offset: 2.1
+  font_size: 20
+theory_legend:
+  font_size: 16
+  n_columns: 1
+  x: 0.56
+  y: 0.19
+data_legend:
+  font_size: 16
+  combine_syst: no
+  x: 0.23
+  y: 0.53
+
+# MC definitions
+theory:
+-
+  title: PYTHIA 6 Perugia-2011
+  active: yes
+  gen: pythia6
+  proc: charm
+  ts: 1520422008
+  color: 857 # kAzure-3
+  line: 2
+  inclusive:
+    title: PYTHIA 6 Perugia-2011
+    gen: pythia6
+    proc: mb
+    ts: 1520882421
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+    line: 8
+    color: 857 # kAzure-3
+-
+  title: PYTHIA 8 Monash-2013
+  active: yes
+  gen: pythia8
+  proc: charm
+  ts: 1520426239
+  color: 819 # kSpring-1
+  line: 6
+  inclusive:
+    title: PYTHIA 8 Monash-2013
+    gen: pythia8
+    proc: mb
+    ts: 1521277750
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+    line: 3
+    color: 819 # kSpring-1
+-
+  title: Herwig++ 7 MEHeavyQuark
+  active: no
+  gen: herwig
+  proc: charm_lo
+  ts: 1530008529
+  color: 903 # kPink+3
+  line: 4
+  inclusive:
+    title: Herwig++ 7 MEQCD2to2
+    gen: herwig
+    proc: dijet_lo
+    ts: 1530007919
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+    line: 8
+    color: 797 # kOrange-3
+-
+  title: Herwig++ 7 MEQCD2to2
+  active: no
+  gen: herwig
+  proc: dijet_lo
+  ts: 1530007919
+  color: 797 # kOrange-3
+  line: 8
+  inclusive:
+    title: Herwig++ 7 MEQCD2to2
+    gen: herwig
+    proc: dijet_lo
+    ts: 1530007919
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+    line: 8
+    color: 797 # kOrange-3
