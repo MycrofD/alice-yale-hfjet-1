@@ -69,6 +69,10 @@ def GetD0JetTheoryCrossSectionStatSyst(input_path, file_name, scale, spectrum, n
     spectrum_name_suffix = spectrum[underscore + 1:]
     if "DPt_3" in spectrum_name_suffix and not "DPt_30" in spectrum_name_suffix:
         spectrum_name_suffix = spectrum_name_suffix.replace("DPt_3", "DPt_30")
+    if "DPt_2" in spectrum_name_suffix and not "DPt_20" in spectrum_name_suffix:
+        spectrum_name_suffix = spectrum_name_suffix.replace("DPt_2", "DPt_20")
+    if "DPt_6" in spectrum_name_suffix and not "DPt_60" in spectrum_name_suffix:
+        spectrum_name_suffix = spectrum_name_suffix.replace("DPt_6", "DPt_60")
     hStat = DMesonJetUtils.GetObject(file, "default/{prefix}_{suffix}_{normalization}/GeneratorLevel_{prefix}".format(prefix=spectrum_name_prefix, suffix=spectrum_name_suffix, normalization=normalization))
     if not hStat:
         print("Cannot get theory cross section with statistical uncertainty!")
@@ -113,8 +117,10 @@ def GetInclusiveJetTheoryCrossSectionAll(config):
     else:
         spectrum_name = "JetPt"
     for t in config["theory"]:
-        if not t["active"]: continue
-        if not t["inclusive"]: continue
+        if not t["active"]:
+            continue
+        if not "inclusive" in t or not t["inclusive"]:
+            continue
         if "jet_type" in t["inclusive"]:
             jet_type = t["inclusive"]["jet_type"]
         elif "jet_type" in t:
