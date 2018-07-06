@@ -248,7 +248,7 @@ class Normalizator:
                 stat_xsec_tot2 += (self.fNormalizationHistogram.GetBinError(ibin) * binw) ** 2
                 if self.fNormalizationGraph:
                     syst_xsec_tot += self.fNormalizationGraph.GetErrorY(ibin - 1) * binw  # take the weighted average of the rel unc
-                print("Cross section in bin [{}, {}] is {} +/- {}".format(self.fNormalizationHistogram.GetXaxis().GetBinLowEdge(ibin), self.fNormalizationHistogram.GetXaxis().GetBinUpEdge(ibin), xsec, self.fNormalizationHistogram.GetBinError(ibin)))
+                print("Cross section in bin [{}, {}] is {} +/- {}".format(self.fNormalizationHistogram.GetXaxis().GetBinLowEdge(ibin), self.fNormalizationHistogram.GetXaxis().GetBinUpEdge(ibin), xsec * binw, self.fNormalizationHistogram.GetBinError(ibin) * binw))
 
             stat_xsec_tot = math.sqrt(stat_xsec_tot2)
 
