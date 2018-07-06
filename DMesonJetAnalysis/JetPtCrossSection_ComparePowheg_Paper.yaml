@@ -33,7 +33,7 @@ axis:
 theory_legend:
   font_size: 16
   n_columns: 1
-  x: 0.194
+  x: 0.205
   y: 0.15
 data_legend:
   font_size: 16
