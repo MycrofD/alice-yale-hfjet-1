@@ -4,11 +4,13 @@
 # D0JetRateVsZ_JetPt_5_15_CompareFullVsCharged.yaml
 # D0JetRateVsZ_JetPt_5_15_CompareLO.yaml
 # D0JetRateVsZ_JetPt_5_15_CompareMonteCarlo_Paper.yaml
+# D0JetRateVsZ_JetPt_5_15_ComparePowheg_Paper.yaml
 # D0JetRateVsZ_JetPt_5_15_ComparePtDCut.yaml
 
 # D0JetRateVsZ_JetPt_15_30_CompareFullVsCharged.yaml
 # D0JetRateVsZ_JetPt_15_30_CompareLO.yaml
 # D0JetRateVsZ_JetPt_15_30_CompareMonteCarlo_Paper.yaml
+# D0JetRateVsZ_JetPt_15_30_ComparePowheg_Paper.yaml
 # D0JetRateVsZ_JetPt_15_30_ComparePtDCut.yaml
 
 import argparse
@@ -112,20 +114,55 @@ def PlotCrossSections(dataStat, dataSyst, config):
         for ipoint in points_to_be_removed:
             dataSyst_copy.RemovePoint(ipoint)
         dataStat_copy.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
+        for t in config["theory"]:
+            if not t["active"]:
+                continue
+            t["histogram"].GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
+            if "type" in t  and t["type"] == "stat+syst":
+                hSyst = t["systematics"]
+                for ipoint in range(0, hSyst.GetN()):
+                    if hSyst.GetX()[ipoint] < config["data_minx"] or hSyst.GetX()[ipoint] > config["data_maxx"]:
+                        points_to_be_removed.add(ipoint)
+                for ipoint in points_to_be_removed:
+                    hSyst.RemovePoint(ipoint)
 
     for t in config["theory"]:
-        if not t["active"]: continue
-        h = t["histogram"].Clone(t["gen"])
-        h.Draw("same e0")
-        globalList.append(h)
-        h.SetLineColor(t["color"])
-        h.SetLineStyle(t["line"])
-        h.SetLineWidth(2)
-        h.SetMarkerStyle(1)
-        h.SetMarkerColor(t["color"])
-        if "data_minx" in config and "data_maxx" in config:
-            h.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
-        t["histogram_plot"] = h
+        if not t["active"]: 
+            continue
+        if not "type" in t or t["type"] == "stat-only":
+            h = t["histogram"].Clone(t["gen"])
+            h.Draw("same e0")
+            globalList.append(h)
+            h.SetLineColor(t["color"])
+            h.SetLineStyle(t["line"])
+            h.SetLineWidth(2)
+            h.SetMarkerStyle(1)
+            h.SetMarkerColor(t["color"])
+            if "data_minx" in config and "data_maxx" in config:
+                h.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
+            t["histogram_plot"] = h
+        elif t["type"] == "stat+syst":
+            hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
+            hSyst.SetLineColor(t["color"])
+            hSyst.SetFillColor(t["color"])
+            hSyst.SetLineWidth(2)
+            if "line" in t:
+                hSyst.SetLineStyle(t["line"])
+            if "fill" in t:
+                hSyst.SetFillStyle(t["fill"])
+            else:
+                hSyst.SetFillStyle(0)
+            hSyst.Draw("2")
+            globalList.append(hSyst)
+            t["systematics_plot"] = hSyst
+
+            hStat = t["histogram"].Clone("{0}_copy".format(t["histogram"].GetName()))
+            hStat.SetMarkerStyle(getattr(ROOT, t["marker"]))
+            hStat.SetLineColor(t["color"])
+            hStat.SetMarkerColor(t["color"])
+            hStat.Draw("same p e0 x0")
+            globalList.append(hStat)
+            t["histogram_plot"] = hStat
 
     padRatio.cd()
 
@@ -168,24 +205,37 @@ def PlotCrossSections(dataStat, dataSyst, config):
         ratioStat.SetBinContent(ibin, 1.0)
 
     for t in config["theory"]:
-        if not t["active"]:
+        if not "histogram_plot" in t:
             continue
         r = t["histogram_plot"].Clone()
-        for ibin in range(1, r.GetNbinsX() + 1):
-            if t["histogram_plot"].GetBinContent(ibin) == 0:
-                continue
-            r.SetBinError(ibin, t["histogram_plot"].GetBinError(ibin) / t["histogram_plot"].GetBinContent(ibin))
-            r.SetBinContent(ibin, t["histogram_plot"].GetBinContent(ibin) / dataStat_copy.GetBinContent(ibin))
-        r.SetLineColor(t["color"])
-        r.SetLineStyle(t["line"])
-        r.SetLineWidth(2)
-        r.SetMarkerStyle(20)
-        r.SetMarkerSize(0)
-        r.Draw("same e0")
-        if "data_minx" in config and "data_maxx" in config:
-            r.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
         globalList.append(r)
-        t["ratio"] = r
+        for ibin in range(1, r.GetNbinsX() + 1):
+            if dataStat_copy.GetBinContent(ibin) <= 0:
+                r.SetBinError(ibin, 0)
+                r.SetBinContent(ibin, 0)
+                continue
+            r.SetBinError(ibin, t["histogram_plot"].GetBinError(ibin) / dataStat_copy.GetBinContent(ibin))
+            r.SetBinContent(ibin, t["histogram_plot"].GetBinContent(ibin) / dataStat_copy.GetBinContent(ibin))
+        if not "type" in t or t["type"] == "stat-only":
+            r.SetLineColor(t["color"])
+            r.SetLineStyle(t["line"])
+            r.SetLineWidth(2)
+            r.SetMarkerStyle(20)
+            r.SetMarkerSize(0)
+            r.Draw("same e0")
+            if "data_minx" in config and "data_maxx" in config:
+                r.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
+            globalList.append(r)
+            t["ratio"] = r
+        elif t["type"] == "stat+syst":
+            rSyst = t["systematics_plot"].Clone()
+            globalList.append(rSyst)
+            for ibin in range(0, rSyst.GetN()):
+                rSyst.SetPointEYlow(ibin, rSyst.GetErrorYlow(ibin) / dataSyst_copy.GetY()[ibin])
+                rSyst.SetPointEYhigh(ibin , rSyst.GetErrorYhigh(ibin) / dataSyst_copy.GetY()[ibin])
+                rSyst.SetPoint(ibin, rSyst.GetX()[ibin], rSyst.GetY()[ibin] / dataSyst_copy.GetY()[ibin])
+            rSyst.Draw("2")
+            r.Draw("same p e0 x0")
 
     padMain.cd()
 
@@ -251,7 +301,17 @@ def PlotCrossSections(dataStat, dataSyst, config):
     for t in config["theory"]:
         if not t["active"]:
             continue
-        leg1.AddEntry(t["histogram_plot"], t["title"], "l")
+        if not "type" in t or t["type"] == "stat-only":
+            leg1.AddEntry(t["histogram_plot"], t["title"], "l")
+        elif t["type"] == "stat+syst":
+            entry = leg1.AddEntry(None, t["title"], "pf")
+            entry.SetFillStyle(0)
+            entry.SetLineColor(t["systematics_plot"].GetLineColor())
+            entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
+            entry.SetFillColor(t["systematics_plot"].GetFillColor())
+            entry.SetFillStyle(t["systematics_plot"].GetFillStyle())
+            entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
+            entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
     leg1.Draw()
 
     if "data_legend" in config and "y" in config["data_legend"]:
@@ -299,12 +359,13 @@ def NormalizeTheory(config):
             continue
         if not "inclusive" in t or not "histogram" in t["inclusive"] or not "histogram" in t:
             continue
-        normalizator = HistogramNormalizator.Normalizator(t["histogram"], "rate")
-        normalizator.fNormalizationHistogram = t["inclusive"]["histogram"]
-        normalizator.fNormalizationXmin = config["min_jet_pt"]
-        normalizator.fNormalizationXmax = config["max_jet_pt"]
-        normalizator.NormalizeHistogram()
-        t["histogram"] = normalizator.fNormalizedHistogram
+        if not "type" in t or t["type"] == "stat-only":
+            normalizator = HistogramNormalizator.Normalizator(t["histogram"], "rate")
+            normalizator.fNormalizationHistogram = t["inclusive"]["histogram"]
+            normalizator.fNormalizationXmin = config["min_jet_pt"]
+            normalizator.fNormalizationXmax = config["max_jet_pt"]
+            normalizator.NormalizeHistogram()
+            t["histogram"] = normalizator.fNormalizedHistogram
 
 def main(config):
     ROOT.TH1.AddDirectory(False)

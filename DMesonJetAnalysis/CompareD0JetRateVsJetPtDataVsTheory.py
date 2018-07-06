@@ -4,6 +4,8 @@
 # D0JetRateVsJetPt_CompareMonteCarlo_OnlyRatio_Paper.yaml
 # D0JetRateVsJetPt_CompareMonteCarlo_SpectrumRatio_Paper.yaml
 # D0JetRateVsJetPt_ComparePowheg_Paper.yaml
+# D0JetRateVsJetPt_CompareFullVsCharged.yaml
+# D0JetRateVsJetPt_ComparePtDCut.yaml
 
 import argparse
 import math
