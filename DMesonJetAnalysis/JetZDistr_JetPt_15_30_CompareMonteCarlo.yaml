@@ -1,3 +1,4 @@
+# use it with
 # CompareCrossSectionDataVsTheory.py
 name: CompareMonteCarlo
 
@@ -7,29 +8,42 @@ data: JetZDistr_JetPt_15_30_Systematics
 theory_spectrum: JetZSpectrum_DPt_6_JetPt_15_30
 jet_type: Charged_R040
 logy: no
-canvas_w: 900
-canvas_h: 900
-x_axis_title: "#it{z}_{||}^{ch}"
-y_axis_title: "Probability Density"
+canvas_w: 550
+canvas_h: 600
+left_margin: 0.19
+bottom_margin: 0.27
 
-# Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
 name_prefix: JetZDistr_JetPt_15_30
-title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
 normalization: Distribution
 data_minx: 0.4
 data_maxx: 1.0
 minx: 0
 maxx: 1
-miny: 0.001
-maxy: 5.5
+miny: -0.1
+maxy: 4.5
 minr: 0.0
-maxr: 4.49
+maxr: 2.99
+title:
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
+  font_size: 18
+  x: 0.21
+  y: 0.88
+axis:
+  x_title: "#it{z}_{||}^{ch}"
+  y_title:  "Probability Density"
+  x_offset: 2.8
+  y_offset: 2.1
+  font_size: 20
 theory_legend:
-  x: 0.18
+  font_size: 16
   n_columns: 1
+  x: 0.205
+  y: 0.15
 data_legend:
-  x: 0.59
-  y: 0.85
+  font_size: 16
+  combine_syst: no
+  x: 0.23
+  y: 0.53
 
 # MC definitions
 theory:
@@ -39,21 +53,29 @@ theory:
   gen: pythia6
   proc: charm
   ts: 1520422008
-  color: 418 # kGreen+2
-  line: 1
--
-  title: POWHEG (ccbar) + PYTHIA 6 
-  active: yes
-  gen: powheg+pythia6
-  proc: charm
-  ts: 1520017218
-  color: 602 # kBlue+2
-  line: 9
--
-  title: POWHEG (dijet) + PYTHIA 6 
-  active: yes
-  gen: powheg+pythia6
-  proc: dijet
-  ts: 1527252990
-  color: 617 # kMagenta+1
+  color: 857 # kAzure-3
   line: 2
+-
+  title: PYTHIA 8 Monash-2013
+  active: yes
+  gen: pythia8
+  proc: charm
+  ts: 1520426239
+  color: 819 # kSpring-1
+  line: 6
+-
+  title: Herwig++ 7 MEHeavyQuark
+  active: no
+  gen: herwig
+  proc: charm_lo
+  ts: 1530008529
+  color: 903 # kPink+3
+  line: 4
+-
+  title: Herwig++ 7 MEQCD2to2
+  active: no
+  gen: herwig
+  proc: dijet_lo
+  ts: 1530007919
+  color: 797 # kOrange-3
+  line: 8

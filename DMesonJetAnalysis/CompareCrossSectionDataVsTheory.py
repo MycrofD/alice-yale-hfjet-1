@@ -291,7 +291,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
         x1 = config["theory_legend"]["x"]
     else:
         x1 = 0.16
-    x2 = x1 + 0.65
+    x2 = x1 + 0.50
     if x2 > 0.95:
         x2 = 0.95
 
@@ -303,7 +303,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
     leg1.SetTextFont(43)
     leg1.SetTextSize(config["theory_legend"]["font_size"])
     leg1.SetTextAlign(12)
-    leg1.SetMargin(0.15)
+    leg1.SetMargin(0.1)
     for t in config["theory"]: 
         if not "histogram_plot" in t:
             continue

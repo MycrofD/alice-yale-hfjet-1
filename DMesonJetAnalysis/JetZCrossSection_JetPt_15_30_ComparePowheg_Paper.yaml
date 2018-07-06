@@ -8,54 +8,59 @@ data: JetZCrossSection_JetPt_15_30_Systematics
 theory_spectrum: JetZSpectrum_DPt_6_JetPt_15_30
 jet_type: Charged_R040
 logy: no
-canvas_w: 900
-canvas_h: 900
-x_axis_title: "#it{z}_{||}^{ch}"
-y_axis_title: "#frac{d^{3}#sigma}{d#it{z}_{||}^{ch}d#it{p}_{T,jet}^{ch}d#it{#eta}} (GeV/#it{c})^{-1}"
+canvas_w: 550
+canvas_h: 600
+left_margin: 0.19
+bottom_margin: 0.27
 
-# Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
 name_prefix: JetZCrossSection_JetPt_15_30
-title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
 normalization: CrossSection
 scale: 0.06666666667  # jet pt acceptance 1 / 15
 data_minx: 0.4
 data_maxx: 1.0
 minx: 0
 maxx: 1
-miny: -0.00005
-maxy: 0.001
+miny: -0.00012
+maxy: 0.0008
 minr: 0.0
 maxr: 5.49
+title:
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets", "Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}", "|#it{#eta}_{jet}| < 0.5", "with D^{0}", "#it{p}_{T,D} > 6 GeV/#it{c}"]
+  font_size: 18
+  x: 0.20
+  y: 0.87
+axis:
+  x_title: "#it{z}_{||}^{ch}"
+  y_title:  "#frac{d^{3}#sigma}{d#it{z}_{||}^{ch}d#it{p}_{T,jet}^{ch}d#it{#eta}} (GeV/#it{c})^{-1}"
+  x_offset: 2.8
+  y_offset: 2.1
+  font_size: 20
 theory_legend:
-  x: 0.18
+  font_size: 16
   n_columns: 1
+  x: 0.21
+  y: 0.15
 data_legend:
-  x: 0.59
-  y: 0.85
+  font_size: 16
+  combine_syst: no
+  x: 0.21
+  y: 0.33
 
 # MC definitions
 theory:
 -
-  title: PYTHIA 6 Perugia-2011
+  title: POWHEG hvq + PYTHIA 6
+  type: stat+syst
   active: yes
-  gen: pythia6
-  proc: charm
-  ts: 1520422008
-  color: 418 # kGreen+2
-  line: 1
--
-  title: POWHEG (ccbar) + PYTHIA 6 
-  active: yes
-  gen: powheg+pythia6
-  proc: charm
-  ts: 1520017218
+  file_name: PromptDJets_Powheg_ccbar_1483386026.root
   color: 602 # kBlue+2
-  line: 9
+  marker: kOpenCircle
+  fill: 3345
 -
-  title: POWHEG (dijet) + PYTHIA 6 
+  title: POWHEG dijet + PYTHIA 6
+  type: stat+syst
   active: yes
-  gen: powheg+pythia6
-  proc: dijet
-  ts: 1527252990
-  color: 617 # kMagenta+1
-  line: 2
+  file_name: PromptDJets_Powheg_dijet_1527252990.root
+  color: 418 # kGreen+2
+  marker: kOpenSquare
+  fill: 3354

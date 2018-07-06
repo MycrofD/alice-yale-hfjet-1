@@ -8,77 +8,58 @@ data: JetZDistr_JetPt_15_30_Systematics
 theory_spectrum: JetZSpectrum_DPt_6_JetPt_15_30
 jet_type: Charged_R040
 logy: no
-canvas_w: 900
-canvas_h: 900
-x_axis_title: "#it{z}_{||}^{ch}"
-y_axis_title: "Probability Density"
+canvas_w: 550
+canvas_h: 600
+left_margin: 0.19
+bottom_margin: 0.27
 
-# Specific to cross section plot (CompareCrossSectionDataVsTheory.py)
 name_prefix: JetZDistr_JetPt_15_30
-title: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "POWHEG+PYTHIA 6", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
 normalization: Distribution
 data_minx: 0.4
 data_maxx: 1.0
 minx: 0
 maxx: 1
-miny: 0.001
+miny: -0.6
 maxy: 4.5
 minr: 0.0
-maxr: 4.49
+maxr: 3.49
+title:
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
+  font_size: 18
+  x: 0.21
+  y: 0.88
+axis:
+  x_title: "#it{z}_{||}^{ch}"
+  y_title:  "Probability Density"
+  x_offset: 2.8
+  y_offset: 2.1
+  font_size: 20
 theory_legend:
-  x: 0.18
+  font_size: 16
   n_columns: 1
+  x: 0.205
+  y: 0.15
 data_legend:
-  x: 0.59
-  y: 0.85
+  font_size: 16
+  combine_syst: no
+  x: 0.23
+  y: 0.53
 
 # MC definitions
 theory:
 -
-  title: Central
+  title: POWHEG hvq + PYTHIA 6
+  type: stat+syst
   active: yes
-  gen: powheg
-  proc: charm
-  ts: 1483386026
-  color: 1 # kBlack
-  line: 1
--
-  title: "#it{m}_{c} = 1.3 GeV/#it{c}^{2}"
-  active: yes
-  gen: powheg
-  proc: charm
-  ts: 1484078952
-  color: 418 # kGreen+2
-  line: 2
--
-  title: "#it{m}_{c} = 1.7 GeV/#it{c}^{2}"
-  active: yes
-  gen: powheg
-  proc: charm
-  ts: 1484079666
-  color: 618 # kMagenta
-  line: 4
--
-  title: "PDF = MSTW2008nlo68cl"
-  active: yes
-  gen: powheg
-  proc: charm
-  ts: 1484231826
+  file_name: PromptDJets_Powheg_ccbar_1483386026.root
   color: 602 # kBlue+2
-  line: 5
+  marker: kOpenCircle
+  fill: 3345
 -
-  title: "#mu_{F} = 2.0, #mu_{R} = 1.0"
+  title: POWHEG dijet + PYTHIA 6
+  type: stat+syst
   active: yes
-  gen: powheg
-  proc: charm
-  ts: 1483623768
-  color: 802 # kOrange+2
-  line: 6
--
-  title: "#mu_{F} = 1.0, #mu_{R} = 0.5"
-  active: yes
-  gen: powheg
-  proc: charm
-  ts: 1483619159
-  color: 434 # kCyan+2
-  line: 7
+  file_name: PromptDJets_Powheg_dijet_1527252990.root
+  color: 418 # kGreen+2
+  marker: kOpenSquare
+  fill: 3354
