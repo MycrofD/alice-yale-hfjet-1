@@ -1,6 +1,6 @@
 # use it with
 # CompareCrossSectionDataVsTheory.py
-name: CompareTheory
+name: CompareMonteCarlo_Paper
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults

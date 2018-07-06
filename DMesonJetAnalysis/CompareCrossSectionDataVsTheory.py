@@ -8,22 +8,17 @@
 # JetPtCrossSection_ComparePtDCut.yaml
 # JetPtCrossSection_CompareSystematicsPowheg_ccbar.yaml
 
-# JetZDistr_JetPt_5_15_ComparePYTHIA6vs8.yaml
-# JetZDistr_JetPt_5_15_CompareHerwig.yaml
+# JetZDistr_JetPt_5_15_CompareMonteCarlo.yaml
 # JetZDistr_JetPt_5_15_ComparePowheg.yaml
-# JetZDistr_JetPt_5_15_CompareTheory.yaml
-# JetZDistr_JetPt_5_15_CompareFullVsCharged.yaml
-# JetZDistr_JetPt_5_15_ComparePtDCut.yaml
 
-# JetZDistr_JetPt_15_30_ComparePYTHIA6vs8.yaml
-# JetZDistr_JetPt_15_30_CompareHerwig.yaml
+# JetZDistr_JetPt_15_30_CompareMonteCarlo.yaml
 # JetZDistr_JetPt_15_30_ComparePowheg.yaml
-# JetZDistr_JetPt_15_30_CompareTheory.yaml
-# JetZDistr_JetPt_15_30_CompareFullVsCharged.yaml
-# JetZDistr_JetPt_15_30_ComparePtDCut.yaml
 
-# JetZCrossSection_JetPt_5_15_CompareTheory.yaml
-# JetZCrossSection_JetPt_15_30_CompareTheory.yaml
+# JetZCrossSection_JetPt_5_15_CompareMonteCarlo_Paper.yaml
+# JetZCrossSection_JetPt_5_15_ComparePowheg_Paper.yaml
+
+# JetZCrossSection_JetPt_15_30_CompareMonteCarlo_Paper.yaml
+# JetZCrossSection_JetPt_15_30_ComparePowheg_Paper.yaml
 
 import argparse
 import yaml
