@@ -126,6 +126,17 @@ def PlotCrossSections(dataStat, dataSyst, config):
         for ipoint in points_to_be_removed:
             dataSyst_copy.RemovePoint(ipoint)
         dataStat_copy.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
+        for t in config["theory"]:
+            if not t["active"]:
+                continue
+            t["histogram"].GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
+            if "type" in t  and t["type"] == "stat+syst":
+                hSyst = t["systematics"]
+                for ipoint in range(0, hSyst.GetN()):
+                    if hSyst.GetX()[ipoint] < config["data_minx"] or hSyst.GetX()[ipoint] > config["data_maxx"]:
+                        points_to_be_removed.add(ipoint)
+                for ipoint in points_to_be_removed:
+                    hSyst.RemovePoint(ipoint)
 
     for t in config["theory"]:
         if not t["active"]:
@@ -211,11 +222,11 @@ def PlotCrossSections(dataStat, dataSyst, config):
         r = t["histogram_plot"].Clone()
         globalList.append(r)
         for ibin in range(1, r.GetNbinsX() + 1):
-            if t["histogram_plot"].GetBinContent(ibin) <= 0: 
+            if dataStat_copy.GetBinContent(ibin) <= 0: 
                 r.SetBinError(ibin, 0)
                 r.SetBinContent(ibin, 0)
                 continue
-            r.SetBinError(ibin, t["histogram_plot"].GetBinError(ibin) / t["histogram_plot"].GetBinContent(ibin))
+            r.SetBinError(ibin, t["histogram_plot"].GetBinError(ibin) / dataStat_copy.GetBinContent(ibin))
             r.SetBinContent(ibin, t["histogram_plot"].GetBinContent(ibin) / dataStat_copy.GetBinContent(ibin))
         if not "type" in t or t["type"] == "stat-only":
             r.SetLineColor(t["color"])
