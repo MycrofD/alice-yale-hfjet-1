@@ -1,6 +1,8 @@
 name: JetPtCrossSection_DPt_30_Systematics
 input_path: /Volumes/DATA/ALICE/JetResults
 normalization: cross_section
+xmin: 5
+xmax: 30
 default:
   title: "Central Values"
   input_name: Unfolding_LHC10_Train1116_LHC15i2_Train1399_efficiency_mt_refl_DoubleGaus

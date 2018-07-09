@@ -1,6 +1,6 @@
 # use it with
 # CompareD0JetRateVsZDataVsTheory.py
-name: CompareFullVsCharged
+name: ComparePtDCut
 
 # General
 input_path: /Volumes/DATA/ALICE/JetResults
