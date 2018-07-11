@@ -1,0 +1,345 @@
+# Selects only c or cbar
+name: FastSimMatchingAnalysis_ccbar
+input_path: /Volumes/DATA/ALICE/JetResults
+train: FastSimOld
+file_name: ""
+task_name: AliAnalysisTaskDmesonJets
+tree_type: simple
+merging_type: average
+collision_system: "pp #sqrt{#it{s}} = 7 TeV"
+trigger: [""]
+d_meson: [D0_MCTruth]
+jets:
+-
+  type: Charged
+  radius: R040
+  title: "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4"
+-
+  type: Full
+  radius: R040
+  title: "Full Jets, Anti-#it{k}_{T}, #it{R} = 0.4"
+spectra:
+-
+  name: JetPtSpectrum_DPt_0_JetPt_5_30
+  title: "#it{p}_{T,D} > 0 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fPt
+  x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
+  y_axis_title: "#it{p}_{T,jet} (GeV/#it{c})"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: yes
+  binsx: [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30]
+  binsy: [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 5
+    max: 30
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetPtSpectrum_DPt_0_JetPt_5_15
+  title: "#it{p}_{T,D} > 0 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fPt
+  x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
+  y_axis_title: "#it{p}_{T,jet} (GeV/#it{c})"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: yes
+  binsx: [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15]
+  binsy: [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 5
+    max: 15
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetPtSpectrum_DPt_0_JetPt_15_30
+  title: "#it{p}_{T,D} > 0 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fPt
+  x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
+  y_axis_title: "#it{p}_{T,jet} (GeV/#it{c})"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: yes
+  binsx: [15, 16, 18, 20, 22, 24, 26, 28, 30]
+  binsy: [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 15
+    max: 30
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetPtSpectrum_DPt_0_JetPt_0_80
+  title: "#it{p}_{T,D} > 0 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fPt
+  x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
+  y_axis_title: "#it{p}_{T,jet} (GeV/#it{c})"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: yes
+  binsx: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50, 60, 70, 80]
+  binsy: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 0
+    max: 80
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetPtSpectrum_DPt_3_JetPt_5_30
+  title: "#it{p}_{T,D} > 3 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fPt
+  x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
+  y_axis_title: "#it{p}_{T,jet} (GeV/#it{c})"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: yes
+  binsx: [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30]
+  binsy: [3.0, 3.5, 4.0, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 5
+    max: 30
+  -
+    object: d
+    variable: fPt
+    min: 3.0
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetPtSpectrum_DPt_2_JetPt_5_15
+  title: "#it{p}_{T,D} > 2 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fPt
+  x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
+  y_axis_title: "#it{p}_{T,jet} (GeV/#it{c})"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: yes
+  binsx: [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15]
+  binsy: [2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 5
+    max: 15
+  -
+    object: d
+    variable: fPt
+    min: 2.0
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetPtSpectrum_DPt_6_JetPt_15_30
+  title: "#it{p}_{T,D} > 6 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fPt
+  x_axis_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
+  y_axis_title: "#it{p}_{T,jet} (GeV/#it{c})"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: yes
+  binsx: [15, 16, 18, 20, 22, 24, 26, 28, 30]
+  binsy: [6, 6.5, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 15
+    max: 30
+  -
+    object: d
+    variable: fPt
+    min: 3.0
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetZSpectrum_DPt_2_JetPt_5_15
+  title: "5 < #it{p}_{T,jet} < 15 GeV/#it{c}, #it{p}_{T,D} > 2 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fZ
+  x_axis_title: "#it{z}_{||}^{ch}"
+  y_axis_title: "#it{z}_{||}"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: no
+  bins: [0.0, 0.1, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0001]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 5
+    max: 15
+  -
+    object: d
+    variable: fPt
+    min: 2.0
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetZSpectrum_DPt_6_JetPt_15_30
+  title: "15 < #it{p}_{T,jet} < 30 GeV/#it{c}, #it{p}_{T,D} > 6 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fZ
+  x_axis_title: "#it{z}_{||}^{ch}"
+  y_axis_title: "#it{z}_{||}"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: no
+  bins: [0.0, 0.1, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0001]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 15
+    max: 30
+  -
+    object: d
+    variable: fPt
+    min: 6.0
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetZSpectrum_DPt_0_JetPt_5_15
+  title: "5 < #it{p}_{T,jet} < 15 GeV/#it{c}, #it{p}_{T,D} > 0 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fZ
+  x_axis_title: "#it{z}_{||}^{ch}"
+  y_axis_title: "#it{z}_{||}"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0
+  log_scale: no
+  bins: [0.0, 0.1, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0001]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 5
+    max: 15
+  -
+    object: d
+    variable: fPartonType
+    include: 4
+-
+  name: JetZSpectrum_DPt_0_JetPt_15_30
+  title: "15 < #it{p}_{T,jet} < 30 GeV/#it{c}, #it{p}_{T,D} > 0 GeV/#it{c}"
+  active_mesons: [D0_MCTruth]
+  variable: fZ
+  x_axis_title: "#it{z}_{||}^{ch}"
+  y_axis_title: "#it{z}_{||}"
+  z_axis_title: "arb. units"
+  zmin: 1.0e-7
+  zmax: 1.0e-2
+  log_scale: no
+  bins: [0.0, 0.1, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0001]
+  cuts:
+  -
+    object: jet
+    variable: fEta
+    min: -0.5
+    max: 0.5
+  -
+    object: jet
+    variable: fPt
+    min: 15
+    max: 30
+  -
+    object: d
+    variable: fPartonType
+    include: 4

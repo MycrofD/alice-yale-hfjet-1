@@ -336,3 +336,50 @@ def frange(start, stop, step, closed=False):
     while i < stop:
         yield i
         i += step
+
+def FitAndRebin(hstat, new_axis):
+    results = []
+    xmin = new_axis.GetBinLowEdge(1) - 5
+    if xmin < 5:
+        xmin = 5
+    xmax = new_axis.GetBinUpEdge(new_axis.GetNbins()) + 5
+    fit_func = ROOT.TF1("myfit", "expo(0)+expo(2)", xmin, xmax)
+    results.append(fit_func)
+    cname = "Fit_{}".format(hstat.GetName())
+    canvas = ROOT.TCanvas(cname, cname)
+    canvas.SetLogy()
+    results.append(canvas)
+    hcopy = hstat.DrawCopy()
+    hcopy.GetXaxis().SetRangeUser(new_axis.GetBinLowEdge(1), new_axis.GetBinUpEdge(new_axis.GetNbins()))
+    results.append(hcopy)
+    fit_func.SetParameter(0, 1)
+    fit_func.SetParameter(1, -1)
+    fit_func.SetParameter(2, -99999999)
+    fit_func.SetParameter(3, 0)
+    fit_func.SetParameter(0, 1 + math.log(hstat.GetBinContent(hstat.GetXaxis().FindBin(xmin)) / fit_func.Eval(xmin)))
+    fit_func.SetParameter(2, 1)
+    fit_func.SetParameter(3, -0.5)
+    fit_func.SetParameter(2, 1 + math.log(hstat.GetBinContent(hstat.GetXaxis().FindBin((xmax - xmin) / 2)) / fit_func.Eval((xmax - xmin) / 2)))
+    fitR = hcopy.Fit(fit_func, "S", "", xmin, xmax)
+    fitOk = int(fitR)
+    if fitOk != 0:
+        print("The fit was unsuccessfull!")
+        return None
+    h_fit = ROOT.TH1D("{}_rebinned".format(hstat.GetName()), hstat.GetTitle(), new_axis.GetNbins(), new_axis.GetXbins().GetArray())
+    results.append(h_fit)
+    for ibin in range(1, h_fit.GetNbinsX() + 1):
+        valErr = fit_func.IntegralError(h_fit.GetXaxis().GetBinLowEdge(ibin), h_fit.GetXaxis().GetBinUpEdge(ibin)) / (h_fit.GetXaxis().GetBinUpEdge(ibin) - h_fit.GetXaxis().GetBinLowEdge(ibin))
+        val = fit_func.Integral(h_fit.GetXaxis().GetBinLowEdge(ibin), h_fit.GetXaxis().GetBinUpEdge(ibin)) / (h_fit.GetXaxis().GetBinUpEdge(ibin) - h_fit.GetXaxis().GetBinLowEdge(ibin))
+        print("integral = {0:.5f}, central = {1:.5f}".format(val, fit_func.Eval((h_fit.GetXaxis().GetBinCenter(ibin)))))
+        h_fit.SetBinContent(ibin, val)
+        h_fit.SetBinError(ibin, valErr)
+    h_fit.Draw("same")
+
+    ratio = hcopy.Clone("ratio")
+    results.append(ratio)
+    ratio.Divide(fit_func)
+    cname = "FitRatio_{}".format(hstat.GetName())
+    canvas_ratio = ROOT.TCanvas(cname, cname)
+    results.append(canvas_ratio)
+    ratio.Draw()
+    return h_fit, results
