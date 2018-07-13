@@ -42,8 +42,14 @@ list:
   title: "POWHEG dijet LO + PYTHIA 6"
   file_name: FastSimAnalysis_inclusive_jets.root
 -
-  ts: 1530007919
+  ts: 1531074150
   active: yes
   prefix: FastSim_herwig_dijet_lo
-  title: "Herwig++ 7"
+  title: "Herwig++ 7 MEQCD2to2"
+  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+-
+  ts: 1531169201
+  active: yes
+  prefix: FastSim_herwig_mb
+  title: "Herwig++ 7 MEQCDMinBias"
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root

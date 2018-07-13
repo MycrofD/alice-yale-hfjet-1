@@ -61,7 +61,7 @@ theory:
   line: 6
 -
   title: Herwig++ 7 MEHeavyQuark
-  active: no
+  active: yes
   gen: herwig
   proc: charm_lo
   ts: 1530008529
@@ -69,9 +69,17 @@ theory:
   line: 4
 -
   title: Herwig++ 7 MEQCD2to2
-  active: no
+  active: yes
   gen: herwig
   proc: dijet_lo
-  ts: 1530007919
+  ts: 1531074150
   color: 797 # kOrange-3
   line: 8
+-
+  title: Herwig++ 7 MEQCDMinBias
+  active: yes
+  gen: herwig
+  proc: mb
+  ts: 1531169201
+  color: 882 # kViolet+2
+  line: 5
