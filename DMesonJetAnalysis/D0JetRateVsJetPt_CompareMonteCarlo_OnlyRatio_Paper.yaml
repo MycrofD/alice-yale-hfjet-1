@@ -34,14 +34,14 @@ axis:
   y_offset: 2.1
   font_size: 20
 theory_legend:
-  font_size: 16
-  n_columns: 1
-  x: 0.22
+  font_size: 15
+  n_columns: 2
+  x: 0.205
   y: 0.78
 data_legend:
-  font_size: 16
+  font_size: 15
   combine_syst: no
-  x: 0.22
+  x: 0.205
   y: 0.69
 
 # MC definitions
@@ -60,7 +60,7 @@ theory:
     proc: mb
     ts: 1520882421
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
-    line: 8
+    line: 10
     color: 881 # kViolet+1
 -
   title: PYTHIA 8 Monash-2013
@@ -80,33 +80,49 @@ theory:
     color: 843 # kTeal+3
 -
   title: Herwig++ 7 MEHeavyQuark
-  active: no
+  active: yes
   gen: herwig
   proc: charm_lo
-  ts: 1530008529
+  ts: 1531075164
   color: 903 # kPink+3
   line: 4
   inclusive:
-    title: Herwig++ 7 MEQCD2to2
+    title: Herwig++ 7 MEQCDMinBias
     gen: herwig
-    proc: dijet_lo
-    ts: 1530007919
+    proc: mb
+    ts: 1531819153
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
-    line: 8
-    color: 903 # kPink+3
+    line: 7
+    color: 797 # kOrange-3
+-
+  title: Herwig++ 7 MEQCDMinBias
+  active: yes
+  gen: herwig
+  proc: mb
+  ts: 1531819153
+  color: 797 # kOrange-3
+  line: 5
+  inclusive:
+    title: Herwig++ 7 MEQCDMinBias
+    gen: herwig
+    proc: mb
+    ts: 1531819153
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+    line: 7
+    color: 797 # kOrange-3
 -
   title: Herwig++ 7 MEQCD2to2
   active: no
   gen: herwig
   proc: dijet_lo
-  ts: 1530007919
-  color: 797 # kOrange-3
+  ts: 1531074150
+  color: 882 # kViolet+2
   line: 8
   inclusive:
     title: Herwig++ 7 MEQCD2to2
     gen: herwig
     proc: dijet_lo
-    ts: 1530007919
+    ts: 1531074150
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
-    line: 8
-    color: 903 # kPink+3
+    line: 9
+    color: 882 # kViolet+2

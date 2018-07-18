@@ -539,7 +539,7 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
         x1 = config["theory_legend"]["x"]
     else:
         x1 = 0.16
-    x2 = x1 + 0.50
+    x2 = x1 + 0.36 * n_leg_columns
     if x2 > 0.95:
         x2 = 0.95
 

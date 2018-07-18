@@ -66,22 +66,22 @@ theory:
   active: yes
   gen: herwig
   proc: charm_lo
-  ts: 1530008529
+  ts: 1531075164
   color: 903 # kPink+3
   line: 4
--
-  title: Herwig++ 7 MEQCD2to2
-  active: yes
-  gen: herwig
-  proc: dijet_lo
-  ts: 1531074150
-  color: 797 # kOrange-3
-  line: 8
 -
   title: Herwig++ 7 MEQCDMinBias
   active: yes
   gen: herwig
   proc: mb
   ts: 1531819153
-  color: 882 # kViolet+2
+  color: 797 # kOrange-3
   line: 5
+-
+  title: Herwig++ 7 MEQCD2to2
+  active: no
+  gen: herwig
+  proc: dijet_lo
+  ts: 1531074150
+  color: 882 # kViolet+2
+  line: 8

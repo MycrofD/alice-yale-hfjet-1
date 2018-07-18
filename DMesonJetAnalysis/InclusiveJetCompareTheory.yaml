@@ -25,19 +25,19 @@ list:
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   ts: 1521277750
-  active: yes
+  active: no
   prefix: FastSim_pythia8_mb
   title: "PYTHIA 8 Monash-2013"
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   ts: 1527252990
-  active: yes
+  active: no
   title: "POWHEG dijet + PYTHIA 6"
   prefix: FastSim_powheg+pythia6_dijet
   file_name: FastSimAnalysis_inclusive_jets.root
 -
   ts: 1529262323
-  active: yes
+  active: no
   prefix: FastSim_powheg+pythia6_dijet_lo
   title: "POWHEG dijet LO + PYTHIA 6"
   file_name: FastSimAnalysis_inclusive_jets.root
@@ -45,11 +45,29 @@ list:
   ts: 1531074150
   active: yes
   prefix: FastSim_herwig_dijet_lo
-  title: "Herwig++ 7 MEQCD2to2"
+  title: "Herwig++ 7 MEQCD2to2 (IdenticalToUE 0)"
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   ts: 1531169201
   active: yes
   prefix: FastSim_herwig_mb
-  title: "Herwig++ 7 MEQCDMinBias"
+  title: "Herwig++ 7 MEQCDMinBias (IdenticalToUE -1)"
+  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+-
+  ts: 1531819153
+  active: yes
+  prefix: FastSim_herwig_mb
+  title: "Herwig++ 7 MEQCDMinBias (IdenticalToUE 0)"
+  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+-
+  ts: 1531508959
+  active: yes
+  prefix: FastSim_herwig_mb
+  title: "Herwig++ 7 MEQCDMinBias (LHC-UE-EE-4)"
+  file_name: FastSimAnalysis_inclusive_jets_unweighted.root
+-
+  ts: 1531821049
+  active: yes
+  prefix: FastSim_herwig_mb
+  title: "Herwig++ 7 MEQCDMinBias (LHC-UE-EE-4, CTEQ6L1)"
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root
