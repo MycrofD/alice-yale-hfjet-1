@@ -13,6 +13,8 @@ canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
 
+data_systematics_style: "02"
+
 name_prefix: JetPtCrossSection
 normalization: CrossSection
 miny: 2.0e-5

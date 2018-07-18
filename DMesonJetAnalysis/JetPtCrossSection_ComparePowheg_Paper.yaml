@@ -13,6 +13,8 @@ canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
 
+data_systematics_style: "02"
+
 name_prefix: JetPtCrossSection
 normalization: CrossSection
 miny: 2.0e-5
@@ -51,6 +53,7 @@ theory:
   color: 602 # kBlue+2
   marker: kOpenCircle
   fill: 3345
+  systematics_style: "02"
 -
   title: POWHEG dijet + PYTHIA 6
   type: stat+syst
@@ -59,3 +62,4 @@ theory:
   color: 418 # kGreen+2
   marker: kOpenSquare
   fill: 3354
+  systematics_style: "02"

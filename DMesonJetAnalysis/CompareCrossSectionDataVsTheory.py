@@ -54,6 +54,11 @@ def GetTheoryCrossSectionAll(config, axis):
     return LoadTheoryCrossSections.GetD0JetTheoryCrossSectionAll(config, axis)
 
 def PlotCrossSections(dataStat, dataSyst, config):
+    no_box_sys = ["[]", "||", "0[]", "0||"]
+    if not "data_systematics_style" in config:
+        config["data_systematics_style"] = "2"
+    config["data_box_systematics"] = not (config["data_systematics_style"] in no_box_sys)
+
     cname = "{}_{}".format(config["name_prefix"], config["name"])
     if "canvas_h" in config:
         canvas_h = config["canvas_h"]
@@ -107,10 +112,8 @@ def PlotCrossSections(dataStat, dataSyst, config):
     h.GetYaxis().SetTitle(config["axis"]["y_title"])
 
     dataSyst_copy = dataSyst.Clone("{0}_copy".format(dataSyst.GetName()))
-    dataSyst_copy.Draw("2")
     globalList.append(dataSyst_copy)
-
-    dataStat_copy = dataStat.DrawCopy("same p e0 x0")
+    dataStat_copy = dataStat.Clone("{0}_copy".format(dataStat.GetName()))
     globalList.append(dataStat_copy)
 
     if "data_minx" in config and "data_maxx" in config:
@@ -133,10 +136,44 @@ def PlotCrossSections(dataStat, dataSyst, config):
                 for ipoint in points_to_be_removed:
                     hSyst.RemovePoint(ipoint)
 
+    # Plot data systematic uncertainties, if they are plotted as a filled box
+    if config["data_box_systematics"]:
+        dataSyst_copy.Draw(config["data_systematics_style"])
+
+    # Plot theory systematic uncertainties (if they are plotted as a filled box)
     for t in config["theory"]:
         if not t["active"]:
             continue
-        if not "type" in t or t["type"] == "stat-only":
+        if not "type" in t:
+            t["type"] = "stat-only"
+        if t["type"] == "stat+syst":
+            if not "systematics_style" in t:
+                t["systematics_style"] = "2"
+            t["box_systematics"] = not (t["systematics_style"] in no_box_sys)
+
+            if t["box_systematics"]:
+                hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
+                hSyst.SetLineColor(t["color"])
+                hSyst.SetFillColor(t["color"])
+                hSyst.SetLineWidth(2)
+                if "line" in t:
+                    hSyst.SetLineStyle(t["line"])
+                if "fill" in t:
+                    hSyst.SetFillStyle(t["fill"])
+                else:
+                    hSyst.SetFillStyle(0)
+                hSyst.Draw(t["systematics_style"])
+                globalList.append(hSyst)
+                t["systematics_plot"] = hSyst
+
+    # Plot data statistical uncertainties
+    dataStat_copy.Draw("same p e0 x0")
+
+    # Plot theory statistical uncertainties and systematic uncertainties (if they are not plotted as filled boxes)
+    for t in config["theory"]:
+        if not t["active"]:
+            continue
+        if t["type"] == "stat-only":
             h = t["histogram"].Clone(t["gen"])
             h.Draw("same e0")
             if "data_minx" in config and "data_maxx" in config:
@@ -149,19 +186,16 @@ def PlotCrossSections(dataStat, dataSyst, config):
             h.SetMarkerColor(t["color"])
             t["histogram_plot"] = h
         elif t["type"] == "stat+syst":
-            hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
-            hSyst.SetLineColor(t["color"])
-            hSyst.SetFillColor(t["color"])
-            hSyst.SetLineWidth(2)
-            if "line" in t:
-                hSyst.SetLineStyle(t["line"])
-            if "fill" in t:
-                hSyst.SetFillStyle(t["fill"])
-            else:
-                hSyst.SetFillStyle(0)
-            hSyst.Draw("2")
-            globalList.append(hSyst)
-            t["systematics_plot"] = hSyst
+            if not t["box_systematics"]:
+                hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
+                for ipoint in range(0, hSyst.GetN()):
+                    hSyst.SetPointEXhigh(ipoint, 0)
+                    hSyst.SetPointEXlow(ipoint, 0)
+                hSyst.SetLineColor(t["color"])
+                hSyst.SetLineWidth(2)
+                hSyst.Draw(t["systematics_style"])
+                globalList.append(hSyst)
+                t["systematics_plot"] = hSyst
 
             hStat = t["histogram"].Clone("{0}_copy".format(t["histogram"].GetName()))
             hStat.SetMarkerStyle(getattr(ROOT, t["marker"]))
@@ -171,34 +205,22 @@ def PlotCrossSections(dataStat, dataSyst, config):
             globalList.append(hStat)
             t["histogram_plot"] = hStat
 
-    padRatio.cd()
+    # Plot data systematic uncertainties, if they are not plotted as filled boxes
+    if not config["data_box_systematics"]:
+        for ipoint in range(0, dataSyst_copy.GetN()):
+            dataSyst_copy.SetPointEXhigh(ipoint, 0)
+            dataSyst_copy.SetPointEXlow(ipoint, 0)
+        dataSyst_copy.SetLineColor(dataStat_copy.GetLineColor())
+        dataSyst_copy.Draw(config["data_systematics_style"])
 
-    hRatio = ROOT.TH1I("h", "h", 1000, minx, maxx)
-    hRatio.Draw("axis")
-    globalList.append(hRatio)
-    hRatio.GetYaxis().SetTitle("MC / Data")
-    hRatio.GetXaxis().SetTitleFont(43)
-    hRatio.GetXaxis().SetTitleSize(config["axis"]["font_size"])
-    hRatio.GetXaxis().SetLabelFont(43)
-    hRatio.GetXaxis().SetLabelSize(config["axis"]["font_size"] - 3)
-    hRatio.GetYaxis().SetTitleFont(43)
-    hRatio.GetYaxis().SetTitleSize(config["axis"]["font_size"])
-    hRatio.GetYaxis().SetLabelFont(43)
-    hRatio.GetYaxis().SetLabelSize(config["axis"]["font_size"] - 3)
-    hRatio.GetYaxis().SetTitleOffset(config["axis"]["y_offset"])
-    hRatio.GetXaxis().SetTitleOffset(config["axis"]["x_offset"])
-    hRatio.GetYaxis().SetRangeUser(config["minr"], config["maxr"])
-    hRatio.GetYaxis().SetNdivisions(509)
-    hRatio.GetXaxis().SetTitle(config["axis"]["x_title"])
+    # RATIO
 
     ratioSyst = dataSyst_copy.Clone("ratioSyst")
     globalList.append(ratioSyst)
-    ratioSyst.Draw("2")
 
     ratioStat = dataStat_copy.Clone("ratioStat")
-    globalList.append(ratioStat)
-    ratioStat.Draw("same p e0 x0")
     ratioStat.SetFillStyle(0)
+    globalList.append(ratioStat)
 
     for ibin in range(0, ratioSyst.GetN()):
         ratioSyst.SetPointEYlow(ibin, ratioSyst.GetErrorYlow(ibin) / ratioSyst.GetY()[ibin])
@@ -223,23 +245,77 @@ def PlotCrossSections(dataStat, dataSyst, config):
                 continue
             r.SetBinError(ibin, t["histogram_plot"].GetBinError(ibin) / dataStat_copy.GetBinContent(ibin))
             r.SetBinContent(ibin, t["histogram_plot"].GetBinContent(ibin) / dataStat_copy.GetBinContent(ibin))
-        if not "type" in t or t["type"] == "stat-only":
-            r.SetLineColor(t["color"])
-            r.SetLineStyle(t["line"])
-            r.SetLineWidth(2)
-            r.SetMarkerStyle(20)
-            r.SetMarkerSize(0)
-            r.Draw("same e0")
-            t["ratio"] = r
-        elif t["type"] == "stat+syst":
+        t["ratio_histogram_plot"] = r
+        if t["type"] == "stat+syst" and "systematics_plot" in t:
             rSyst = t["systematics_plot"].Clone()
             globalList.append(rSyst)
             for ibin in range(0, rSyst.GetN()):
                 rSyst.SetPointEYlow(ibin, rSyst.GetErrorYlow(ibin) / dataSyst_copy.GetY()[ibin])
                 rSyst.SetPointEYhigh(ibin , rSyst.GetErrorYhigh(ibin) / dataSyst_copy.GetY()[ibin])
                 rSyst.SetPoint(ibin, rSyst.GetX()[ibin], rSyst.GetY()[ibin] / dataSyst_copy.GetY()[ibin])
-            rSyst.Draw("2")
+            t["ratio_systematics_plot"] = rSyst
+
+    padRatio.cd()
+
+    hRatio = ROOT.TH1I("h", "h", 1000, minx, maxx)
+    hRatio.Draw("axis")
+    globalList.append(hRatio)
+    hRatio.GetYaxis().SetTitle("MC / Data")
+    hRatio.GetXaxis().SetTitleFont(43)
+    hRatio.GetXaxis().SetTitleSize(config["axis"]["font_size"])
+    hRatio.GetXaxis().SetLabelFont(43)
+    hRatio.GetXaxis().SetLabelSize(config["axis"]["font_size"] - 3)
+    hRatio.GetYaxis().SetTitleFont(43)
+    hRatio.GetYaxis().SetTitleSize(config["axis"]["font_size"])
+    hRatio.GetYaxis().SetLabelFont(43)
+    hRatio.GetYaxis().SetLabelSize(config["axis"]["font_size"] - 3)
+    hRatio.GetYaxis().SetTitleOffset(config["axis"]["y_offset"])
+    hRatio.GetXaxis().SetTitleOffset(config["axis"]["x_offset"])
+    hRatio.GetYaxis().SetRangeUser(config["minr"], config["maxr"])
+    hRatio.GetYaxis().SetNdivisions(509)
+    hRatio.GetXaxis().SetTitle(config["axis"]["x_title"])
+
+    # Plot data systematic uncertainties, if they are plotted as a filled box
+    if config["data_box_systematics"]:
+        ratioSyst.Draw(config["data_systematics_style"])
+
+    # Plot theory systematic uncertainties (if they are plotted as a filled box)
+    for t in config["theory"]:
+        if not t["active"]:
+            continue
+        if t["type"] == "stat+syst" and t["box_systematics"]:
+            if not "ratio_systematics_plot" in t:
+                continue
+            rSyst = t["ratio_systematics_plot"]
+            rSyst.Draw(t["systematics_style"])
+
+    # Plot data statistical uncertainties
+    ratioStat.Draw("same p e0 x0")
+
+    # Plot theory statistical uncertainties and systematic uncertainties (if they are not plotted as filled boxes)
+    for t in config["theory"]:
+        if not t["active"]:
+            continue
+        r = t["ratio_histogram_plot"]
+        if t["type"] == "stat-only":
+            r.Draw("same e0")
+        elif t["type"] == "stat+syst":
             r.Draw("same p e0 x0")
+            if not t["box_systematics"] and "ratio_systematics_plot" in t:
+                rSyst = t["ratio_systematics_plot"]
+                for ipoint in range(0, rSyst.GetN()):
+                    rSyst.SetPointEXhigh(ipoint, 0)
+                    rSyst.SetPointEXlow(ipoint, 0)
+                rSyst.Draw(t["systematics_style"])
+
+    # Plot data systematic uncertainties, if they are not plotted as filled boxes
+    if not config["data_box_systematics"]:
+        for ipoint in range(0, ratioSyst.GetN()):
+            ratioSyst.SetPointEXhigh(ipoint, 0)
+            ratioSyst.SetPointEXlow(ipoint, 0)
+        ratioSyst.SetLineColor(ratioStat.GetLineColor())
+        ratioSyst.Draw(config["data_systematics_style"])
+
     padMain.cd()
 
     if "y" in config["title"]:
@@ -307,11 +383,10 @@ def PlotCrossSections(dataStat, dataSyst, config):
     for t in config["theory"]: 
         if not "histogram_plot" in t:
             continue
-        if not "type" in t or t["type"] == "stat-only":
+        if t["type"] == "stat-only":
             leg1.AddEntry(t["histogram_plot"], t["title"], "l")
         elif t["type"] == "stat+syst":
             entry = leg1.AddEntry(None, t["title"], "pf")
-            entry.SetFillStyle(0)
             entry.SetLineColor(t["systematics_plot"].GetLineColor())
             entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
             entry.SetFillColor(t["systematics_plot"].GetFillColor())
@@ -339,8 +414,19 @@ def PlotCrossSections(dataStat, dataSyst, config):
     leg1.SetTextSize(config["data_legend"]["font_size"])
     leg1.SetTextAlign(12)
     leg1.SetMargin(0.2)
-    leg1.AddEntry(dataStat_copy, "Data", "p")
-    leg1.AddEntry(dataSyst_copy, "Syst. Unc. (data)", "f")
+
+    if config["data_box_systematics"]:
+        entry = leg1.AddEntry(None, "Data", "pf")
+        entry.SetFillStyle(dataSyst_copy.GetFillStyle())
+        entry.SetFillColor(dataSyst_copy.GetFillColor())
+        entry.SetLineColor(dataSyst_copy.GetFillColor())
+        entry.SetMarkerColor(dataStat_copy.GetMarkerColor())
+        entry.SetMarkerStyle(dataStat_copy.GetMarkerStyle())
+    else:
+        entry = leg1.AddEntry(None, "Data", "p")
+        entry.SetMarkerColor(dataStat_copy.GetMarkerColor())
+        entry.SetMarkerStyle(dataStat_copy.GetMarkerStyle())
+
     leg1.Draw()
 
     padRatio.RedrawAxis("g")
