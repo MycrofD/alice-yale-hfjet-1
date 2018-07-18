@@ -45,6 +45,11 @@ def GetInclusiveJetTheoryCrossSectionAll(config):
     return LoadTheoryCrossSections.GetInclusiveJetTheoryCrossSectionAll(config)
 
 def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_jet_cross_sections, config):
+    no_box_sys = ["[]", "||", "0[]", "0||"]
+    if not "data_systematics_style" in config:
+        config["data_systematics_style"] = "2"
+    config["data_box_systematics"] = not (config["data_systematics_style"] in no_box_sys)
+
     d0jet_syst_copy = d0jet_syst.Clone("{0}_copy".format(d0jet_syst.GetName()))
     d0jet_syst_copy.SetFillStyle(1001)
     d0jet_syst_copy.SetLineWidth(0)
@@ -76,26 +81,32 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
         globalList.append(incl_h)
         incl_h.SetLineColor(t["color"])
         incl_h.SetLineStyle(t["line"])
-        incl_h.SetLineWidth(2)
+        incl_h.SetLineWidth(1)
         incl_h.SetMarkerColor(t["color"])
         t["histogram_plot"] = incl_h
 
     for t in config["theory"]:
         if not t["active"]:
             continue
-        if not "type" in t or t["type"] == "stat-only":
+        if not "type" in t:
+            t["type"] = "stat-only"
+        if t["type"] == "stat-only":
             d0jet_h = t["histogram"].Clone("_".join([t["gen"], t["proc"]]))
             globalList.append(d0jet_h)
             d0jet_h.SetLineColor(t["color"])
             d0jet_h.SetLineStyle(t["line"])
-            d0jet_h.SetLineWidth(2)
+            d0jet_h.SetLineWidth(1)
             d0jet_h.SetMarkerColor(t["color"])
             t["histogram_plot"] = d0jet_h
         elif t["type"] == "stat+syst":
+            if not "systematics_style" in t:
+                t["systematics_style"] = "2"
+            t["box_systematics"] = not (t["systematics_style"] in no_box_sys)
+            
             hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
             hSyst.SetLineColor(t["color"])
             hSyst.SetFillColor(t["color"])
-            hSyst.SetLineWidth(2)
+            hSyst.SetLineWidth(1)
             if "line" in t:
                 hSyst.SetLineStyle(t["line"])
             if "fill" in t:
@@ -128,7 +139,7 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
         if not t["inclusive"]:
             continue
 
-        if not "type" in t or t["type"] == "stat-only":
+        if t["type"] == "stat-only":
             incl_h = t["inclusive"]["histogram_plot"]
             d0jet_h = t["histogram_plot"]
             normalizator = HistogramNormalizator.Normalizator(d0jet_h, "ratio")
@@ -137,11 +148,13 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
             hratio = normalizator.fNormalizedHistogram
             hratio.SetName("_".join([t["gen"], t["proc"], "over", t["inclusive"]["gen"], t["inclusive"]["proc"]]))
             t["ratio_histogram"] = hratio
+            hStat = t["ratio_histogram"].Clone("{0}_copy".format(t["ratio_histogram"].GetName()))
+            t["ratio_histogram_plot"] = hStat
         elif t["type"] == "stat+syst":
             hSyst = t["ratio_systematics"].Clone("{0}_copy".format(t["ratio_systematics"].GetName()))
             hSyst.SetLineColor(t["color"])
             hSyst.SetFillColor(t["color"])
-            hSyst.SetLineWidth(2)
+            hSyst.SetLineWidth(1)
             if "line" in t:
                 hSyst.SetLineStyle(t["line"])
             if "fill" in t:
@@ -160,13 +173,12 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
 
     # Done with all the preparations, now plotting
 
-    # First plot the cross section + ratio panel
-    canvas = DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy, incl_syst_copy, ratioSyst, ratioStat, inclusive_jet_cross_sections)
+    if "plot_ratio_only" in config and config["plot_ratio_only"]:
+        canvas = DrawRatioCanvas(config, ratioSyst, ratioStat)
+    else:
+        canvas = DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy, incl_syst_copy, ratioSyst, ratioStat, inclusive_jet_cross_sections)
 
-    # Now plot the ratio only
-    canvas_ratio = DrawRatioCanvas(config, ratioSyst, ratioStat)
-
-    return canvas, canvas_ratio
+    return canvas
 
 def GenerateHistogramAxis(config, xmin, xmax):
     hAxis = ROOT.TH1I("axis", "axis", 1000, xmin, xmax)
@@ -247,12 +259,12 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     for t in config["theory"]:
         if not t["active"]:
             continue
-        if not "type" in t or t["type"] == "stat-only":
+        if t["type"] == "stat-only":
             d0jet_h = t["histogram_plot"]
             d0jet_h.Draw("same e0")
         elif t["type"] == "stat+syst":
             hSyst = t["systematics_plot"]
-            hSyst.Draw("2")
+            hSyst.Draw(t["systematics_style"])
 
             hStat = t["histogram_plot"]
             hStat.Draw("same p e0 x0")
@@ -267,12 +279,12 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     for t in config["theory"]:
         if not t["active"]:
             continue
-        if not "type" in t or t["type"] == "stat-only":
+        if t["type"] == "stat-only":
             hratio = t["ratio_histogram"]
             hratio.Draw("same")
         elif t["type"] == "stat+syst":
             hSyst = t["ratio_systematics_plot"]
-            hSyst.Draw("2")
+            hSyst.Draw(t["systematics_style"])
 
             hStat = t["ratio_histogram_plot"]
             hStat.Draw("same p e0 x0")
@@ -347,17 +359,19 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     for t in config["theory"]: 
         if not "histogram_plot" in t:
             continue
-        if not "type" in t or t["type"] == "stat-only":
+        if t["type"] == "stat-only":
             leg1.AddEntry(t["histogram_plot"], "D^{{0}} Jets, {}".format(t["title"]), "l")
         elif t["type"] == "stat+syst":
-            entry = leg1.AddEntry(None, "D^{{0}} Jets, {}".format(t["title"]), "pf")
-            entry.SetFillStyle(0)
-            entry.SetLineColor(t["systematics_plot"].GetLineColor())
-            entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
-            entry.SetFillColor(t["systematics_plot"].GetFillColor())
-            entry.SetFillStyle(t["systematics_plot"].GetFillStyle())
-            entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
-            entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
+            if t["box_systematics"]:
+                entry = leg1.AddEntry(None, "D^{{0}} Jets, {}".format(t["title"]), "pf")
+                entry.SetLineColor(t["systematics_plot"].GetLineColor())
+                entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
+                entry.SetFillColor(t["systematics_plot"].GetFillColor())
+                entry.SetFillStyle(t["systematics_plot"].GetFillStyle())
+                entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
+                entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
+            else:
+                leg1.AddEntry(t["histogram_plot"], "D^{{0}} Jets, {}".format(t["title"]), "p")
     for t in inclusive_jet_cross_sections.itervalues():
         if "histogram_plot" in t: 
             leg1.AddEntry(t["histogram_plot"], "Inclusive Jets, {}".format(t["title"]), "l")
@@ -382,12 +396,18 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
     leg1.SetTextSize(config["data_legend"]["font_size"])
     leg1.SetTextAlign(12)
     leg1.SetMargin(0.2)
-    entry = leg1.AddEntry(None, "D^{0} Jets, #it{p}_{T,D} > 3 GeV/#it{c}", "pf")
-    entry.SetFillStyle(d0jet_syst_copy.GetFillStyle())
-    entry.SetFillColor(d0jet_syst_copy.GetFillColor())
-    entry.SetLineColor(d0jet_syst_copy.GetFillColor())
-    entry.SetMarkerColor(d0jet_stat_copy.GetMarkerColor())
-    entry.SetMarkerStyle(d0jet_stat_copy.GetMarkerStyle())
+    if config["data_box_systematics"]:
+        entry = leg1.AddEntry(None, "D^{0} Jets, #it{p}_{T,D} > 3 GeV/#it{c}", "pf")
+        entry.SetFillStyle(d0jet_syst_copy.GetFillStyle())
+        entry.SetFillColor(d0jet_syst_copy.GetFillColor())
+        entry.SetLineColor(d0jet_syst_copy.GetFillColor())
+        entry.SetMarkerColor(d0jet_stat_copy.GetMarkerColor())
+        entry.SetMarkerStyle(d0jet_stat_copy.GetMarkerStyle())
+    else:
+        entry = leg1.AddEntry(None, "D^{0} Jets, #it{p}_{T,D} > 3 GeV/#it{c}", "p")
+        entry.SetMarkerColor(d0jet_stat_copy.GetMarkerColor())
+        entry.SetMarkerStyle(d0jet_stat_copy.GetMarkerStyle())
+
     entry = leg1.AddEntry(None, "Inclusive Jets", "pf")
     entry.SetFillStyle(incl_syst_copy.GetFillStyle())
     entry.SetFillColor(incl_syst_copy.GetFillColor())
@@ -405,6 +425,11 @@ def DrawTwoPanelCanvas(config, d0jet_stat_copy, d0jet_syst_copy, incl_stat_copy,
 def DrawRatioCanvas(config, ratioSyst, ratioStat):
     hAxisRatio = GenerateHistogramRatioAxis(config, ratioStat.GetXaxis().GetBinLowEdge(1), ratioStat.GetXaxis().GetBinUpEdge(ratioStat.GetXaxis().GetNbins()))
     hAxisRatio.GetXaxis().SetTitleOffset(config["axis"]["x_offset"] * 0.35)
+
+    ratioSyst_copy = ratioSyst.Clone()
+    ratioStat_copy = ratioStat.Clone()
+    globalList.append(ratioStat_copy)
+    globalList.append(ratioSyst_copy)
 
     cname = "{}_{}_Ratio".format(config["name_prefix"], config["name"])
     if "canvas_h" in config:
@@ -427,22 +452,41 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     hAxisRatio.Draw("axis")
     globalList.append(hAxisRatio)
 
-    ratioSyst.Draw("2")
-    ratioStat_copy = ratioStat.DrawCopy("same p e0 x0")
-    globalList.append(ratioStat_copy)
+    # Plot data systematic uncertainties, if they are plotted as a filled box
+    if config["data_box_systematics"]:
+        ratioSyst_copy.Draw(config["data_systematics_style"])
 
+    # Plot theory systematic uncertainties (if they are plotted as a filled box)
     for t in config["theory"]:
         if not t["active"]:
             continue
-        if not "type" in t or t["type"] == "stat-only":
-            hratio = t["ratio_histogram"]
-            hratio.Draw("same")
-        elif t["type"] == "stat+syst":
+        if t["type"] == "stat+syst" and t["box_systematics"]:
             hSyst = t["ratio_systematics_plot"]
-            hSyst.Draw("2")
+            hSyst.Draw(t["systematics_style"])
 
-            hStat = t["ratio_histogram_plot"]
+    # Plot data statistical uncertainties
+    ratioStat_copy.Draw("same p e0 x0")    
+
+    # Plot theory statistical uncertainties and systematic uncertainties (if they are not plotted as filled boxes)
+    for t in config["theory"]:
+        if not t["active"]:
+            continue
+        hStat = t["ratio_histogram_plot"]
+        if t["type"] == "stat-only":
+            hStat.Draw("same e0")
+        elif t["type"] == "stat+syst":
             hStat.Draw("same p e0 x0")
+            if not t["box_systematics"]:
+                hSyst = t["ratio_systematics_plot"]
+                hSyst.Draw(t["systematics_style"])
+
+    # Plot data systematic uncertainties, if they are not plotted as filled boxes
+    if not config["data_box_systematics"]:
+        for ipoint in range(0, ratioSyst_copy.GetN()):
+            ratioSyst_copy.SetPointEXhigh(ipoint, 0)
+            ratioSyst_copy.SetPointEXlow(ipoint, 0)
+        ratioSyst_copy.SetLineColor(ratioStat_copy.GetLineColor())
+        ratioSyst_copy.Draw(config["data_systematics_style"])
 
     # Now plotting labels
 
@@ -511,17 +555,19 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     for t in config["theory"]: 
         if not "histogram_plot" in t:
             continue
-        if not "type" in t or t["type"] == "stat-only":
+        if t["type"] == "stat-only":
             leg1.AddEntry(t["histogram_plot"], t["title"], "l")
         elif t["type"] == "stat+syst":
-            entry = leg1.AddEntry(None, t["title"], "pf")
-            entry.SetFillStyle(0)
-            entry.SetLineColor(t["systematics_plot"].GetLineColor())
-            entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
-            entry.SetFillColor(t["systematics_plot"].GetFillColor())
-            entry.SetFillStyle(t["systematics_plot"].GetFillStyle())
-            entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
-            entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
+            if t["box_systematics"]:
+                entry = leg1.AddEntry(None, t["title"], "pf")
+                entry.SetLineColor(t["ratio_systematics_plot"].GetLineColor())
+                entry.SetLineWidth(t["ratio_systematics_plot"].GetLineWidth())
+                entry.SetFillColor(t["ratio_systematics_plot"].GetFillColor())
+                entry.SetFillStyle(t["ratio_systematics_plot"].GetFillStyle())
+                entry.SetMarkerColor(t["ratio_histogram_plot"].GetMarkerColor())
+                entry.SetMarkerStyle(t["ratio_histogram_plot"].GetMarkerStyle())
+            else:
+                leg1.AddEntry(t["ratio_histogram_plot"], t["title"], "p")
 
     leg1.Draw()
 
@@ -543,12 +589,18 @@ def DrawRatioCanvas(config, ratioSyst, ratioStat):
     leg1.SetTextSize(config["data_legend"]["font_size"])
     leg1.SetTextAlign(12)
     leg1.SetMargin(0.2)
-    entry = leg1.AddEntry(None, "Data", "pf")
-    entry.SetFillStyle(ratioSyst.GetFillStyle())
-    entry.SetFillColor(ratioSyst.GetFillColor())
-    entry.SetLineColor(ratioSyst.GetFillColor())
-    entry.SetMarkerColor(ratioStat.GetMarkerColor())
-    entry.SetMarkerStyle(ratioStat.GetMarkerStyle())
+
+    if config["data_box_systematics"]:
+        entry = leg1.AddEntry(None, "Data", "pf")
+        entry.SetFillStyle(ratioSyst_copy.GetFillStyle())
+        entry.SetFillColor(ratioSyst_copy.GetFillColor())
+        entry.SetLineColor(ratioSyst_copy.GetFillColor())
+        entry.SetMarkerColor(ratioStat_copy.GetMarkerColor())
+        entry.SetMarkerStyle(ratioStat_copy.GetMarkerStyle())
+    else:
+        entry = leg1.AddEntry(None, "Data", "p")
+        entry.SetMarkerColor(ratioStat_copy.GetMarkerColor())
+        entry.SetMarkerStyle(ratioStat_copy.GetMarkerStyle())
     leg1.Draw()
 
     canvas_ratio.RedrawAxis("g")
@@ -565,11 +617,9 @@ def main(config):
     incl_stat, incl_syst = GetInclJetCrossSection()
     GetD0JetTheoryCrossSectionAll(config, d0jet_stat.GetXaxis())
     inclusive_jet_cross_sections = GetInclusiveJetTheoryCrossSectionAll(config)
-    canvas, canvas_ratio = PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_jet_cross_sections, config)
+    canvas = PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_jet_cross_sections, config)
     canvas.SaveAs("{}/{}.pdf".format(config["input_path"], canvas.GetName()))
     canvas.SaveAs("{}/{}.C".format(config["input_path"], canvas.GetName()))
-    canvas_ratio.SaveAs("{}/{}.pdf".format(config["input_path"], canvas_ratio.GetName()))
-    canvas_ratio.SaveAs("{}/{}.C".format(config["input_path"], canvas_ratio.GetName()))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Jet pt spectrum theory comparison.')

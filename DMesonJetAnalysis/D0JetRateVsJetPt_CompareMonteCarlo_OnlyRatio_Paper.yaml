@@ -12,6 +12,9 @@ canvas_w: 550
 canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
+plot_ratio_only: yes
+
+data_systematics_style: "0[]"
 
 name_prefix: D0JetRateVsJetPt
 normalization: CrossSection
@@ -49,7 +52,7 @@ theory:
   gen: pythia6
   proc: charm
   ts: 1520422008
-  color: 857 # kAzure-3
+  color: 881 # kViolet+1
   line: 2
   inclusive:
     title: PYTHIA 6 Perugia-2011
@@ -58,14 +61,14 @@ theory:
     ts: 1520882421
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
     line: 8
-    color: 857 # kAzure-3
+    color: 881 # kViolet+1
 -
   title: PYTHIA 8 Monash-2013
   active: yes
   gen: pythia8
   proc: charm
   ts: 1520426239
-  color: 819 # kSpring-1
+  color: 843 # kTeal+3
   line: 6
   inclusive:
     title: PYTHIA 8 Monash-2013
@@ -74,7 +77,7 @@ theory:
     ts: 1521277750
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
     line: 3
-    color: 819 # kSpring-1
+    color: 843 # kTeal+3
 -
   title: Herwig++ 7 MEHeavyQuark
   active: no
@@ -90,7 +93,7 @@ theory:
     ts: 1530007919
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
     line: 8
-    color: 797 # kOrange-3
+    color: 903 # kPink+3
 -
   title: Herwig++ 7 MEQCD2to2
   active: no
@@ -106,4 +109,4 @@ theory:
     ts: 1530007919
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
     line: 8
-    color: 797 # kOrange-3
+    color: 903 # kPink+3

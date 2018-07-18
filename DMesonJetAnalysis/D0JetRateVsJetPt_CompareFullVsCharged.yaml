@@ -12,6 +12,7 @@ canvas_w: 550
 canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
+plot_ratio_only: no
 
 name_prefix: D0JetRateVsJetPt
 normalization: CrossSection
