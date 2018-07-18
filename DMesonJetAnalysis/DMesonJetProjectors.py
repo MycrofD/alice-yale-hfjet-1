@@ -11,7 +11,6 @@ import DMesonJetUtils
 import DetectorResponse
 import DetectorResponseLoader
 
-
 class DMesonJetProjector:
 
     def __init__(self, inputPath, train, fileName, taskName, tree_type, merging_type, norm_factor, maxEvents):
@@ -35,6 +34,8 @@ class DMesonJetProjector:
         self.fNormFactor = norm_factor
         self.fDoNotAsk = True
         self.fFilePaths = None
+        if self.fNormFactor > 1 or self.fNormFactor < 1:
+            print("An artificial normalization factor of {} is applied.".format(self.fNormFactor))
 
     def GenerateChain(self, treeName):
         self.fChain = ROOT.TChain(treeName)
@@ -83,7 +84,7 @@ class DMesonJetProjector:
             if self.fMergingType != "explicit_weight": 
                 weight = self.CalculateWeight(myfile, trigger)
                 self.fWeights[myfilename] = weight
-                print("Weight: {} (merging type = {})".format(self.fWeight, self.fMergingType))
+                print("Weight: {} (merging type = {})".format(weight, self.fMergingType))
 
         self.CalculateNormalizedEvents()
 
@@ -191,9 +192,11 @@ class DMesonJetProjector:
 
             if self.fMergingType == "average":
                 averageFactor = 1. / self.fNFiles
-                totEvents = self.fChain.GetEntries()
-                if self.fMaxEvents > 0 and self.fMaxEvents < totEvents:
-                    averageFactor *= totEvents / self.fMaxEvents
+
+                if self.fMaxEvents > 0:
+                    totEvents = self.fChain.GetEntries()
+                    if self.fMaxEvents < totEvents:
+                        averageFactor *= totEvents / self.fMaxEvents
                 weight *= averageFactor
             else:
                 weight *= self.fNormFactor
@@ -273,22 +276,27 @@ class DMesonJetProjector:
             pass
         jet_branch_names = output.GetJetBranches()
         dmesonEvent = DMesonEvent()
+        idmeson = 0
         for i, event in enumerate(self.fChain):
             if i % 10000 == 0:
-                print("D meson candidate n. {0}".format(i))
+                print("Event n. {0}".format(i))
                 if self.fMaxEvents > 0 and i >= self.fMaxEvents:
                     print("Stopping the analysis.")
                     break
             self.OnFileChange()
-            self.GetExplicitWeight(event)
+            if self.fMergingType == "explicit_weight": 
+                self.GetExplicitWeight(event)
             jet_branches = [getattr(event, jet_branch_name) for jet_branch_name in jet_branch_names]
             for dmeson_and_jets in zip(event.Dmesons, *jet_branches):
+                if idmeson % 10000 == 0:
+                    print("D meson candidate n. {0}".format(idmeson))
                 dmeson = dmeson_and_jets[0]
                 jets = dmeson_and_jets[1:]
                 dmesonEvent.DmesonJet = dmeson
                 for jet, jet_branch_name in zip(jets, jet_branch_names):
                     setattr(dmesonEvent, jet_branch_name, jet)
                 output.Fill(dmesonEvent, self.fWeight * norm)
+                idmeson += 1
 
     def DoProjectionSimple(self, trigger, DMesonDef, DMesonDefSuffix, output, norm):
         for i, dmesonEvent in enumerate(self.fChain):
