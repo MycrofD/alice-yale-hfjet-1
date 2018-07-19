@@ -386,13 +386,16 @@ def PlotCrossSections(dataStat, dataSyst, config):
         if t["type"] == "stat-only":
             leg1.AddEntry(t["histogram_plot"], t["title"], "l")
         elif t["type"] == "stat+syst":
-            entry = leg1.AddEntry(None, t["title"], "pf")
-            entry.SetLineColor(t["systematics_plot"].GetLineColor())
-            entry.SetLineWidth(t["systematics_plot"].GetLineWidth())
-            entry.SetFillColor(t["systematics_plot"].GetFillColor())
-            entry.SetFillStyle(t["systematics_plot"].GetFillStyle())
-            entry.SetMarkerColor(t["histogram_plot"].GetMarkerColor())
-            entry.SetMarkerStyle(t["histogram_plot"].GetMarkerStyle())
+            if t["box_systematics"]:
+                entry = leg1.AddEntry(None, t["title"], "pf")
+                entry.SetLineColor(t["ratio_systematics_plot"].GetLineColor())
+                entry.SetLineWidth(t["ratio_systematics_plot"].GetLineWidth())
+                entry.SetFillColor(t["ratio_systematics_plot"].GetFillColor())
+                entry.SetFillStyle(t["ratio_systematics_plot"].GetFillStyle())
+                entry.SetMarkerColor(t["ratio_histogram_plot"].GetMarkerColor())
+                entry.SetMarkerStyle(t["ratio_histogram_plot"].GetMarkerStyle())
+            else:
+                leg1.AddEntry(t["ratio_histogram_plot"], t["title"], "p")
 
     leg1.Draw()
 
@@ -400,7 +403,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
         y1 = config["data_legend"]["y"]
     else:
         y1 = y2 - 0.02
-    y2 = y1 - 0.12
+    y2 = y1 - 0.06
     if "data_legend" in config and "x" in config["data_legend"]:
         x1 = config["data_legend"]["x"]
     else:

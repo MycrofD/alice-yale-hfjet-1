@@ -51,9 +51,9 @@ theory:
   type: stat+syst
   active: yes
   file_name: PromptDJets_Powheg_ccbar_1483386026.root
-  color: 418 # kGreen+2
+  color: 602 # kBlue+2
   marker: kOpenCircle
-  fill: 3345
+  fill: 3016
   systematics_style: "02"
   inclusive:
     title: POWHEG dijet + PYTHIA 6
@@ -69,9 +69,9 @@ theory:
   type: stat+syst
   active: yes
   file_name: PromptDJets_Powheg_dijet_1527252990.root
-  color: 602 # kBlue+2 
+  color: 418 # kGreen+2
   marker: kOpenSquare
-  fill: 3354
+  fill: 3002
   systematics_style: "02"
   inclusive:
     title: POWHEG dijet + PYTHIA 6
@@ -80,5 +80,5 @@ theory:
     ts: 1527252990
     file_name: FastSimAnalysis_inclusive_jets.root
     line: 2
-    color: 602 # kBlue+2 
+    color: 418 # kGreen+2
   ratio: yes

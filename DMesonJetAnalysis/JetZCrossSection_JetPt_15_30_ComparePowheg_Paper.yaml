@@ -13,6 +13,8 @@ canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
 
+data_systematics_style: "0[]"
+
 name_prefix: JetZCrossSection_JetPt_15_30
 normalization: CrossSection
 scale: 0.06666666667  # jet pt acceptance 1 / 15
@@ -20,8 +22,8 @@ data_minx: 0.4
 data_maxx: 1.0
 minx: 0
 maxx: 1
-miny: -0.00012
-maxy: 0.0008
+miny: -0.00002
+maxy: 0.0009
 minr: 0.0
 maxr: 5.49
 title:
@@ -38,13 +40,13 @@ axis:
 theory_legend:
   font_size: 16
   n_columns: 1
-  x: 0.21
-  y: 0.15
+  x: 0.55
+  y: 0.83
 data_legend:
   font_size: 16
   combine_syst: no
   x: 0.21
-  y: 0.33
+  y: 0.32
 
 # MC definitions
 theory:
@@ -55,12 +57,12 @@ theory:
   file_name: PromptDJets_Powheg_ccbar_1483386026.root
   color: 602 # kBlue+2
   marker: kOpenCircle
-  fill: 3345
+  fill: 3016
 -
   title: POWHEG dijet + PYTHIA 6
   type: stat+syst
-  active: yes
+  active: no
   file_name: PromptDJets_Powheg_dijet_1527252990.root
   color: 418 # kGreen+2
   marker: kOpenSquare
-  fill: 3354
+  fill: 3002

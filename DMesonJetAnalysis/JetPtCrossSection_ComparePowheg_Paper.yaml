@@ -24,7 +24,7 @@ maxr: 2.99
 title:
   text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "|#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 3 GeV/#it{c}"]
   font_size: 19
-  x: 0.34
+  x: 0.44
   y: 0.89
 axis:
   x_title: "#it{p}_{T,jet}^{ch} (GeV/#it{c})"
@@ -35,13 +35,13 @@ axis:
 theory_legend:
   font_size: 16
   n_columns: 1
-  x: 0.205
-  y: 0.15
+  x: 0.215
+  y: 0.16
 data_legend:
   font_size: 16
   combine_syst: no
-  x: 0.62
-  y: 0.56
+  x: 0.215
+  y: 0.22
 
 # MC definitions
 theory:
@@ -52,7 +52,7 @@ theory:
   file_name: PromptDJets_Powheg_ccbar_1483386026.root
   color: 602 # kBlue+2
   marker: kOpenCircle
-  fill: 3345
+  fill: 3016
   systematics_style: "02"
 -
   title: POWHEG dijet + PYTHIA 6
@@ -61,5 +61,5 @@ theory:
   file_name: PromptDJets_Powheg_dijet_1527252990.root
   color: 418 # kGreen+2
   marker: kOpenSquare
-  fill: 3354
+  fill: 3002
   systematics_style: "02"

@@ -7,6 +7,7 @@ input_path: /Volumes/DATA/ALICE/JetResults
 data: JetZCrossSection_JetPt_15_30_Systematics
 theory_spectrum: JetZSpectrum_DPt_6_JetPt_15_30
 inclusive_theory_spectrum: JetPtTwoBins
+normalization: Rate
 jet_type: Charged_R040
 min_jet_pt: 15
 max_jet_pt: 30
@@ -15,16 +16,18 @@ canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
 
+data_systematics_style: "0[]"
+
 name_prefix: D0JetRateVsZ_JetPt_15_30
 data_minx: 0.4
 data_maxx: 1.0
-miny: -0.049
-maxy: 0.3
+miny: -0.009
+maxy: 0.36
 minr: 0
 maxr: 3.99
 title:
-  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets", "Anti-#it{k}_{T}, #it{R} = 0.4", "15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}", "|#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
-  font_size: 18
+  text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4, 15 < #it{p}_{T,jet}^{ch} < 30 GeV/#it{c}", "|#it{#eta}_{jet}| < 0.5, with D^{0}, #it{p}_{T,D} > 6 GeV/#it{c}"]
+  font_size: 17
   x: 0.20
   y: 0.888
 axis:
@@ -37,12 +40,12 @@ theory_legend:
   font_size: 16
   n_columns: 1
   x: 0.215
-  y: 0.15
+  y: 0.68
 data_legend:
   font_size: 16
   combine_syst: no
   x: 0.215
-  y: 0.28
+  y: 0.36
 
 # MC definitions
 theory:
@@ -60,15 +63,13 @@ theory:
     proc: mb
     ts: 1520882421
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
-    line: 8
-    color: 857 # kAzure-3
 -
   title: PYTHIA 8 Monash-2013
   active: yes
   gen: pythia8
   proc: charm
   ts: 1520426239
-  color: 819 # kSpring-1
+  color: 839 # kTeal-1
   line: 6
   inclusive:
     title: PYTHIA 8 Monash-2013
@@ -76,37 +77,53 @@ theory:
     proc: mb
     ts: 1521277750
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
-    line: 3
-    color: 819 # kSpring-1
 -
   title: Herwig++ 7 MEHeavyQuark
-  active: no
+  active: yes
   gen: herwig
   proc: charm_lo
-  ts: 1530008529
+  ts: 1531075164
   color: 903 # kPink+3
   line: 4
   inclusive:
-    title: Herwig++ 7 MEQCD2to2
+    title: Herwig++ 7 MEQCDMinBias
     gen: herwig
-    proc: dijet_lo
-    ts: 1530007919
+    proc: mb
+    ts: 1531819153
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
-    line: 8
-    color: 797 # kOrange-3
+-
+  title: Herwig++ 7 MEQCDMinBias
+  active: yes
+  gen: herwig
+  proc: mb
+  ts: 1531819153
+  color: 797 # kOrange-3
+  line: 5
+  inclusive:
+    title: Herwig++ 7 MEQCDMinBias
+    gen: herwig
+    proc: mb
+    ts: 1531819153
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: Herwig++ 7 MEQCD2to2
   active: no
   gen: herwig
   proc: dijet_lo
-  ts: 1530007919
-  color: 797 # kOrange-3
+  ts: 1531074150
+  color: 882 # kViolet+2
   line: 8
   inclusive:
     title: Herwig++ 7 MEQCD2to2
     gen: herwig
     proc: dijet_lo
-    ts: 1530007919
+    ts: 1531074150
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
-    line: 8
-    color: 797 # kOrange-3
+-
+  title: POWHEG dijet + PYTHIA 6
+  type: stat+syst
+  active: yes
+  file_name: PromptDJets_Powheg_dijet_1527252990.root
+  color: 418 # kGreen+2
+  marker: kOpenSquare
+  fill: 3002
