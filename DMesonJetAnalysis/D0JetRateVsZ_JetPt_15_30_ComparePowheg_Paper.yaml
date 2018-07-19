@@ -60,8 +60,22 @@ theory:
 -
   title: POWHEG dijet + PYTHIA 6
   type: stat+syst
-  active: yes
+  active: no
   file_name: PromptDJets_Powheg_dijet_1527252990.root
   color: 418 # kGreen+2
   marker: kOpenSquare
   fill: 3002
+-
+  title: Herwig++ 7 MEHeavyQuark
+  active: yes
+  gen: herwig
+  proc: charm_lo
+  ts: 1531075164
+  color: 903 # kPink+3
+  line: 4
+  inclusive:
+    title: Herwig++ 7 MEQCDMinBias
+    gen: herwig
+    proc: mb
+    ts: 1531819153
+    file_name: FastSimAnalysis_inclusive_jets_unweighted.root

@@ -23,9 +23,9 @@ data_maxx: 1.0
 minx: 0
 maxx: 1
 miny: -0.002
-maxy: 0.035
+maxy: 0.055
 minr: 0.0
-maxr: 3.49
+maxr: 2.49
 title:
   text: ["ALICE, pp, #sqrt{#it{s}} = 7 TeV", "Charged Jets, Anti-#it{k}_{T}, #it{R} = 0.4", "5 < #it{p}_{T,jet}^{ch} < 15 GeV/#it{c}, |#it{#eta}_{jet}| < 0.5", "with D^{0}, #it{p}_{T,D} > 2 GeV/#it{c}"]
   font_size: 18
@@ -66,3 +66,11 @@ theory:
   color: 418 # kGreen+2
   marker: kOpenSquare
   fill: 3002
+-
+  title: Herwig++ 7 MEHeavyQuark
+  active: yes
+  gen: herwig
+  proc: charm_lo
+  ts: 1531075164
+  color: 903 # kPink+3
+  line: 4

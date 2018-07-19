@@ -155,7 +155,6 @@ def PlotCrossSections(dataStat, dataSyst, config):
                 hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
                 hSyst.SetLineColor(t["color"])
                 hSyst.SetFillColor(t["color"])
-                hSyst.SetLineWidth(2)
                 if "line" in t:
                     hSyst.SetLineStyle(t["line"])
                 if "fill" in t:
@@ -181,7 +180,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
             globalList.append(h)
             h.SetLineColor(t["color"])
             h.SetLineStyle(t["line"])
-            h.SetLineWidth(2)
+            h.SetLineWidth(3)
             h.SetMarkerStyle(1)
             h.SetMarkerColor(t["color"])
             t["histogram_plot"] = h
@@ -192,7 +191,6 @@ def PlotCrossSections(dataStat, dataSyst, config):
                     hSyst.SetPointEXhigh(ipoint, 0)
                     hSyst.SetPointEXlow(ipoint, 0)
                 hSyst.SetLineColor(t["color"])
-                hSyst.SetLineWidth(2)
                 hSyst.Draw(t["systematics_style"])
                 globalList.append(hSyst)
                 t["systematics_plot"] = hSyst
@@ -298,6 +296,7 @@ def PlotCrossSections(dataStat, dataSyst, config):
             continue
         r = t["ratio_histogram_plot"]
         if t["type"] == "stat-only":
+            r.SetLineWidth(3)
             r.Draw("same e0")
         elif t["type"] == "stat+syst":
             r.Draw("same p e0 x0")

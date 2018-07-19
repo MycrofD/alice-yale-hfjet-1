@@ -23,7 +23,7 @@ data_maxx: 1.0
 minx: 0
 maxx: 1
 miny: -0.00002
-maxy: 0.0009
+maxy: 0.00095
 minr: 0.0
 maxr: 5.49
 title:
@@ -66,3 +66,11 @@ theory:
   color: 418 # kGreen+2
   marker: kOpenSquare
   fill: 3002
+-
+  title: Herwig++ 7 MEHeavyQuark
+  active: yes
+  gen: herwig
+  proc: charm_lo
+  ts: 1531075164
+  color: 903 # kPink+3
+  line: 4

@@ -95,7 +95,7 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
             globalList.append(d0jet_h)
             d0jet_h.SetLineColor(t["color"])
             d0jet_h.SetLineStyle(t["line"])
-            d0jet_h.SetLineWidth(1)
+            d0jet_h.SetLineWidth(3)
             d0jet_h.SetMarkerColor(t["color"])
             t["histogram_plot"] = d0jet_h
         elif t["type"] == "stat+syst":
@@ -106,7 +106,6 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
             hSyst = t["systematics"].Clone("{0}_copy".format(t["systematics"].GetName()))
             hSyst.SetLineColor(t["color"])
             hSyst.SetFillColor(t["color"])
-            hSyst.SetLineWidth(1)
             if "line" in t:
                 hSyst.SetLineStyle(t["line"])
             if "fill" in t:
@@ -149,12 +148,12 @@ def PlotCrossSections(d0jet_stat, d0jet_syst, incl_stat, incl_syst, inclusive_je
             hratio.SetName("_".join([t["gen"], t["proc"], "over", t["inclusive"]["gen"], t["inclusive"]["proc"]]))
             t["ratio_histogram"] = hratio
             hStat = t["ratio_histogram"].Clone("{0}_copy".format(t["ratio_histogram"].GetName()))
+            hStat.SetLineWidth(3)
             t["ratio_histogram_plot"] = hStat
         elif t["type"] == "stat+syst":
             hSyst = t["ratio_systematics"].Clone("{0}_copy".format(t["ratio_systematics"].GetName()))
             hSyst.SetLineColor(t["color"])
             hSyst.SetFillColor(t["color"])
-            hSyst.SetLineWidth(1)
             if "line" in t:
                 hSyst.SetLineStyle(t["line"])
             if "fill" in t:

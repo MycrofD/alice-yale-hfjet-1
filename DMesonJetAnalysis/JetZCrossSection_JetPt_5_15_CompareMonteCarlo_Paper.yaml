@@ -68,7 +68,7 @@ theory:
   line: 6
 -
   title: Herwig++ 7 MEHeavyQuark
-  active: yes
+  active: no
   gen: herwig
   proc: charm_lo
   ts: 1531075164

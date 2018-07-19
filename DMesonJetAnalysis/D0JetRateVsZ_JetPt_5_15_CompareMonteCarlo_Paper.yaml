@@ -77,7 +77,7 @@ theory:
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: Herwig++ 7 MEHeavyQuark
-  active: yes
+  active: no
   gen: herwig
   proc: charm_lo
   ts: 1531075164
