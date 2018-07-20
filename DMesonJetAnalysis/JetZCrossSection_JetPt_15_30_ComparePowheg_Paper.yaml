@@ -67,7 +67,7 @@ theory:
   marker: kOpenSquare
   fill: 3002
 -
-  title: Herwig++ 7 MEHeavyQuark
+  title: Herwig++ 7 MEPP2QQ
   active: yes
   gen: herwig
   proc: charm_lo

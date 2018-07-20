@@ -51,23 +51,23 @@ list:
   ts: 1531169201
   active: yes
   prefix: FastSim_herwig_mb
-  title: "Herwig++ 7 MEQCDMinBias (IdenticalToUE -1)"
+  title: "Herwig++ 7 MEMinBias (IdenticalToUE -1)"
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   ts: 1531819153
   active: yes
   prefix: FastSim_herwig_mb
-  title: "Herwig++ 7 MEQCDMinBias (IdenticalToUE 0)"
+  title: "Herwig++ 7 MEMinBias (IdenticalToUE 0)"
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   ts: 1531508959
   active: yes
   prefix: FastSim_herwig_mb
-  title: "Herwig++ 7 MEQCDMinBias (LHC-UE-EE-4)"
+  title: "Herwig++ 7 MEMinBias (LHC-UE-EE-4)"
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   ts: 1531821049
   active: yes
   prefix: FastSim_herwig_mb
-  title: "Herwig++ 7 MEQCDMinBias (LHC-UE-EE-4, CTEQ6L1)"
+  title: "Herwig++ 7 MEMinBias (LHC-UE-EE-4, CTEQ6L1)"
   file_name: FastSimAnalysis_inclusive_jets_unweighted.root

@@ -76,7 +76,7 @@ theory:
     ts: 1521277750
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
-  title: Herwig++ 7 MEHeavyQuark
+  title: Herwig++ 7 MEPP2QQ
   active: no
   gen: herwig
   proc: charm_lo
@@ -84,13 +84,13 @@ theory:
   color: 903 # kPink+3
   line: 4
   inclusive:
-    title: Herwig++ 7 MEQCDMinBias
+    title: Herwig++ 7 MEMinBias
     gen: herwig
     proc: mb
     ts: 1531819153
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
-  title: Herwig++ 7 MEQCDMinBias
+  title: Herwig++ 7 MEMinBias
   active: yes
   gen: herwig
   proc: mb
@@ -98,7 +98,7 @@ theory:
   color: 797 # kOrange-3
   line: 5
   inclusive:
-    title: Herwig++ 7 MEQCDMinBias
+    title: Herwig++ 7 MEMinBias
     gen: herwig
     proc: mb
     ts: 1531819153

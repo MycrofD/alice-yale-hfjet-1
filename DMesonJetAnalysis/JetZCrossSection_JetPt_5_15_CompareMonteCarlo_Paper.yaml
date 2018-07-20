@@ -67,7 +67,7 @@ theory:
   color: 839 # kTeal-1
   line: 6
 -
-  title: Herwig++ 7 MEHeavyQuark
+  title: Herwig++ 7 MEPP2QQ
   active: no
   gen: herwig
   proc: charm_lo
@@ -75,7 +75,7 @@ theory:
   color: 903 # kPink+3
   line: 4
 -
-  title: Herwig++ 7 MEQCDMinBias
+  title: Herwig++ 7 MEMinBias
   active: yes
   gen: herwig
   proc: mb
