@@ -9,11 +9,12 @@ from DMesonJetBase import AnalysisType
 
 class Spectrum:
 
-    def __init__(self, config, dmeson, jtype, jradius, jtitle, binSet, effWeight):
+    def __init__(self, config, dmeson, jtype, jradius, jscheme, jtitle, binSet, effWeight):
         self.fConfig = config
         self.fDMeson = dmeson
         self.fJetType = jtype
         self.fJetRadius = jradius
+        self.fJetRecoScheme = jscheme
         self.fJetTitle = jtitle
         self.fReflFitterName = ""
         if "suffix" in config:
@@ -21,7 +22,7 @@ class Spectrum:
         else:
             self.fSuffix = None
         self.fSimpleName = config["name"]
-        self.fName = '_'.join(obj for obj in [self.fDMeson, self.fJetType, self.fJetRadius, self.fSimpleName, self.fSuffix] if obj)
+        self.fName = '_'.join(obj for obj in [self.fDMeson, self.fJetType, self.fJetRadius, self.fJetRecoScheme, self.fSimpleName, self.fSuffix] if obj)
         self.fBinSet = binSet
         self.fHistogram = None
         self.fNormHistogram = None
@@ -58,12 +59,12 @@ class Spectrum:
 
         self.fComparisonDone = False
         if "compare" in config:
-            self.fCompare = config["compare"]
+            self.fCompare = list(config["compare"])
         else:
             self.fCompare = None
 
         if "comp_titles" in config:
-            self.fComparisonTitles = config["comp_titles"]
+            self.fComparisonTitles = list(config["comp_titles"])
         else:
             self.fComparisonTitles = None
 
@@ -102,7 +103,7 @@ class Spectrum:
 
         if "axis" in config:
             if len(config["axis"]) > 2:
-                print("Error: cannot do bin counting spectra (e.g. side band) with more than 2 axis. Spectrum {}".format(s["name"]))
+                print("Error: cannot do bin counting spectra (e.g. side band) with more than 2 axis. Spectrum {}".format(config["name"]))
                 exit(1)
             for axis_name, axis_bins in config["axis"].iteritems():
                 self.fAxis.append(Axis.Axis(axis_name, axis_bins, "", (jtype != "Full")))
@@ -113,7 +114,7 @@ class Spectrum:
         print("Spectrum {0} with analysis type {1} added".format(self.fName, self.fAnalysisType.name))
 
     def Clone(self):
-        s_new = Spectrum(self.fConfig, self.fDMeson, self.fJetType, self.fJetRadius, self.fJetTitle, self.fBinSet, self.fEfficiencyWeight)
+        s_new = Spectrum(self.fConfig, self.fDMeson, self.fJetType, self.fJetRadius, self.fJetRecoScheme, self.fJetTitle, self.fBinSet, self.fEfficiencyWeight)
         return s_new
 
     def GenerateRootList(self):

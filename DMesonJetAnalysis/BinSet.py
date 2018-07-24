@@ -15,7 +15,6 @@ import Axis
 import Spectrum
 from DMesonJetBase import AnalysisType
 
-
 class BinMultiSet:
 
     def __init__(self):
@@ -28,15 +27,17 @@ class BinMultiSet:
     def AddBinSet(self, binSet):
         self.fBinSets[binSet.fBinSetName] = binSet
 
-    def Initialize(self, dmeson, jtype, jradius, jtitle, reflections, inputPath):
+    def Initialize(self, dmeson, jtype, jradius, scheme, jtitle, reflections, inputPath):
         self.fDMeson = dmeson
         self.fJetType = jtype
         self.fJetRadius = jradius
+        self.fJetRecoScheme = scheme
+        self.fJetTitle = jtitle
         for k, binSet in self.fBinSets.items():
             if not dmeson in binSet.fActiveMesons:
                 del self.fBinSets[k]
                 continue
-            r = binSet.Initialize(dmeson, jtype, jradius, jtitle, reflections, inputPath)
+            r = binSet.Initialize(dmeson, jtype, jradius, scheme, jtitle, reflections, inputPath)
             if not r:
                 del self.fBinSets[k]
 
@@ -75,9 +76,9 @@ class BinMultiSet:
         groups = set()
         for binSet in self.fBinSets.itervalues():
             for s in binSet.fSpectra.itervalues():
-                if s.fCompare: groups.update(s.fCompare)
+                if s.fCompare: 
+                    groups.update(s.fCompare)
         return groups
-
 
 class BinSet:
 
@@ -174,10 +175,10 @@ class BinSet:
         for refl_fit in self.fReflectionTemplateNames:
             self.fReflectionTemplates[refl_fit] = self.LoadReflectionsForTemplateName(reflFileName, refl_fit)
 
-    def Initialize(self, dmeson, jtype, jradius, jtitle, reflections, inputPath):
-        self.fName = "_".join(obj for obj in [dmeson, jtype, jradius, self.fBinSetName] if not obj == None)
+    def Initialize(self, dmeson, jtype, jradius, scheme, jtitle, reflections, inputPath):
+        self.fName = "_".join(obj for obj in [dmeson, jtype, jradius, scheme, self.fBinSetName] if not obj == None)
         jetDep = self.AmIJetDependent()
-        if jtype or jradius:
+        if jtype or jradius or scheme:
             if not jetDep: return False
         else:
             if jetDep: return False
@@ -186,8 +187,8 @@ class BinSet:
             for a in self.fAxis:
                 a.fChargedJet = False
 
-        if jtype and jradius:
-            jetName = "Jet_AKT{0}{1}_pt_scheme".format(jtype, jradius)
+        if jtype and jradius and scheme:
+            jetName = "Jet_AKT{0}{1}_{2}".format(jtype, jradius, scheme)
         else:
             # This is a temporary hack. The detector response analysis does not have an option for "no jet"
             jetName = "Jet_AKTChargedR040_pt_scheme"
@@ -219,14 +220,19 @@ class BinSet:
             else:
                 effWeight = DetectorResponseLoader.DMesonJetEfficiency(None)
 
-            spectrum = Spectrum.Spectrum(s, dmeson, jtype, jradius, jtitle, self, effWeight)
+            spectrum = Spectrum.Spectrum(s, dmeson, jtype, jradius, scheme, jtitle, self, effWeight)
 
             self.fSpectra[spectrum.fName] = spectrum
 
         limits = dict()
         self.AddBinsRecursive(self.fLimitSetList, limits)
 
-        if reflections: self.LoadReflections(dmeson, jtype, jradius, reflections)
+        if reflections:
+            if scheme != "pt_scheme":
+                print("BinSet.Initialize: Error! Reflections have only been implemented for the pt scheme!")
+                print("************* CONTINUE AT YOUR OWN RISK! *******************")
+                #exit(1)
+            self.LoadReflections(dmeson, jtype, jradius, reflections)
 
         return True
 

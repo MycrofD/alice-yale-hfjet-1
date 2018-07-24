@@ -1,0 +1,142 @@
+name: Unfolding_LHC10_Train1236_LHC15i2_Train1399
+input_path: /Volumes/DATA/ALICE/JetResults
+data_train: Jets_EMC_pp_1236
+data: LHC10_Train1236
+response_train: Jets_EMC_pp_MC_1399_1400_1401_1402
+response: LHC15i2_Train1399_response
+efficiency: yes  # apply efficiency correction?
+use_overflow: yes # use overflow bins?
+analysis:
+-
+  name: JetPt_SideBand_DPt_30
+  active: yes
+  jet_type: Charged
+  jet_radius: R040
+  jet_reco_scheme: pt_scheme
+  d_meson: D0_D0toKpiCuts
+  variable: JetPt
+  raw_yield_method: SideBand
+  kinematic_cuts: DPt_30
+  FD:
+    file_name: BFeedDown_1516708272_1399.root
+    central_points: default
+    spectrum: DetectorLevel_JetPtSpectrum_bEfficiencyMultiply
+  d_meson_response: Prompt_D0_D0toKpiCuts
+  spectrum_response: JetPtSpectrum_DPt_30
+  default_prior: ResponseTruth
+  priors: [ResponseTruth, PowerLaw_3, PowerLaw_7]
+  default_method: Bayes
+  methods:
+    Svd:
+      default_reg:
+        ResponseTruth: 5
+        PowerLaw_3: 5
+        PowerLaw_7: 5
+    Bayes:
+      default_reg:
+        ResponseTruth: 3
+        PowerLaw_3: 3
+        PowerLaw_7: 3
+      iter_min: 1
+      iter_max: 6
+      iter_step: 1
+    BinByBin:
+      default_reg: null
+-
+  name: JetZ_SideBand_DPt_20_JetPt_5_15
+  active: yes
+  jet_type: Charged
+  jet_radius: R040
+  jet_reco_scheme: pt_scheme
+  d_meson: D0_D0toKpiCuts
+  variable: JetZ
+  raw_yield_method: SideBand
+  kinematic_cuts: DPt_20_JetPt_5_15
+  FD:
+    file_name: BFeedDown_1516708272_1399.root
+    central_points: default
+    spectrum: DetectorLevel_JetZSpectrum_bEfficiencyMultiply
+  d_meson_response: Prompt_D0_D0toKpiCuts
+  spectrum_response: JetZSpectrum_DPt_20_JetPt_5_15
+  default_prior: ResponseTruth
+  priors: [ResponseTruth]
+  default_method: Bayes
+  methods:
+    Svd:
+      default_reg:
+        ResponseTruth: 5
+    Bayes:
+      default_reg:
+        ResponseTruth: 3
+      iter_min: 1
+      iter_max: 6
+      iter_step: 1
+    BinByBin:
+      default_reg: null
+-
+  name: JetZ_SideBand_DPt_60_JetPt_15_30
+  active: yes
+  jet_type: Charged
+  jet_radius: R040
+  jet_reco_scheme: pt_scheme
+  d_meson: D0_D0toKpiCuts
+  variable: JetZ
+  raw_yield_method: SideBand
+  kinematic_cuts: DPt_60_JetPt_15_30
+  FD:
+    file_name: BFeedDown_1516708272_1399.root
+    central_points: default
+    spectrum: DetectorLevel_JetZSpectrum_bEfficiencyMultiply
+  d_meson_response: Prompt_D0_D0toKpiCuts
+  spectrum_response: JetZSpectrum_DPt_60_JetPt_15_30
+  default_prior: ResponseTruth
+  priors: [ResponseTruth]
+  default_method: Bayes
+  methods:
+    Svd:
+      default_reg:
+        ResponseTruth: 5
+    Bayes:
+      default_reg:
+        ResponseTruth: 3
+      iter_min: 1
+      iter_max: 6
+      iter_step: 1
+    BinByBin:
+      default_reg: null
+-
+  name: __self_unfolding__
+  active: no
+  jet_type: Charged
+  jet_radius: R040
+  jet_reco_scheme: pt_scheme
+  d_meson_truth: __self_unfolding__
+  spectrum_truth: __self_unfolding__
+  d_meson: __self_unfolding__
+  variable: __self_unfolding__
+  self_unfolding_bins: [5, 6, 8, 10, 14, 20, 32]
+  self_unfolding_events: 300000000
+  self_unfolding_scaling: 48.44
+  raw_yield_method: __self_unfolding__
+  kinematic_cuts: DPt_30
+  d_meson_response: D0
+  spectrum_response: JetPtSpectrum_DPt_30
+  default_prior: ResponseTruth
+  priors: [ResponseTruth] #, PowerLaw_3, PowerLaw_7]
+  default_method: Svd
+  methods:
+    Svd:
+      default_reg:
+        ResponseTruth: 5
+#        PowerLaw_3: 5
+#        PowerLaw_7: 5
+#    Bayes:
+#      default_reg:
+#        ResponseTruth: 3
+#        PowerLaw_3: 3
+#        PowerLaw_7: 3
+#      iter_min: 1
+#      iter_max: 6
+#      iter_step: 1
+#    BinByBin:
+#      default_reg: null

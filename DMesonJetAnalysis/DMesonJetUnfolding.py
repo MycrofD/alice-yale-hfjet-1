@@ -15,7 +15,6 @@ import RawYieldSpectrumLoader
 
 globalList = []
 
-
 class DMesonJetUnfoldingEngine:
 
     def __init__(self, input_path, dataTrain, analysisName, config, fd_error_band=0, ry_error_band=0):
@@ -37,6 +36,10 @@ class DMesonJetUnfoldingEngine:
         self.fDMeson = config["d_meson"]
         self.fJetType = config["jet_type"]
         self.fJetRadius = config["jet_radius"]
+        if "jet_reco_scheme" in config:
+            self.fJetRecoScheme = config["jet_reco_scheme"]
+        else:
+            self.fJetRecoScheme = "pt_scheme"
         self.fVariableName = config["variable"]
         self.fSpectrumName = "{}Spectrum".format(self.fVariableName)
         self.fKinematicCuts = config["kinematic_cuts"]
@@ -170,12 +173,12 @@ class DMesonJetUnfoldingEngine:
         return res
 
     def LoadResponse(self, eff):
-        responseListName = "{0}_Jet_AKT{1}{2}_pt_scheme_{3}".format(self.fDMesonResponse, self.fJetType, self.fJetRadius, self.fSpectrumResponseName)
+        responseListName = "{}_Jet_AKT{}{}_{}_{}".format(self.fDMesonResponse, self.fJetType, self.fJetRadius, self.fJetRecoScheme, self.fSpectrumResponseName)
         responseList = self.fResponseFile.Get(responseListName)
         if not responseList:
             print("Could not find list {0} in file {1}". format(responseListName, self.fResponseFile.GetName()))
             exit(1)
-        detectorResponseName = "{0}_Jet_AKT{1}{2}_pt_scheme_{3}_DetectorResponse".format(self.fDMesonResponse, self.fJetType, self.fJetRadius, self.fSpectrumResponseName)
+        detectorResponseName = "{}_Jet_AKT{}{}_{}_{}_DetectorResponse".format(self.fDMesonResponse, self.fJetType, self.fJetRadius, self.fJetRecoScheme, self.fSpectrumResponseName)
         detectorResponse = responseList.FindObject(detectorResponseName)
         if not detectorResponse:
             print("Could not find histogram {0} in list {1} in file {2}". format(detectorResponseName, responseListName, self.fResponseFile.GetName()))
@@ -184,7 +187,7 @@ class DMesonJetUnfoldingEngine:
         self.fDetectorResponse.SetTitle("{0} Detector Response".format(self.fName))
 
         if eff:
-            detTrainTruthName = "{0}_Jet_AKT{1}{2}_pt_scheme_{3}_Truth".format(self.fDMesonResponse, self.fJetType, self.fJetRadius, self.fSpectrumResponseName)
+            detTrainTruthName = "{}_Jet_AKT{}{}_{}_{}_Truth".format(self.fDMesonResponse, self.fJetType, self.fJetRadius, self.fJetRecoScheme, self.fSpectrumResponseName)
             detTrainTruth = responseList.FindObject(detTrainTruthName)
             if not detTrainTruth:
                 print("Could not find histogram {0} in list {1} in file {2}". format(detTrainTruthName, responseListName, self.fResponseFile.GetName()))
@@ -249,6 +252,7 @@ class DMesonJetUnfoldingEngine:
         wrap.fDMeson = self.fDMeson
         wrap.fJetType = self.fJetType
         wrap.fJetRadius = self.fJetRadius
+        wrap.fJetRecoScheme = self.fJetRecoScheme
         wrap.fVariableName = self.fVariableName
         wrap.fKinematicCuts = self.fKinematicCuts
         wrap.fDataSpectrumList = self.fDataList

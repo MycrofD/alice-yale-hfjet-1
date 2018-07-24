@@ -1,0 +1,214 @@
+# Added E and BIpt reco schemes
+name: LHC10_Train1236
+input_path: /Volumes/DATA/ALICE/JetResults
+train: Jets_EMC_pp_1236
+file_name: AnalysisResults.root
+merging_type: simple_sum
+task_name: AliAnalysisTaskDmesonJets
+collision_system: "pp #sqrt{#it{s}} = 7 TeV"
+monte_carlo: no
+reflection_templates: null
+analysis:
+- 
+  trigger: ["AnyINT"]
+  d_meson: [D0_D0toKpiCuts]
+  n_mass_bins: 50
+  min_mass: 1.715
+  max_mass: 2.015
+  jets:
+  -
+    type: Charged
+    radius: R040
+    reco_scheme: pt_scheme
+    title: "#it{p}_{T} recombination scheme"
+  -
+    type: Charged
+    radius: R040
+    reco_scheme: BIpt_scheme
+    title: "BI #it{p}_{T} recombination scheme"
+  -
+    type: Charged
+    radius: R040
+    reco_scheme: E_scheme
+    title: "#it{E} recombination scheme"
+  binLists:
+  -
+    name: DPtBins_JetPt_5_30
+    title: "5 < #it{p}_{T,ch jet} < 30 GeV/#it{c}"
+    active_mesons: [D0_D0toKpiCuts]
+    need_inv_mass: [D0_D0toKpiCuts]
+    reflection_template_names: []
+    efficiency: no
+    bins:
+      d_pt: [2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 30]
+    sigma_fits:
+      D0_D0toKpiCuts: [0.0096, 0.0111, 0.0119, 0.0135, 0.0143, 0.0156, 0.0181, 0.019, 0.021, 0.021]
+    cuts:
+    -
+      object: jet
+      variable: fEta
+      min: -0.5
+      max: 0.5
+    -
+      object: jet
+      variable: fPt
+      min: 5
+      max: 30
+    spectra:
+    -
+      name: JetPtSpectrum_DPt_30
+      suffix: SideBand
+      title: "Side Band, #it{p}_{T,D} > 3 GeV/#it{c}"
+      efficiency: no
+      compare: []
+      comp_titles: []
+      type: side_band
+      active_mesons: [D0_D0toKpiCuts]
+      multitrial: [D0_D0toKpiCuts]
+      axis:
+        jet_pt: [5, 6, 8, 10, 14, 20, 30]
+      side_band:
+        skip_bins: [0]
+        min_sigmas: 4
+        max_sigmas: 8
+        max_signal_sigmas: 2
+        backup_mean: 1.86484
+        backup_sigma: 0.015
+    -
+      name: DPtSpectrum_JetPt_5_30
+      suffix: InvMassFit
+      title: "5 < #it{p}_{T,ch jet} < 30 GeV/#it{c}"
+      compare: []
+      comp_titles: []
+      type: inv_mass_fit
+      active_mesons: [D0_D0toKpiCuts]
+  -
+    name: DPtBins_JetPt_5_15
+    title: "5 < #it{p}_{T,ch jet} < 15 GeV/#it{c}"
+    active_mesons: [D0_D0toKpiCuts]
+    need_inv_mass: [D0_D0toKpiCuts]
+    reflection_template_names: []
+    efficiency: no
+    bins:
+      d_pt: [2, 3, 4, 5, 6, 7, 8, 10, 12, 15]
+    sigma_fits:
+      D0_D0toKpiCuts: [0.0096, 0.0110, 0.0119, 0.0136, 0.0143, 0.0156, 0.0181, 0.019, 0.019]
+    cuts:
+    -
+      object: jet
+      variable: fEta
+      min: -0.5
+      max: 0.5
+    -
+      object: jet
+      variable: fPt
+      min: 5
+      max: 15
+    spectra:
+    -
+      name: JetZSpectrum_DPt_20_JetPt_5_15
+      suffix: SideBand
+      title: "Side Band, #it{p}_{T,D} > 2 GeV/#it{c}, 5 < #it{p}_{T,ch jet} < 15 GeV/#it{c}"
+      efficiency: no
+      compare: []
+      comp_titles: []
+      type: side_band
+      active_mesons: [D0_D0toKpiCuts]
+      multitrial: [D0_D0toKpiCuts]
+      axis:
+        d_z: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]
+      side_band:
+        min_sigmas: 4
+        max_sigmas: 8
+        max_signal_sigmas: 2
+        backup_mean: 1.86484
+        backup_sigma: 0.015
+    -
+      name: DPtSpectrum_JetPt_5_15
+      suffix: InvMassFit
+      title: "5 < #it{p}_{T,ch jet} < 15 GeV/#it{c}"
+      compare: []
+      comp_titles: []
+      type: inv_mass_fit
+      active_mesons: [D0_D0toKpiCuts]
+  -
+    name: DPtBins_JetPt_15_30
+    title: "15 < #it{p}_{T,ch jet} < 30 GeV/#it{c}"
+    active_mesons: [D0_D0toKpiCuts]
+    need_inv_mass: [D0_D0toKpiCuts]
+    reflection_template_names: []
+    efficiency: no
+    bins:
+      d_pt: [6, 12, 30]
+    sigma_fits:
+      D0_D0toKpiCuts: [0.017, 0.021]
+    cuts:
+    -
+      object: jet
+      variable: fEta
+      min: -0.5
+      max: 0.5
+    -
+      object: jet
+      variable: fPt
+      min: 15
+      max: 30
+    spectra:
+    -
+      name: JetZSpectrum_DPt_60_JetPt_15_30
+      suffix: SideBand
+      title: "Side Band, #it{p}_{T,D} > 6 GeV/#it{c}, 15 < #it{p}_{T,ch jet} < 30 GeV/#it{c}"
+      compare: []
+      comp_titles: []
+      type: side_band
+      active_mesons: [D0_D0toKpiCuts]
+      multitrial: [D0_D0toKpiCuts]
+      axis:
+        d_z: [0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0001]
+      side_band:
+        min_sigmas: 4
+        max_sigmas: 8
+        max_signal_sigmas: 2
+        backup_mean: 1.86484
+        backup_sigma: 0.015
+    -
+      name: DPtSpectrum_JetPt_15_30
+      suffix: SideBand
+      title: "Side Band, 15 < #it{p}_{T,ch jet} < 30 GeV/#it{c}"
+      compare: []
+      comp_titles: []
+      type: side_band
+      active_mesons: [D0_D0toKpiCuts]
+      axis:
+        d_pt: [6, 7, 8, 10, 12, 15, 30]
+      side_band:
+        min_sigmas: 4
+        max_sigmas: 8
+        max_signal_sigmas: 2
+        backup_mean: 1.86484
+        backup_sigma: 0.015
+  -
+    name: DPtBins
+    title: "|#eta_{D}| < 0.5"
+    active_mesons: [D0_D0toKpiCuts]
+    need_inv_mass: [D0_D0toKpiCuts]
+    reflection_template_names: []
+    efficiency: no
+    bins:
+      d_pt: [2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 30]
+    cuts:
+    -
+      object: d
+      variable: fEta
+      min: -0.5
+      max: 0.5
+    spectra:
+    -
+      name: DPtSpectrum
+      suffix: InvMassFit
+      title: "Inv.Mass Fit"
+      compare: []
+      comp_titles: []
+      type: inv_mass_fit
+      active_mesons: [D0_D0toKpiCuts]
+  

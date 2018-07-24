@@ -1,3 +1,4 @@
+# Improved QA info, should be equivalent to 1116.
 name: LHC10_Train1158
 input_path: /Volumes/DATA/ALICE/JetResults
 train: Jets_EMC_pp_1158_1159_1160_1161

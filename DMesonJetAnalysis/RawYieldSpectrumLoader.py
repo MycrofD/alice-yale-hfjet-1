@@ -21,6 +21,7 @@ class RawYieldSpectrumLoader:
         self.fDMeson = None
         self.fJetType = None
         self.fJetRadius = None
+        self.fJetRecoScheme = None
         self.fVariableName = None
         self.fKinematicCuts = None
         self.fRawYieldMethod = None
@@ -91,8 +92,8 @@ class RawYieldSpectrumLoader:
             if not self.fDataMesonList:
                 print("Could not find list {0} in file {1}". format(dataMesonListName, self.fDataFile.GetName()))
                 exit(1)
-            if self.fJetType and self.fJetRadius:
-                dataJetListName = "_".join([self.fJetType, self.fJetRadius])
+            if self.fJetType or self.fJetRadius or self.fJetRecoScheme:
+                dataJetListName = "_".join(obj for obj in [self.fJetType, self.fJetRadius, self.fJetRecoScheme] if obj)
                 self.fDataJetList = self.fDataMesonList.FindObject(dataJetListName)
                 if not self.fDataJetList:
                     print("Could not find list {0}/{1} in file {2}". format(self.fDMeson, dataJetListName, self.fDataFile.GetName()))
@@ -105,7 +106,7 @@ class RawYieldSpectrumLoader:
                         print("Could not find list {0}/{1}/{2} in file {3}". format(self.fDMeson, dataJetListName, dataListName, self.fDataFile.GetName()))
                         self.fDataJetList.Print()
                         exit(1)
-            if var and not (self.fJetType and self.fJetRadius):
+            if var and not (self.fJetType or self.fJetRadius or self.fJetRecoScheme):
                 dataListName = "_".join([s for s in [self.fDMeson, spectrumName, self.fKinematicCuts, self.fRawYieldMethod, refl] if s])
                 self.fDataSpectrumList = self.fDataMesonList.FindObject(dataListName)
                 if not self.fDataSpectrumList:
@@ -130,7 +131,7 @@ class RawYieldSpectrumLoader:
             refl = None
         if not self.fDataSpectrumList: self.LoadDataListFromDMesonJetAnalysis()
         spectrumName = "{}Spectrum".format(var)
-        inputSpectrumName = "_".join([s for s in [self.fDMeson, self.fJetType, self.fJetRadius, spectrumName, self.fKinematicCuts, self.fRawYieldMethod, refl] if s])
+        inputSpectrumName = "_".join([s for s in [self.fDMeson, self.fJetType, self.fJetRadius, self.fJetRecoScheme, spectrumName, self.fKinematicCuts, self.fRawYieldMethod, refl] if s])
         h_orig = self.fDataSpectrumList.FindObject(inputSpectrumName)
         if not h_orig:
             print("Could not find histogram {0} in list {1}". format(inputSpectrumName, self.fDataSpectrumList.GetName()))
@@ -149,6 +150,9 @@ class RawYieldSpectrumLoader:
         return h
 
     def GetDefaultSpectrumInvMassFitFromMultiTrial(self):
+        if self.fJetRecoScheme != "pt_scheme":
+            print("Fatal error: only pt reco scheme is implemented for multi-trial code. Requested: '{}'".format(self.fJetRecoScheme))
+            exit(1)
         if not self.fVariableName == "JetPt":
             print("Fatal error: inv. mass fit multi-trial available only for jet pt. Requested for: {}".format(self.fVariableName))
             exit(1)
@@ -187,6 +191,9 @@ class RawYieldSpectrumLoader:
         return h
 
     def GetDefaultSpectrumSideBandFromMultiTrial(self):
+        if self.fJetRecoScheme != "pt_scheme":
+            print("Fatal error: only pt reco scheme is implemented for multi-trial code. Requested: '{}'".format(self.fJetRecoScheme))
+            exit(1)
         if self.fVariableName:
             var = self.fVariableName.replace("Z", "z")
         else:

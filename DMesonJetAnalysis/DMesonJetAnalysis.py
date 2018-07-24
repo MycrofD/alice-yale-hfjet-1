@@ -16,7 +16,6 @@ import Axis
 
 globalList = []
 
-
 class DMesonJetContainer:
 
     def __init__(self, trigger, DMesonDef, binMultiSets, nMassBins, minMass, maxMass):
@@ -31,9 +30,9 @@ class DMesonJetContainer:
 
     def GetJetBranches(self):
         jet_branches = []
-        for (jtype, jradius) in self.fBinMultiSets.iterkeys():
-            if jtype and jradius:
-                jetName = "Jet_AKT{0}{1}_pt_scheme".format(jtype, jradius)
+        for (jtype, jradius, scheme) in self.fBinMultiSets.iterkeys():
+            if jtype and jradius and scheme:
+                jetName = "Jet_AKT{0}{1}_{2}".format(jtype, jradius, scheme)
                 jet_branches.append(jetName)
         return jet_branches
 
@@ -41,9 +40,9 @@ class DMesonJetContainer:
         dmeson = event.DmesonJet
         if hasattr(dmeson, "fInvMass") and (dmeson.fInvMass < self.fMinMass or dmeson.fInvMass >= self.fMaxMass): return
 
-        for (jtype, jradius), binMultiSet in self.fBinMultiSets.iteritems():
-            if jtype and jradius:
-                jetName = "Jet_AKT{0}{1}_pt_scheme".format(jtype, jradius)
+        for (jtype, jradius, scheme), binMultiSet in self.fBinMultiSets.iteritems():
+            if jtype and jradius and scheme:
+                jetName = "Jet_AKT{0}{1}_{2}".format(jtype, jradius, scheme)
                 jet = getattr(event, jetName)
                 if jet.fPt == 0:
                     continue
@@ -57,7 +56,6 @@ class DMesonJetContainer:
 
             spectra = binMultiSet.FindSpectra(dmeson, jet)
             for spectrum, weight in spectra: spectrum.Fill(dmeson, jet, weight * eventWeight)
-
 
 class DMesonJetAnalysisEngine:
 
@@ -78,23 +76,92 @@ class DMesonJetAnalysisEngine:
         for jetDef in self.fJetDefinitions:
             if "active" in jetDef and not jetDef["active"]:
                 continue
+            if not "reco_scheme" in jetDef:
+                jetDef["reco_scheme"] = "pt_scheme"
             binset_copy = copy.deepcopy(binSet)
-            binset_copy.Initialize(self.fDMeson, jetDef["type"], jetDef["radius"], jetDef["title"], reflections, self.fProjector.fInputPath)
-            self.fBinMultiSets[jetDef["type"], jetDef["radius"]] = binset_copy
+            binset_copy.Initialize(self.fDMeson, jetDef["type"], jetDef["radius"], jetDef["reco_scheme"], jetDef["title"], reflections, self.fProjector.fInputPath)
+            self.fBinMultiSets[jetDef["type"], jetDef["radius"], jetDef["reco_scheme"]] = binset_copy
 
         binset_copy = copy.deepcopy(binSet)
-        binset_copy.Initialize(self.fDMeson, None, None, None, reflections, self.fProjector.fInputPath)
-        self.fBinMultiSets[None, None] = binset_copy
+        binset_copy.Initialize(self.fDMeson, None, None, None, None, reflections, self.fProjector.fInputPath)
+        self.fBinMultiSets[None, None, None] = binset_copy
 
         self.BuildSpectra()
 
     def CompareSpectra(self):
+        self.CompareJetDefinitions()
         for binMultiSet in self.fBinMultiSets.itervalues():
             comparison_groups = binMultiSet.GetAllComparisonGroups()
             for group in comparison_groups:
                 n = 999
-                while(n > 0): n = self.CompareSpectraForJetDef(binMultiSet, group)
+                while(n > 0): 
+                    n = self.CompareSpectraForJetDef(binMultiSet, group)
                 binMultiSet.ResetAllComaprisonDone()
+
+    def CompareJetDefinitions(self):
+        if len(self.fBinMultiSets) < 3:
+            return
+        for (jtype, jradius, jscheme), binMultiSet in self.fBinMultiSets.iteritems():
+            if jtype and jradius and jscheme:
+                break
+        if not (jtype and jradius and jscheme and binMultiSet):
+            return
+        jetdef1 = "_".join([jtype, jradius, jscheme])
+        for binSetName, binSet in binMultiSet.fBinSets.iteritems():
+            for spectrumName, spectrum in binSet.fSpectra.iteritems():
+                if not spectrum.fNormHistogram:
+                    continue
+                cname = '_'.join(obj for obj in ["Comparison", self.fTrigger, "JetDefinition", spectrumName.replace(jetdef1 + "_", "")])
+                baseline = spectrum.fNormHistogram.Clone("_".join([cname, jtype, jradius, jscheme]))
+                baseline.SetTitle(binMultiSet.fJetTitle)
+                globalList.append(baseline)
+                histToCompare = []
+                for (jtype2, jradius2, jscheme2), binMultiSet2 in self.fBinMultiSets.iteritems():
+                    if not (jtype2 and jradius2 and jscheme2):
+                        continue
+                    if jtype2 == jtype and jradius2 == jradius and jscheme2 == jscheme:
+                        continue
+                    if not binSetName in binMultiSet2.fBinSets:
+                        print("Could not find bin set '{}' in '{}'".format(binSetName, (jtype2, jradius2, jscheme2)))
+                        continue
+                    binSet2 = binMultiSet2.fBinSets[binSetName]
+                    jetdef2 = "_".join([jtype2, jradius2, jscheme2])
+                    spectrumName2 = spectrumName.replace(jetdef1, jetdef2)
+                    if not spectrumName2 in binSet2.fSpectra:
+                        print("Could not find spectrum '{}' in bin set '{}' in {}'".format(spectrumName2, binSetName, (jtype2, jradius2, jscheme2)))
+                        continue
+                    spectrum2 = binSet2.fSpectra[spectrumName2]
+                    if not spectrum2.fNormHistogram:
+                        continue
+                    h = spectrum2.fNormHistogram.Clone("_".join([cname, jtype2, jradius2, jscheme2]))
+                    h.SetTitle(binMultiSet2.fJetTitle)
+                    globalList.append(h)
+                    histToCompare.append(h)
+
+                if len(histToCompare) < 1:
+                    return
+
+                compH = DMesonJetCompare.DMesonJetCompare(cname)
+                compH.fOptRatio = "hist"
+                if spectrum.fAxis[0].fName == "d_z":
+                    compH.fDoSpectraPlot = "lineary"
+                resultsH = compH.CompareSpectra(baseline, histToCompare)
+
+                for obj in resultsH:
+                    if obj and isinstance(obj, ROOT.TCanvas):
+                        self.fCanvases.append(obj)
+                        obj.cd()
+                        pave = ROOT.TPaveText(0.12, 0.70, 0.40, 0.85, "NB NDC")
+                        pave.SetTextAlign(11)
+                        pave.SetFillStyle(0)
+                        pave.SetBorderSize(0)
+                        pave.SetTextFont(43)
+                        pave.SetTextSize(15)
+                        pave.AddText(self.fCollision)
+                        pave.AddText(DMesonJetUtils.ConvertDMesonName(self.fDMeson))
+                        pave.Draw()
+                        globalList.append(pave)
+                    globalList.append(obj)
 
     def CompareSpectraForJetDef(self, binMultiSet, group):
         spectraToCompare = []
@@ -114,7 +181,7 @@ class DMesonJetAnalysisEngine:
                     # if s.fAxis[0].fBins[0] != spectraToCompare[0].fAxis[0].fBins[0] or s.fAxis[0].fBins[-1] != spectraToCompare[0].fAxis[0].fBins[-1]:
                     # continue
                 else:
-                    cname = '_'.join(obj for obj in ["Comparison", self.fTrigger, self.fDMeson, binMultiSet.fJetType, binMultiSet.fJetRadius, group, s.fAxis[0].fName, str(int(s.fAxis[0].fBins[0] * 10)), str(int(s.fAxis[0].fBins[-1] * 10)), "SpectraComparison"] if obj)
+                    cname = '_'.join(obj for obj in ["Comparison", self.fTrigger, self.fDMeson, binMultiSet.fJetType, binMultiSet.fJetRadius, binMultiSet.fJetRecoScheme, group, s.fAxis[0].fName, str(int(s.fAxis[0].fBins[0] * 10)), str(int(s.fAxis[0].fBins[-1] * 10)), "SpectraComparison"] if obj)
                 spectraToCompare.append(s)
                 title = s.fComparisonTitles[s.fCompare.index(group)]
 
@@ -129,11 +196,13 @@ class DMesonJetAnalysisEngine:
                 uncToCompare.append(unc)
 
                 s.fComparisonDone = True
-        if len(spectraToCompare) < 2: return len(spectraToCompare)
+        if len(spectraToCompare) < 2:
+            return len(spectraToCompare)
 
         compH = DMesonJetCompare.DMesonJetCompare(cname)
         compH.fOptRatio = "hist"
-        if spectraToCompare[0].fAxis[0].fName == "d_z": compH.fDoSpectraPlot = "lineary"
+        if spectraToCompare[0].fAxis[0].fName == "d_z":
+            compH.fDoSpectraPlot = "lineary"
         resultsH = compH.CompareSpectra(histToCompare[0], histToCompare[1:])
 
         compU = DMesonJetCompare.DMesonJetCompare("{}_Uncertainty".format(cname))
@@ -169,9 +238,9 @@ class DMesonJetAnalysisEngine:
             rlist.SetName(self.fDMeson)
         rlist.Add(self.fHistEvents)
 
-        for (jtype, jradius), binMultiSet in self.fBinMultiSets.iteritems():
-            if jtype or jradius:
-                jetName = "_".join(obj for obj in [jtype, jradius] if obj)
+        for (jtype, jradius, jscheme), binMultiSet in self.fBinMultiSets.iteritems():
+            if jtype or jradius or jscheme:
+                jetName = "_".join(obj for obj in [jtype, jradius, jscheme] if obj)
                 jlist = ROOT.TList()
                 jlist.SetName(jetName)
             else:
@@ -593,6 +662,7 @@ class DMesonJetAnalysisEngine:
             for binSet in binMultiSet.fBinSets.itervalues():
                 new_spectra = dict()
                 for sname, s in binSet.fSpectra.iteritems():
+                    s.fReflFitterName = "default"
                     comp_refl = None
                     for refl_fitter_name in s.fBinSet.fReflectionTemplateNames:
                         s_new = s.Clone()
@@ -601,13 +671,12 @@ class DMesonJetAnalysisEngine:
                         comp_refl = '_'.join(obj for obj in ["Refl", s.fSimpleName, s.fSuffix] if obj)
                         s_new.fCompare.append(comp_refl)
                         s_new.fComparisonTitles.append(refl_fitter_name)
-                        s_new.BuildHistograms()
                         s_new.fReflFitterName = refl_fitter_name
+                        s_new.BuildHistograms()
                         new_spectra["{}_{}".format(sname, refl_fitter_name)] = s_new
-                    if comp_refl:
+                    if comp_refl and not comp_refl in s.fCompare:
                         s.fCompare.append(comp_refl)
                         s.fComparisonTitles.append("No Refl.")
-                        s.fReflFitterName = "default"
                     s.BuildHistograms()
                 binSet.fSpectra.update(new_spectra)
 
@@ -638,11 +707,11 @@ class DMesonJetAnalysisEngine:
                 self.ProcessInvMassFitSpectrumBin(s, bin, s.fLikeSignSubtractedBinSet, s.fReflFitterName)
 
     def ProcessInvMassFitSpectrumBin(self, s, bin, binSet, refl_fitter_name):
-        w = s.fEfficiencyWeight.GetEfficiencyWeightTH1ForPt(bin.GetBinCenter("d_pt"))
+        if not s.fReflFitterName in bin.fMassFitters:
+            print("Skipping bin {} because I could not find the mass fitter '{}'".format(bin.GetTitle(), s.fReflFitterName))
+            return
         mass_fitter = bin.fMassFitters[refl_fitter_name]
-
-        xbin = s.fHistogram.GetXaxis().FindBin(bin.GetBinCenter(s.fAxis[0].fName))
-        if mass_fitter is None:
+        if not mass_fitter:
             print("The bin printed below does not have a mass fitter!")
             bin.Print()
             return
@@ -650,6 +719,9 @@ class DMesonJetAnalysisEngine:
             print("The bin printed below does not have a successful invariant mass fit!")
             bin.Print()
             return
+
+        w = s.fEfficiencyWeight.GetEfficiencyWeightTH1ForPt(bin.GetBinCenter("d_pt"))
+        xbin = s.fHistogram.GetXaxis().FindBin(bin.GetBinCenter(s.fAxis[0].fName))
         signal = mass_fitter.GetSignal() * w
         signal_unc = mass_fitter.GetSignalError() * w
 
@@ -692,6 +764,9 @@ class DMesonJetAnalysisEngine:
             if s.fSkipBins and ibin in s.fSkipBins:
                 print("Skipping bin {0} as requested".format(bin.GetTitle()))
                 continue
+            if not s.fReflFitterName in bin.fMassFitters:
+                print("Skipping bin {} because I could not find the mass fitter '{}'".format(bin.GetTitle(), s.fReflFitterName))
+                continue  
             mass_fitter = bin.fMassFitters[s.fReflFitterName]
             if not mass_fitter or not mass_fitter.FitSuccessfull():
                 print("Skipping bin {0} because fit was unsuccessful".format(bin.GetTitle()))
@@ -1295,7 +1370,8 @@ class DMesonJetAnalysis:
                         pave.SetTextFont(43)
                         pave.SetTextSize(15)
                         pave.AddText(self.fCollision)
-                        if jetDef["title"]: pave.AddText(jetDef["title"])
+                        if jetDef["title"]:
+                            pave.AddText(jetDef["title"])
                         pave.Draw()
                         globalList.append(pave)
                     globalList.append(obj)
