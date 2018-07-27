@@ -246,7 +246,6 @@ def PlotCrossSections(dataStat, dataSyst, config):
             r.SetLineWidth(2)
             r.SetMarkerStyle(20)
             r.SetMarkerSize(0)
-            r.Draw("same e0")
             if "data_minx" in config and "data_maxx" in config:
                 r.GetXaxis().SetRangeUser(config["data_minx"], config["data_maxx"])
         elif t["type"] == "stat+syst":
