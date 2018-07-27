@@ -7,6 +7,7 @@ input_path: /Volumes/DATA/ALICE/JetResults
 data: JetZCrossSection_JetPt_5_15_Systematics
 theory_spectrum: JetZSpectrum_DPt_2_JetPt_5_15
 inclusive_theory_spectrum: JetPtTwoBins
+normalization: Rate
 jet_type: Charged_R040
 min_jet_pt: 5
 max_jet_pt: 15
@@ -14,6 +15,8 @@ canvas_w: 550
 canvas_h: 600
 left_margin: 0.19
 bottom_margin: 0.27
+
+data_systematics_style: "0[]"
 
 name_prefix: D0JetRateVsZ_JetPt_5_15
 data_minx: 0.2
@@ -48,7 +51,7 @@ data_legend:
 theory:
 -
   title: PYTHIA 6 Perugia-2011
-  active: yes
+  active: no
   gen: pythia6
   proc: charm
   ts: 1520422008
@@ -61,7 +64,7 @@ theory:
     file_name: FastSimAnalysis_inclusive_jets_unweighted.root
 -
   title: PYTHIA 6 LO
-  active: yes
+  active: no
   gen: pythia6
   proc: charm_lo
   ts: 1521276365
@@ -100,7 +103,7 @@ theory:
     file_name: FastSimAnalysis_inclusive_jets.root
 -
   title: POWHEG dijet + PYTHIA 6 
-  active: yes
+  active: no
   gen: powheg+pythia6
   proc: dijet
   ts: 1527252990
@@ -113,7 +116,7 @@ theory:
     file_name: FastSimAnalysis_inclusive_jets.root
 -
   title: POWHEG dijet LO + PYTHIA 6 
-  active: yes
+  active: no
   gen: powheg+pythia6
   proc: dijet_lo
   ts: 1529262323

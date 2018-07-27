@@ -47,7 +47,7 @@ data_legend:
 theory:
 -
   title: PYTHIA 6 Perugia-2011
-  active: yes
+  active: no
   gen: pythia6
   proc: charm
   ts: 1520422008
@@ -55,7 +55,7 @@ theory:
   line: 2
 -
   title: PYTHIA 6 LO
-  active: yes
+  active: no
   gen: pythia6
   proc: charm_lo
   ts: 1521276365
@@ -79,7 +79,7 @@ theory:
   line: 5
 -
   title: POWHEG dijet + PYTHIA 6 
-  active: yes
+  active: no
   gen: powheg+pythia6
   proc: dijet
   ts: 1527252990
@@ -87,7 +87,7 @@ theory:
   line: 8
 -
   title: POWHEG dijet LO + PYTHIA 6 
-  active: yes
+  active: no
   gen: powheg+pythia6
   proc: dijet_lo
   ts: 1529262323
